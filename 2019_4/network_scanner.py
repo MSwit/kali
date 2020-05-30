@@ -9,8 +9,8 @@ def scan(ip):
     broadcast = scapy.Ether(dst="ff:ff:ff:ff:ff:ff")
 
     arp_request_broadcast = broadcast/arp_request
-    answered_list = scapy.srp(arp_request_broadcast, timeout=3, verbose=True)[0]
-
+    answered_list = scapy.srp(arp_request_broadcast, timeout=3, verbose=True, iface="wlan0")[0]
+    
     clients_list = []
     for element in answered_list:
         client_dict = {"ip": element[1].psrc, "mac": element[1].hwsrc}
