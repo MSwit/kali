@@ -25,5 +25,5 @@ def print_result(results_list):
         print(client['ip'] + "\t\t" + client['mac'])
 
 
-scan_result = scan("192.168.178.1/24")
+scan_result = scan("192.168.178.0/24")
 print_result(scan_result)
