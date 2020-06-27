@@ -55,13 +55,15 @@ def restore(destination_ip, source_ip):
     scapy.send(packet, count=4, verbose=False)
 
 
+
+
 # target_ip = "192.168.178.25" # TV
 # target_ip = "192.168.178.32" BlueRayPlayer? 
 # target_ip = "192.168.178.33" Kalie
-# target_ip = "192.168.178.27" # MacBook-Pro
-# target_ip = "192.168.178.23" # OnePlus 3T
 
 target_ip = "192.168.178.35" # Nexus 5 # fe80::bef5::acff:fef6::4f3b
+# target_ip = "192.168.178.27" # MacBook-Pro
+target_ip = "192.168.178.23" # OnePlus 3T
 gateway_ip = "192.168.178.1"
 
 
