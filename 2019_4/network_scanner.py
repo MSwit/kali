@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import scapy.all as scapy
+import socket
 
 
 def scan(ip):
@@ -22,7 +23,11 @@ def print_result(results_list):
 
     print("IP\t\t\tMAC Address\n-------------------------------------------")
     for client in results_list:
-        print(client['ip'] + "\t\t" + client['mac'])
+        try:
+            details = str(socket.gethostbyaddr(client['ip']))
+        except:
+            details = "error getting details"
+        print(client['ip'] + "\t\t" + client['mac'] + "\t\t" + details)
 
 
 scan_result = scan("192.168.178.0/24")
