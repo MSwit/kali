@@ -13,6 +13,7 @@ current_kind = ""
 
 last_sequence_number = None
 last_seq_num = None
+error = False
 
 
 def update_seq_numbers(json_content):
@@ -37,10 +38,11 @@ def request(flow: http.HTTPFlow) -> None:
 
     global last_sequence_number
     global last_seq_num
+    global error
 
     url = flow.request.pretty_url
     if not url.startswith("https://soulhunters"):
-        flow.kill()
+        # flow.kill()
         return
 
     try:
@@ -75,7 +77,13 @@ def request(flow: http.HTTPFlow) -> None:
                     if kind in "mob_reward_consumed":
                         ctx.log.error(
                             "mob_reward_consumed detected; increasing sequence_number")
-                        expected_sequence_number = last_sequence_number + 1
+
+                        level = json_content['level']
+                        if level <= 100:  # Das wird nicht stimmen. Es ist entweder ein anderer Wert, oder es gar nichts damit zu tun.
+                            expected_sequence_number = last_sequence_number + 1
+                        else:
+                            expected_sequence_number = last_sequence_number + 2
+
                     if kind in 'state_updated':
                         ctx.log.error(
                             "state_updated detected; increasing sequence_number")
@@ -86,13 +94,16 @@ def request(flow: http.HTTPFlow) -> None:
                             "[-] Error: expected sequence_number wrong.")
                         ctx.log.error(
                             f"[-]  expected : {expected_sequence_number}, but was {sequence_number}")
-                        exit(1)
+                        error = True
 
                     if seq_num != expected_seq_num:
                         ctx.log.error("[-] Error: expected seq_num wrong.")
                         ctx.log.error(
                             f"[-]  expected : {expected_seq_num}, but was {seq_num}")
-                        exit(1)
+                        error = True
+
+                    if error:
+                        ctx.log.warn("[-] Es ist ein Fehler aufgetreten.")
                 ctx.log.error(
                     f"setting sequence_number: {sequence_number} and seq_num: {seq_num}")
                 last_sequence_number = sequence_number
@@ -107,10 +118,11 @@ def request(flow: http.HTTPFlow) -> None:
         ctx.log.error(str(type(content)))
         ctx.log.error(f"[-] {json.dumps(content,indent=2)}")
 
-        exit(1)
+        error = True
+    if error:
+        ctx.log.warn("[-] Es ist ein Fehler aufgetreten.")
 
 
 def response(flow: http.HTTPFlow) -> None:
-
-    ctx.log.error("------------ resonse -------------")
-    flow.kill()
+    pass
+    # ctx.log.error("------------ resonse -------------")
