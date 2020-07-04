@@ -93,6 +93,14 @@ def request(flow: http.HTTPFlow) -> None:
                         # Das wird nicht stimmen, aber erstmal besser als nix.
                         if json_content['level'] >= 122:
                             mob_reward_consumed_modifier = 2
+                    if kind in "bank_lot_consumed":
+                        bank_lot_id = json_content['bank_lot_id']
+                        if bank_lot_id == 811:
+                            pass
+                        if bank_lot_id == 801:
+                            expected_sequence_number = 0
+                        if bank_lot_id == 200:
+                            expected_sequence_number = 0
 
                     if kind in "mob_reward_consumed":
                         ctx.log.error(
