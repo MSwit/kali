@@ -105,7 +105,6 @@ def request(flow: http.HTTPFlow) -> None:
                         if json_content['level'] >= 122:
                             mob_reward_consumed_modifier = 2
 
-                        level = json_content['level']
                         expected_sequence_number = last_sequence_number + mob_reward_consumed_modifier
 
                     if kind in 'state_updated':
