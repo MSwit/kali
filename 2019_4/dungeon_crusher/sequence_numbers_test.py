@@ -106,6 +106,10 @@ def request(flow: http.HTTPFlow) -> None:
                             mob_reward_consumed_modifier = 2
 
                         expected_sequence_number = last_sequence_number + mob_reward_consumed_modifier
+                    if kind in "battler_reward_chest_consumed":
+                        ctx.log.error(
+                            "battler_reward_chest_consumed  detected; increasing sequence_number")
+                        expected_sequence_number = last_sequence_number + mob_reward_consumed_modifier
 
                     if kind in 'state_updated':
                         ctx.log.error(
