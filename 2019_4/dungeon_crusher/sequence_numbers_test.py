@@ -11,9 +11,12 @@ find_boss_for_siege_request_flow = None
 sequence_numbers = {}
 current_kind = ""
 
+
 last_sequence_number = None
 last_seq_num = None
 error = False
+
+mob_reward_consumed_modifier = 1
 
 
 def update_seq_numbers(json_content):
@@ -39,6 +42,7 @@ def request(flow: http.HTTPFlow) -> None:
     global last_sequence_number
     global last_seq_num
     global error
+    global mob_reward_consumed_modifier
 
     url = flow.request.pretty_url
     if not url.startswith("https://soulhunters"):
@@ -74,15 +78,17 @@ def request(flow: http.HTTPFlow) -> None:
                     expected_sequence_number = last_sequence_number
                     expected_seq_num = last_seq_num + 1
                     ctx.log.error(f"Kind : {kind}")
+                    if kind in "primal_mob_consumed" and mob_reward_consumed_modifier == 1:
+                        # Das wird nicht stimmen, aber erstmal besser als nix.
+                        if json_content['level'] >= 122:
+                            mob_reward_consumed_modifier = 2
+
                     if kind in "mob_reward_consumed":
                         ctx.log.error(
                             "mob_reward_consumed detected; increasing sequence_number")
 
                         level = json_content['level']
-                        if level <= 100:  # Das wird nicht stimmen. Es ist entweder ein anderer Wert, oder es gar nichts damit zu tun.
-                            expected_sequence_number = last_sequence_number + 1
-                        else:
-                            expected_sequence_number = last_sequence_number + 2
+                        expected_sequence_number = last_sequence_number + mob_reward_consumed_modifier
 
                     if kind in 'state_updated':
                         ctx.log.error(
@@ -104,6 +110,7 @@ def request(flow: http.HTTPFlow) -> None:
 
                     if error:
                         ctx.log.warn("[-] Es ist ein Fehler aufgetreten.")
+                        # exit(1)
                 ctx.log.error(
                     f"setting sequence_number: {sequence_number} and seq_num: {seq_num}")
                 last_sequence_number = sequence_number
