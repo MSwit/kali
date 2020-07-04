@@ -89,10 +89,7 @@ def request(flow: http.HTTPFlow) -> None:
                     expected_sequence_number = last_sequence_number
                     expected_seq_num = last_seq_num + 1
                     ctx.log.error(f"Kind : {kind}")
-                    if kind in "primal_mob_consumed" and mob_reward_consumed_modifier == 1:
-                        # Das wird nicht stimmen, aber erstmal besser als nix.
-                        if json_content['level'] >= 122:
-                            mob_reward_consumed_modifier = 2
+
                     if kind in "bank_lot_consumed":
                         bank_lot_id = json_content['bank_lot_id']
                         if bank_lot_id == 811:
@@ -105,6 +102,8 @@ def request(flow: http.HTTPFlow) -> None:
                     if kind in "mob_reward_consumed":
                         ctx.log.error(
                             "mob_reward_consumed detected; increasing sequence_number")
+                        if json_content['level'] >= 122:
+                            mob_reward_consumed_modifier = 2
 
                         level = json_content['level']
                         expected_sequence_number = last_sequence_number + mob_reward_consumed_modifier
