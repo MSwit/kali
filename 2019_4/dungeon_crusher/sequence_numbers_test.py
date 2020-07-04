@@ -149,5 +149,11 @@ def request(flow: http.HTTPFlow) -> None:
 
 
 def response(flow: http.HTTPFlow) -> None:
-    pass
-    # ctx.log.error("------------ resonse -------------")
+
+    status_code = flow.response.status_code
+    if status_code % 200 > 100:
+        if status_code != 304:
+            ctx.log.error(str(status_code))
+            ctx.log.error(
+                f"Body: {flow.response.get_content().decode('utf-8')}")
+            # exit(1)
