@@ -61,6 +61,17 @@ def request(flow: http.HTTPFlow) -> None:
             ctx.log.error(
                 "This request has a dict as content: So it seems unintersting")
             ctx.log.error(json.dumps(json_content_list, indent=2))
+            try:
+                device_name = json_content_list['device_name']
+                if "LGE Nexus 5" in device_name:
+                    ctx.log.error(
+                        "Detecting relogin. Setting sequence_number and seq_num to zero")
+                    last_sequence_number = 0
+                    last_seq_num = -1
+            except Exception as e:
+                ctx.log.error(f"[-] Error: {str(e)}")
+                pass
+
             return
 
         ctx.log.error(
