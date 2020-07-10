@@ -29,7 +29,22 @@ class Sequence_Number:
         return content
 
     def check(self, flow: http.HTTPFlow) -> None:
-        json_content_list = json.load(flow.request.get_content())
+        if not self.is_interesting_request(flow):
+            return
+        json_content_list = json.loads(flow.request.get_content())
+
+    def is_interesting_request(self, flow: http.HTTPFlow):
+        url = flow.request.pretty_url
+        if not url.startswith("https://soulhunters"):
+            return False
+        if len(flow.request.get_content()) == 0:
+            return False
+
+        json_content = json.loads(flow.request.get_content())
+
+        if type(json_content) is not list:
+            return False
+        return True
 
 
 this_class = Sequence_Number()
