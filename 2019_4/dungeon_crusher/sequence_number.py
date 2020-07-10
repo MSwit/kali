@@ -9,8 +9,8 @@ import copy
 class Sequence_Number:
 
     def __init__(self):
-        self.last_sequence_number = None
-        self.last_seq_num = None
+        self.sequence_number = None
+        self.seq_num = None
 
     def generate_updated_json_list(self, json_content_list):
         content = json.loads(json.dumps(json_content_list))
@@ -21,12 +21,12 @@ class Sequence_Number:
     def generate_updated_json(self, json_content):
         content = json.loads(json.dumps(json_content))
 
-        if self.last_sequence_number == None:
-            self.last_sequence_number = content['sequence_number']
-            self.last_seq_num = content['seq_num']
+        if self.sequence_number == None:
+            self.sequence_number = content['sequence_number']
+            self.seq_num = content['seq_num']
             return content
-        self.last_seq_num += 1
-        content['seq_num'] = self.last_seq_num
+        self.seq_num += 1
+        content['seq_num'] = self.seq_num
 
         return content
 
