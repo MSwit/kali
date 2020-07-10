@@ -25,8 +25,14 @@ class Sequence_Number:
             self.sequence_number = content['sequence_number']
             self.seq_num = content['seq_num']
             return content
+
+        kind = content['kind']
+        if kind == 'state_updated':
+            self.sequence_number += 1
+
         self.seq_num += 1
         content['seq_num'] = self.seq_num
+        content['sequence_number'] = self.sequence_number
 
         return content
 
