@@ -10,6 +10,7 @@ class Sequence_Number:
 
     def __init__(self):
         self.sequence_number = None
+        self.mob_reward_consumed_modifier = 1
         self.seq_num = None
 
     def generate_updated_json_list(self, json_content_list):
@@ -27,6 +28,15 @@ class Sequence_Number:
             return content
 
         kind = content['kind']
+        if kind in "mob_reward_consumed":
+            # TODO this is not correct, but ok for now.
+            if json_content['level'] >= 122:
+                self.mob_reward_consumed_modifier = 2
+            self.sequence_number += self.mob_reward_consumed_modifier
+
+        if kind in "battler_reward_chest_consumed":
+            self.sequence_number += self.mob_reward_consumed_modifier
+
         if kind == 'state_updated':
             self.sequence_number += 1
 

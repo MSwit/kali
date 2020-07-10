@@ -41,3 +41,45 @@ def test_update_sequence_number():
     updated_content = updater.generate_updated_json(request)
     assert updated_content['seq_num'] == 1
     assert updated_content['sequence_number'] == 1
+
+
+def test_lvl_122_increases_mob_reward_consumed_modifier():
+    updater = Sequence_Number()
+
+    initial_request = generate_request(0, 0, "some_kind")
+    updater.generate_updated_json(initial_request)
+    request = generate_request(1, 1, "mob_reward_consumed")
+    request["level"] = 121
+
+    updated_content = updater.generate_updated_json(request)
+    assert updated_content['sequence_number'] == 1
+
+    updated_content = updater.generate_updated_json(request)
+    assert updated_content['sequence_number'] == 2  # +1
+
+    request['level'] = 122
+    updated_content = updater.generate_updated_json(request)
+    assert updated_content['sequence_number'] == 4  # +2
+
+
+def test_battler_reward_chest_consumed_increase_by_1_or_2():
+    updater = Sequence_Number()
+
+    initial_request = generate_request(0, 0, "some_kind")
+    updater.generate_updated_json(initial_request)
+
+    mob_request = generate_request(1, 1, "mob_reward_consumed")
+    mob_request["level"] = 121
+    updated_content = updater.generate_updated_json(mob_request)
+    assert updated_content['sequence_number'] == 1
+
+    chest_reward = generate_request(0, 0, "battler_reward_chest_consumed")
+    updated_content = updater.generate_updated_json(chest_reward)
+    assert updated_content['sequence_number'] == 2  # +1
+
+    mob_request['level'] = 122
+    updated_content = updater.generate_updated_json(mob_request)
+    assert updated_content['sequence_number'] == 4  # +2
+
+    updated_content = updater.generate_updated_json(chest_reward)
+    assert updated_content['sequence_number'] == 6  # +2
