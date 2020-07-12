@@ -20,7 +20,10 @@ def update_json(json_content) -> json:
 
     content = json.loads(json.dumps(json_content))
     if content['result'] == 1:
+        # ctx.log.warn("[+] found Arena battle loss. Will update to win")
+        # ctx.log.warn(content)
         content['result'] = 0
+        # content['sequence_number'] = content['sequence_number'] + 1  # TODO to be done in sequence_number.
 
     return content
 
@@ -70,4 +73,14 @@ def request(flow: http.HTTPFlow) -> None:
 def response(flow: http.HTTPFlow) -> None:
     if "pvp_finished" not in str(flow.request.get_content()):
         return
+
+    try:
+        response = json.loads(flow.response.get_content().decode('utf-8'))
+        error = response['error']
+        code = error['code']
+        if code == 400:
+            ctx.log.error("[-] Error: Bad status code.")
+            ctx.log.error(json.dumps(response, indent=2))
+    except:
+        pass
     flow.kill()
