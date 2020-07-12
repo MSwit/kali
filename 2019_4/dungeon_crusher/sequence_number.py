@@ -67,6 +67,19 @@ class Sequence_Number:
                 f"[-]{json.dumps(Tooling.remove_non_trivial_items_list(updated_content_list), indent=2)}")
             # exit(1)
 
+    def try_update_request(self, flow: http.HTTPFlow) -> None:
+        try:
+            if len(flow.request.get_content()) == 0:
+                return
+            json_content = json.loads(flow.request.get_content())
+            if type(json_content) is list:
+                new_json_content = self.generate_updated_json_list(json_content)
+            else:
+                new_json_content = self.generate_updated_json(json_content)
+            flow.request.content = json.dumps(new_json_content).encode('utf-8')
+        except:
+            pass
+
 
 this_class = Sequence_Number()
 
