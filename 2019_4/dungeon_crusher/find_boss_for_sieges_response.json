@@ -1,0 +1,30 @@
+{
+  "sieges": [
+    {
+      "id": "4df4f9bb-5ff1-409d-af98-a830642401a9",
+      "current_hp": 770000,
+      "expires_at": "2020-07-12T17:04:20.177Z",
+      "created_at": "2020-07-12T16:34:20.178Z",
+      "updated_at": "2020-07-12T16:34:20.178Z",
+      "private": false,
+      "total_users": 2,
+      "top_users": {
+        "mvp": null,
+        "finder": "b31f73b3-b65a-4907-a5d6-0347dcf874c1",
+        "last_hit": null
+      },
+      "top_attack_id": null,
+      "boss_config_id": 76601
+    }
+  ],
+  "mail": { "inbox": [], "sent": [] },
+  "online": {
+    "global": 2440,
+    "local": 156,
+    "clan_members": 3,
+    "clan_leaders": 496
+  },
+  "pending_heroes": [],
+  "backend_time": "2020-07-12T16:46:54.475Z",
+  "siege_period": 201
+}

@@ -1,0 +1,78 @@
+{
+  "sieges": [
+    {
+      "id": "4df4f9bb-5ff1-409d-af98-a830642401a9",
+      "current_hp": 770000,
+      "expires_at": "2020-07-12T17:04:20.177Z",
+      "created_at": "2020-07-12T16:34:20.178Z",
+      "updated_at": "2020-07-12T16:34:20.178Z",
+      "private": false,
+      "total_users": 2,
+      "top_users": {
+        "mvp": null,
+        "finder": "b31f73b3-b65a-4907-a5d6-0347dcf874c1",
+        "last_hit": null
+      },
+      "top_attack_id": null,
+      "boss_config_id": 76601
+    },
+    {
+      "id": "7613990c-6c57-4064-b4b6-242adcfde790",
+      "current_hp": 110000,
+      "expires_at": "2020-07-12T17:04:22.120Z",
+      "created_at": "2020-07-12T16:34:22.121Z",
+      "updated_at": "2020-07-12T16:34:22.121Z",
+      "private": false,
+      "total_users": 2,
+      "top_users": {
+        "mvp": null,
+        "finder": "944038f3-5daa-457f-80a0-c15f3e3adb6c",
+        "last_hit": null
+      },
+      "top_attack_id": null,
+      "boss_config_id": 75320
+    },
+    {
+      "id": "0684a408-70cf-4930-9c78-553deef9f169",
+      "current_hp": 5600000,
+      "expires_at": "2020-07-12T17:16:56.078Z",
+      "created_at": "2020-07-12T16:46:56.079Z",
+      "updated_at": "2020-07-12T16:46:56.079Z",
+      "private": false,
+      "total_users": 1,
+      "top_users": {
+        "mvp": null,
+        "finder": "e786b343-35e8-4f59-9b86-256e188783d7",
+        "last_hit": null
+      },
+      "top_attack_id": null,
+      "boss_config_id": 207105
+    },
+    {
+      "id": "8637456d-72b0-4f42-a61c-dcba952adcb9",
+      "current_hp": 5600000,
+      "expires_at": "2020-07-12T17:16:58.109Z",
+      "created_at": "2020-07-12T16:46:58.110Z",
+      "updated_at": "2020-07-12T16:46:58.110Z",
+      "private": false,
+      "total_users": 1,
+      "top_users": {
+        "mvp": null,
+        "finder": "e786b343-35e8-4f59-9b86-256e188783d7",
+        "last_hit": null
+      },
+      "top_attack_id": null,
+      "boss_config_id": 211973
+    }
+  ],
+  "mail": { "inbox": [], "sent": [] },
+  "online": {
+    "global": 2440,
+    "local": 156,
+    "clan_members": 3,
+    "clan_leaders": 496
+  },
+  "pending_heroes": [],
+  "backend_time": "2020-07-12T16:47:01.048Z",
+  "siege_period": 201
+}

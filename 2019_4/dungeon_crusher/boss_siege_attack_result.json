@@ -1,0 +1,1441 @@
+{
+  "boss_siege_attack_result": {
+    "status": 200,
+    "siege": {
+      "expires_at": "2020-07-05T19:12:18.833Z",
+      "current_hp": 109381,
+      "id": "fea44fb8-356d-45aa-8e0b-271b7ca592f3",
+      "created_at": "2020-07-05T18:42:18.834Z",
+      "updated_at": "2020-07-05T18:42:27.266Z",
+      "private": false,
+      "total_users": 1,
+      "top_users": {
+        "mvp": "e786b343-35e8-4f59-9b86-256e188783d7",
+        "finder": "e786b343-35e8-4f59-9b86-256e188783d7",
+        "last_hit": "e786b343-35e8-4f59-9b86-256e188783d7"
+      },
+      "top_attack_id": "72d2238f-2295-4e75-8870-50f6842f099b",
+      "boss_config_id": 164587,
+      "scores": [
+        {
+          "user_id": "e786b343-35e8-4f59-9b86-256e188783d7",
+          "points": 619,
+          "user_info": {
+            "name": "Grorfemkann",
+            "country": "WOR",
+            "avatar_url": "icon_5",
+            "role": 0,
+            "clan_info": {
+              "id": "db871b16-c663-44ca-adc7-db33e34be9c1",
+              "name": "KisKis",
+              "prefix": "KiS",
+              "emblem": "3_6_1_18",
+              "clan_role": 5,
+              "badges": [],
+              "member_since": "2020-06-19T14:20:33.941Z",
+              "newbie": false,
+              "privacy": 1
+            }
+          },
+          "rank": 1
+        }
+      ]
+    },
+    "squad": [
+      {
+        "config_id": 350,
+        "rarity": 30,
+        "stars": 0,
+        "guild_rank": 0,
+        "valor_rank": 0,
+        "count": 1,
+        "runes": []
+      },
+      {
+        "config_id": 262,
+        "rarity": 0,
+        "stars": 0,
+        "guild_rank": 0,
+        "valor_rank": 0,
+        "count": 1,
+        "runes": []
+      },
+      {
+        "config_id": 300,
+        "rarity": 30,
+        "stars": 0,
+        "guild_rank": 0,
+        "valor_rank": 0,
+        "count": 1,
+        "runes": []
+      },
+      {
+        "config_id": 60,
+        "rarity": 0,
+        "stars": 0,
+        "guild_rank": 0,
+        "valor_rank": 0,
+        "count": 1,
+        "runes": []
+      },
+      {
+        "config_id": 240,
+        "rarity": 0,
+        "stars": 0,
+        "guild_rank": 0,
+        "valor_rank": 0,
+        "count": 1,
+        "runes": []
+      },
+      {
+        "config_id": 271,
+        "rarity": 70,
+        "stars": 1,
+        "guild_rank": 214,
+        "valor_rank": 0,
+        "count": 1,
+        "runes": []
+      },
+      {
+        "config_id": 36,
+        "rarity": 70,
+        "stars": 0,
+        "guild_rank": 53,
+        "valor_rank": 0,
+        "count": 1,
+        "runes": []
+      },
+      {
+        "config_id": 260,
+        "rarity": 0,
+        "stars": 0,
+        "guild_rank": 0,
+        "valor_rank": 0,
+        "count": 1,
+        "runes": []
+      },
+      {
+        "config_id": 210,
+        "rarity": 0,
+        "stars": 0,
+        "guild_rank": 0,
+        "valor_rank": 0,
+        "count": 1,
+        "runes": []
+      },
+      {
+        "config_id": 251,
+        "rarity": 10,
+        "stars": 0,
+        "guild_rank": 0,
+        "valor_rank": 0,
+        "count": 1,
+        "runes": []
+      }
+    ],
+    "battle": {
+      "winner": "Defender",
+      "decks": {
+        "first_deck": [
+          {
+            "rarity": 30,
+            "stars": 0,
+            "guild_rank": 0,
+            "valor_rank": 0,
+            "config": {
+              "config_id": 350,
+              "card_type": "Hero",
+              "class": "Warrior",
+              "race": "Human",
+              "status": "None",
+              "atk": 126,
+              "def": 126,
+              "wis": 66,
+              "agi": 69,
+              "pow": 540,
+              "hp": 126,
+              "hit_src": "ATK"
+            },
+            "base_buff": [0, 1],
+            "current_hp": 126
+          },
+          {
+            "rarity": 0,
+            "stars": 0,
+            "guild_rank": 0,
+            "valor_rank": 0,
+            "config": {
+              "config_id": 262,
+              "card_type": "Hero",
+              "class": "Bard",
+              "race": "Human",
+              "status": "None",
+              "atk": 15,
+              "def": 17,
+              "wis": 12,
+              "agi": 15,
+              "pow": 80,
+              "hp": 20,
+              "hit_src": "AGI"
+            },
+            "base_buff": [0, 1],
+            "current_hp": 20
+          },
+          {
+            "rarity": 30,
+            "stars": 0,
+            "guild_rank": 0,
+            "valor_rank": 0,
+            "config": {
+              "config_id": 300,
+              "card_type": "Hero",
+              "class": "Defender",
+              "race": "Human",
+              "status": "Defender",
+              "atk": 111,
+              "def": 123,
+              "wis": 60,
+              "agi": 51,
+              "pow": 480,
+              "hp": 105,
+              "hit_src": "ATK"
+            },
+            "base_buff": [0, 1],
+            "current_hp": 105
+          },
+          {
+            "rarity": 0,
+            "stars": 0,
+            "guild_rank": 0,
+            "valor_rank": 0,
+            "config": {
+              "config_id": 60,
+              "card_type": "Hero",
+              "class": "Bard",
+              "race": "Human",
+              "status": "None",
+              "atk": 8,
+              "def": 11,
+              "wis": 6,
+              "agi": 8,
+              "pow": 45,
+              "hp": 11,
+              "hit_src": "AGI"
+            },
+            "base_buff": [0, 1],
+            "current_hp": 11
+          },
+          {
+            "rarity": 0,
+            "stars": 0,
+            "guild_rank": 0,
+            "valor_rank": 0,
+            "config": {
+              "config_id": 240,
+              "card_type": "Hero",
+              "class": "Warrior",
+              "race": "Elemental",
+              "status": "None",
+              "atk": 12,
+              "def": 13,
+              "wis": 6,
+              "agi": 7,
+              "pow": 55,
+              "hp": 14,
+              "hit_src": "ATK"
+            },
+            "base_buff": [0, 1],
+            "current_hp": 14
+          },
+          {
+            "rarity": 70,
+            "stars": 1,
+            "guild_rank": 214,
+            "valor_rank": 0,
+            "config": {
+              "config_id": 271,
+              "card_type": "Hero",
+              "class": "Warrior",
+              "race": "Dragonoid",
+              "status": "HunterHuman",
+              "atk": 204,
+              "def": 204,
+              "wis": 110,
+              "agi": 110,
+              "pow": 875,
+              "hp": 204,
+              "hit_src": "ATK"
+            },
+            "base_buff": [0, 1],
+            "current_hp": 204
+          },
+          {
+            "rarity": 70,
+            "stars": 0,
+            "guild_rank": 53,
+            "valor_rank": 0,
+            "config": {
+              "config_id": 36,
+              "card_type": "Hero",
+              "class": "Warrior",
+              "race": "Gnoll",
+              "status": "None",
+              "atk": 64,
+              "def": 48,
+              "wis": 27,
+              "agi": 43,
+              "pow": 237,
+              "hp": 53,
+              "hit_src": "ATK"
+            },
+            "base_buff": [0, 1],
+            "current_hp": 53
+          },
+          {
+            "rarity": 0,
+            "stars": 0,
+            "guild_rank": 0,
+            "valor_rank": 0,
+            "config": {
+              "config_id": 260,
+              "card_type": "Hero",
+              "class": "Dragon",
+              "race": "Dragon",
+              "status": "None",
+              "atk": 25,
+              "def": 25,
+              "wis": 25,
+              "agi": 24,
+              "pow": 130,
+              "hp": 30,
+              "hit_src": "ATK"
+            },
+            "base_buff": [0, 1],
+            "current_hp": 30
+          },
+          {
+            "rarity": 0,
+            "stars": 0,
+            "guild_rank": 0,
+            "valor_rank": 0,
+            "config": {
+              "config_id": 210,
+              "card_type": "Hero",
+              "class": "Warrior",
+              "race": "Treefolk",
+              "status": "GuildBreaker",
+              "atk": 12,
+              "def": 14,
+              "wis": 6,
+              "agi": 7,
+              "pow": 55,
+              "hp": 13,
+              "hit_src": "ATK"
+            },
+            "base_buff": [0, 1],
+            "current_hp": 13
+          },
+          {
+            "rarity": 10,
+            "stars": 0,
+            "guild_rank": 0,
+            "valor_rank": 0,
+            "config": {
+              "config_id": 251,
+              "card_type": "Hero",
+              "class": "Defender",
+              "race": "Beast",
+              "status": "Defender",
+              "atk": 19,
+              "def": 19,
+              "wis": 9,
+              "agi": 9,
+              "pow": 80,
+              "hp": 19,
+              "hit_src": "ATK"
+            },
+            "base_buff": [0, 1],
+            "current_hp": 19
+          }
+        ],
+        "second_deck": [
+          null,
+          null,
+          {
+            "rarity": 0,
+            "stars": 0,
+            "guild_rank": 0,
+            "valor_rank": 0,
+            "config": {
+              "config_id": 28000,
+              "card_type": "Hero",
+              "class": "SmallBoss",
+              "race": "Gigant",
+              "status": "BuffImmune, DebuffImmune",
+              "atk": 2125,
+              "def": 0,
+              "wis": 0,
+              "agi": 1,
+              "pow": 1,
+              "hp": 110000,
+              "hit_src": "ATK"
+            },
+            "base_buff": [0, 1],
+            "current_hp": 110000
+          },
+          null,
+          null
+        ]
+      },
+      "rounds": [
+        {
+          "content_type": "RoundResult",
+          "attacks": [
+            {
+              "content_type": "AttackResult",
+              "src_card": 5,
+              "abilities": [
+                {
+                  "content_type": "BuffStatsRelatively",
+                  "_s": 1,
+                  "_t": 3,
+                  "_i": 570,
+                  "buffed_cards": [
+                    {
+                      "stats": {
+                        "ATK": 235,
+                        "WIS": 232,
+                        "AGI": 235,
+                        "DEF": 237,
+                        "HP": 240,
+                        "POW": 300
+                      },
+                      "hp": 240,
+                      "pos": 1
+                    },
+                    {
+                      "stats": {
+                        "ATK": 232,
+                        "WIS": 226,
+                        "AGI": 227,
+                        "DEF": 233,
+                        "HP": 234,
+                        "POW": 275
+                      },
+                      "hp": 234,
+                      "pos": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 0,
+              "abilities": [
+                {
+                  "content_type": "BuffAllStats",
+                  "_s": 1,
+                  "_t": 3,
+                  "_i": 750,
+                  "buffed_cards": [
+                    {
+                      "stats": {
+                        "ATK": 189,
+                        "WIS": 66,
+                        "AGI": 69,
+                        "DEF": 126,
+                        "HP": 126,
+                        "POW": 540
+                      },
+                      "hp": 126,
+                      "pos": 0
+                    },
+                    {
+                      "stats": {
+                        "ATK": 353,
+                        "WIS": 232,
+                        "AGI": 235,
+                        "DEF": 237,
+                        "HP": 240,
+                        "POW": 300
+                      },
+                      "hp": 240,
+                      "pos": 1
+                    },
+                    {
+                      "stats": {
+                        "ATK": 167,
+                        "WIS": 60,
+                        "AGI": 51,
+                        "DEF": 123,
+                        "HP": 105,
+                        "POW": 480
+                      },
+                      "hp": 105,
+                      "pos": 2
+                    },
+                    {
+                      "stats": {
+                        "ATK": 12,
+                        "WIS": 6,
+                        "AGI": 8,
+                        "DEF": 11,
+                        "HP": 11,
+                        "POW": 45
+                      },
+                      "hp": 11,
+                      "pos": 3
+                    },
+                    {
+                      "stats": {
+                        "ATK": 348,
+                        "WIS": 226,
+                        "AGI": 227,
+                        "DEF": 233,
+                        "HP": 234,
+                        "POW": 275
+                      },
+                      "hp": 234,
+                      "pos": 4
+                    },
+                    {
+                      "stats": {
+                        "ATK": 306,
+                        "WIS": 110,
+                        "AGI": 110,
+                        "DEF": 204,
+                        "HP": 204,
+                        "POW": 875
+                      },
+                      "hp": 204,
+                      "pos": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 1,
+              "abilities": [
+                {
+                  "content_type": "BuffAllStats",
+                  "_s": 1,
+                  "_t": 3,
+                  "_i": 520,
+                  "buffed_cards": [
+                    {
+                      "stats": {
+                        "ATK": 218,
+                        "WIS": 76,
+                        "AGI": 80,
+                        "DEF": 145,
+                        "HP": 145,
+                        "POW": 621
+                      },
+                      "hp": 145,
+                      "pos": 0
+                    },
+                    {
+                      "stats": {
+                        "ATK": 406,
+                        "WIS": 267,
+                        "AGI": 271,
+                        "DEF": 273,
+                        "HP": 276,
+                        "POW": 345
+                      },
+                      "hp": 276,
+                      "pos": 1
+                    },
+                    {
+                      "stats": {
+                        "ATK": 192,
+                        "WIS": 69,
+                        "AGI": 59,
+                        "DEF": 142,
+                        "HP": 121,
+                        "POW": 552
+                      },
+                      "hp": 121,
+                      "pos": 2
+                    },
+                    {
+                      "stats": {
+                        "ATK": 14,
+                        "WIS": 7,
+                        "AGI": 10,
+                        "DEF": 13,
+                        "HP": 13,
+                        "POW": 52
+                      },
+                      "hp": 13,
+                      "pos": 3
+                    },
+                    {
+                      "stats": {
+                        "ATK": 401,
+                        "WIS": 260,
+                        "AGI": 262,
+                        "DEF": 268,
+                        "HP": 270,
+                        "POW": 317
+                      },
+                      "hp": 270,
+                      "pos": 4
+                    },
+                    {
+                      "stats": {
+                        "ATK": 352,
+                        "WIS": 126,
+                        "AGI": 126,
+                        "DEF": 235,
+                        "HP": 235,
+                        "POW": 1006
+                      },
+                      "hp": 235,
+                      "pos": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 3,
+              "abilities": [
+                {
+                  "content_type": "BuffAllStats",
+                  "_s": 1,
+                  "_t": 3,
+                  "_i": 130,
+                  "buffed_cards": [
+                    {
+                      "stats": {
+                        "ATK": 250,
+                        "WIS": 88,
+                        "AGI": 92,
+                        "DEF": 167,
+                        "HP": 167,
+                        "POW": 715
+                      },
+                      "hp": 167,
+                      "pos": 0
+                    },
+                    {
+                      "stats": {
+                        "ATK": 467,
+                        "WIS": 307,
+                        "AGI": 311,
+                        "DEF": 314,
+                        "HP": 318,
+                        "POW": 397
+                      },
+                      "hp": 318,
+                      "pos": 1
+                    },
+                    {
+                      "stats": {
+                        "ATK": 221,
+                        "WIS": 80,
+                        "AGI": 68,
+                        "DEF": 163,
+                        "HP": 139,
+                        "POW": 635
+                      },
+                      "hp": 139,
+                      "pos": 2
+                    },
+                    {
+                      "stats": {
+                        "ATK": 16,
+                        "WIS": 8,
+                        "AGI": 11,
+                        "DEF": 15,
+                        "HP": 15,
+                        "POW": 60
+                      },
+                      "hp": 15,
+                      "pos": 3
+                    },
+                    {
+                      "stats": {
+                        "ATK": 461,
+                        "WIS": 299,
+                        "AGI": 301,
+                        "DEF": 309,
+                        "HP": 310,
+                        "POW": 364
+                      },
+                      "hp": 310,
+                      "pos": 4
+                    },
+                    {
+                      "stats": {
+                        "ATK": 405,
+                        "WIS": 145,
+                        "AGI": 145,
+                        "DEF": 270,
+                        "HP": 270,
+                        "POW": 1156
+                      },
+                      "hp": 270,
+                      "pos": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 4,
+              "abilities": [
+                {
+                  "content_type": "BuffStats",
+                  "_s": 1,
+                  "_t": 3,
+                  "_i": 470,
+                  "buffed_cards": [
+                    {
+                      "stats": {
+                        "ATK": 630,
+                        "WIS": 307,
+                        "AGI": 311,
+                        "DEF": 424,
+                        "HP": 318,
+                        "POW": 397
+                      },
+                      "hp": 318,
+                      "pos": 1
+                    },
+                    {
+                      "stats": {
+                        "ATK": 547,
+                        "WIS": 145,
+                        "AGI": 145,
+                        "DEF": 365,
+                        "HP": 270,
+                        "POW": 1156
+                      },
+                      "hp": 270,
+                      "pos": 5
+                    },
+                    {
+                      "stats": {
+                        "ATK": 338,
+                        "WIS": 88,
+                        "AGI": 92,
+                        "DEF": 225,
+                        "HP": 167,
+                        "POW": 715
+                      },
+                      "hp": 167,
+                      "pos": 0
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 8,
+              "abilities": [
+                {
+                  "content_type": "Summon",
+                  "_s": 1,
+                  "_t": 3,
+                  "_i": 40025,
+                  "summoned_cards": [
+                    {
+                      "config": {
+                        "config_id": 140000,
+                        "card_type": "Hero",
+                        "class": "Warrior",
+                        "race": "Undead",
+                        "status": "None",
+                        "atk": 150,
+                        "def": 150,
+                        "wis": 150,
+                        "agi": 150,
+                        "pow": 1,
+                        "hp": 150,
+                        "hit_src": "ATK"
+                      },
+                      "hp": 150,
+                      "pos": 7,
+                      "opening": [
+                        {
+                          "content_type": "BuffSelfStats",
+                          "_s": 0,
+                          "_t": 0,
+                          "buffed_stats": {
+                            "ATK": 150,
+                            "WIS": 150,
+                            "AGI": 150,
+                            "DEF": 150,
+                            "HP": 150,
+                            "POW": 1
+                          },
+                          "hp": 150
+                        }
+                      ]
+                    },
+                    {
+                      "config": {
+                        "config_id": 140000,
+                        "card_type": "Hero",
+                        "class": "Warrior",
+                        "race": "Undead",
+                        "status": "None",
+                        "atk": 150,
+                        "def": 150,
+                        "wis": 150,
+                        "agi": 150,
+                        "pow": 1,
+                        "hp": 150,
+                        "hit_src": "ATK"
+                      },
+                      "hp": 150,
+                      "pos": 6,
+                      "opening": [
+                        {
+                          "content_type": "BuffSelfStats",
+                          "_s": 0,
+                          "_t": 0,
+                          "buffed_stats": {
+                            "ATK": 150,
+                            "WIS": 150,
+                            "AGI": 150,
+                            "DEF": 150,
+                            "HP": 150,
+                            "POW": 1
+                          },
+                          "hp": 150
+                        }
+                      ]
+                    },
+                    {
+                      "config": {
+                        "config_id": 140000,
+                        "card_type": "Hero",
+                        "class": "Warrior",
+                        "race": "Undead",
+                        "status": "None",
+                        "atk": 150,
+                        "def": 150,
+                        "wis": 150,
+                        "agi": 150,
+                        "pow": 1,
+                        "hp": 150,
+                        "hit_src": "ATK"
+                      },
+                      "hp": 150,
+                      "pos": 10,
+                      "opening": [
+                        {
+                          "content_type": "BuffSelfStats",
+                          "_s": 0,
+                          "_t": 0,
+                          "buffed_stats": {
+                            "ATK": 150,
+                            "WIS": 150,
+                            "AGI": 150,
+                            "DEF": 150,
+                            "HP": 150,
+                            "POW": 1
+                          },
+                          "hp": 150
+                        }
+                      ]
+                    },
+                    {
+                      "config": {
+                        "config_id": 140000,
+                        "card_type": "Hero",
+                        "class": "Warrior",
+                        "race": "Undead",
+                        "status": "None",
+                        "atk": 150,
+                        "def": 150,
+                        "wis": 150,
+                        "agi": 150,
+                        "pow": 1,
+                        "hp": 150,
+                        "hit_src": "ATK"
+                      },
+                      "hp": 150,
+                      "pos": 9,
+                      "opening": [
+                        {
+                          "content_type": "BuffSelfStats",
+                          "_s": 0,
+                          "_t": 0,
+                          "buffed_stats": {
+                            "ATK": 150,
+                            "WIS": 150,
+                            "AGI": 150,
+                            "DEF": 150,
+                            "HP": 150,
+                            "POW": 1
+                          },
+                          "hp": 150
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "content_type": "BonusResult",
+              "datas": [
+                [11, 0, 36, 3],
+                [61, 0, 36, 2]
+              ],
+              "deltas": [
+                {
+                  "stats": {
+                    "ATK": 389,
+                    "WIS": 101,
+                    "AGI": 105,
+                    "DEF": 259,
+                    "HP": 240,
+                    "POW": 822
+                  },
+                  "pos": 0,
+                  "hp": 240
+                },
+                {
+                  "stats": {
+                    "ATK": 530,
+                    "WIS": 344,
+                    "AGI": 346,
+                    "DEF": 355,
+                    "HP": 445,
+                    "POW": 419
+                  },
+                  "pos": 4,
+                  "hp": 445
+                },
+                {
+                  "status": "HunterHuman",
+                  "stats": {
+                    "ATK": 629,
+                    "WIS": 167,
+                    "AGI": 167,
+                    "DEF": 419,
+                    "HP": 388,
+                    "POW": 1330
+                  },
+                  "pos": 5,
+                  "hp": 388
+                },
+                {
+                  "stats": {
+                    "ATK": 724,
+                    "WIS": 353,
+                    "AGI": 358,
+                    "DEF": 487,
+                    "HP": 366,
+                    "POW": 457
+                  },
+                  "pos": 1,
+                  "hp": 366
+                },
+                {
+                  "status": "Defender",
+                  "stats": {
+                    "ATK": 254,
+                    "WIS": 92,
+                    "AGI": 78,
+                    "DEF": 188,
+                    "HP": 160,
+                    "POW": 731
+                  },
+                  "pos": 2,
+                  "hp": 160
+                },
+                {
+                  "stats": {
+                    "ATK": 19,
+                    "WIS": 10,
+                    "AGI": 13,
+                    "DEF": 17,
+                    "HP": 17,
+                    "POW": 69
+                  },
+                  "pos": 3,
+                  "hp": 17
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 1,
+              "abilities": [
+                {
+                  "content_type": "PhysicalAttack",
+                  "_s": 0,
+                  "_t": 0,
+                  "attack": {
+                    "src": "AGI",
+                    "dmg": 358
+                  },
+                  "target_card": {
+                    "pos": 6,
+                    "hp": 0,
+                    "count": 0
+                  }
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 4,
+              "abilities": [
+                {
+                  "content_type": "PhysicalAttack",
+                  "_s": 0,
+                  "_t": 0,
+                  "attack": {
+                    "src": "ATK",
+                    "dmg": 530
+                  },
+                  "target_card": {
+                    "pos": 8,
+                    "hp": 109470
+                  }
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 7,
+              "abilities": [
+                {
+                  "content_type": "AtkBonus",
+                  "_s": 1,
+                  "_t": 1,
+                  "_i": 310,
+                  "attacked_cards": [
+                    {
+                      "pos": 2,
+                      "hp": 0,
+                      "count": 0
+                    }
+                  ],
+                  "hit_src": "ATK"
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 5,
+              "abilities": [
+                {
+                  "content_type": "PhysicalAttack",
+                  "_s": 0,
+                  "_t": 0,
+                  "attack": {
+                    "src": "ATK",
+                    "dmg": 629
+                  },
+                  "target_card": {
+                    "pos": 7,
+                    "hp": 0,
+                    "count": 0
+                  }
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 9,
+              "abilities": [
+                {
+                  "content_type": "PhysicalAttack",
+                  "_s": 0,
+                  "_t": 0,
+                  "attack": {
+                    "src": "ATK",
+                    "dmg": 150
+                  },
+                  "target_card": {
+                    "pos": 1,
+                    "hp": 365,
+                    "type": "Protected"
+                  }
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 0,
+              "abilities": [
+                {
+                  "content_type": "PhysicalAttack",
+                  "_s": 0,
+                  "_t": 0,
+                  "attack": {
+                    "src": "ATK",
+                    "dmg": 389
+                  },
+                  "target_card": {
+                    "pos": 10,
+                    "hp": 0,
+                    "count": 0
+                  }
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 8,
+              "abilities": [
+                {
+                  "content_type": "AtksilenceBonus",
+                  "_s": 1,
+                  "_t": 1,
+                  "_i": 40050,
+                  "attacked_cards": [
+                    {
+                      "pos": 1,
+                      "hp": 0,
+                      "count": 0
+                    },
+                    {
+                      "pos": 0,
+                      "hp": 0,
+                      "count": 0
+                    },
+                    {
+                      "pos": 5,
+                      "hp": 0,
+                      "gp": 214,
+                      "count": 0
+                    },
+                    {
+                      "pos": 4,
+                      "hp": 0,
+                      "count": 0
+                    },
+                    {
+                      "pos": 3,
+                      "hp": 0,
+                      "count": 0
+                    }
+                  ],
+                  "hit_src": "ATK"
+                }
+              ]
+            },
+            {
+              "content_type": "BonusResult"
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 0,
+              "abilities": [
+                {
+                  "content_type": "Spawn",
+                  "_s": 0,
+                  "_t": 0,
+                  "config": {
+                    "config_id": 36,
+                    "card_type": "Hero",
+                    "class": "Warrior",
+                    "race": "Gnoll",
+                    "status": "None",
+                    "atk": 64,
+                    "def": 48,
+                    "wis": 27,
+                    "agi": 43,
+                    "pow": 237,
+                    "hp": 53,
+                    "hit_src": "ATK"
+                  },
+                  "hp": 53,
+                  "rarity": 70,
+                  "stars": 0,
+                  "gp": 53,
+                  "valor_rank": 0
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 1,
+              "abilities": [
+                {
+                  "content_type": "Spawn",
+                  "_s": 0,
+                  "_t": 0,
+                  "config": {
+                    "config_id": 260,
+                    "card_type": "Hero",
+                    "class": "Dragon",
+                    "race": "Dragon",
+                    "status": "None",
+                    "atk": 25,
+                    "def": 25,
+                    "wis": 25,
+                    "agi": 24,
+                    "pow": 130,
+                    "hp": 30,
+                    "hit_src": "ATK"
+                  },
+                  "hp": 30,
+                  "rarity": 0,
+                  "stars": 0,
+                  "gp": 0,
+                  "valor_rank": 0
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 2,
+              "abilities": [
+                {
+                  "content_type": "Spawn",
+                  "_s": 0,
+                  "_t": 0,
+                  "config": {
+                    "config_id": 210,
+                    "card_type": "Hero",
+                    "class": "Warrior",
+                    "race": "Treefolk",
+                    "status": "GuildBreaker",
+                    "atk": 12,
+                    "def": 14,
+                    "wis": 6,
+                    "agi": 7,
+                    "pow": 55,
+                    "hp": 13,
+                    "hit_src": "ATK"
+                  },
+                  "hp": 13,
+                  "rarity": 0,
+                  "stars": 0,
+                  "gp": 0,
+                  "valor_rank": 0
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 3,
+              "abilities": [
+                {
+                  "content_type": "Spawn",
+                  "_s": 0,
+                  "_t": 0,
+                  "config": {
+                    "config_id": 251,
+                    "card_type": "Hero",
+                    "class": "Defender",
+                    "race": "Beast",
+                    "status": "Defender",
+                    "atk": 19,
+                    "def": 19,
+                    "wis": 9,
+                    "agi": 9,
+                    "pow": 80,
+                    "hp": 19,
+                    "hit_src": "ATK"
+                  },
+                  "hp": 19,
+                  "rarity": 10,
+                  "stars": 0,
+                  "gp": 0,
+                  "valor_rank": 0
+                }
+              ]
+            },
+            {
+              "content_type": "BonusResult"
+            }
+          ]
+        },
+        {
+          "content_type": "RoundResult",
+          "attacks": [
+            {
+              "content_type": "AttackResult",
+              "src_card": 9,
+              "abilities": [
+                {
+                  "content_type": "AtkBonus",
+                  "_s": 1,
+                  "_t": 1,
+                  "_i": 310,
+                  "attacked_cards": [
+                    {
+                      "pos": 3,
+                      "hp": 0,
+                      "count": 0
+                    }
+                  ],
+                  "hit_src": "ATK"
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 0,
+              "abilities": [
+                {
+                  "content_type": "PhysicalAttack",
+                  "_s": 0,
+                  "_t": 0,
+                  "attack": {
+                    "src": "ATK",
+                    "dmg": 64
+                  },
+                  "target_card": {
+                    "pos": 9,
+                    "hp": 146
+                  }
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 8,
+              "abilities": [
+                {
+                  "content_type": "PhysicalAttack",
+                  "_s": 0,
+                  "_t": 0,
+                  "attack": {
+                    "src": "ATK",
+                    "dmg": 2125
+                  },
+                  "target_card": {
+                    "pos": 2,
+                    "hp": 0,
+                    "count": 0
+                  }
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 1,
+              "abilities": [
+                {
+                  "content_type": "PhysicalAttack",
+                  "_s": 0,
+                  "_t": 0,
+                  "attack": {
+                    "src": "ATK",
+                    "dmg": 25
+                  },
+                  "target_card": {
+                    "pos": 8,
+                    "hp": 109445
+                  }
+                }
+              ]
+            },
+            {
+              "content_type": "BonusResult"
+            },
+            {
+              "content_type": "BonusResult"
+            }
+          ]
+        },
+        {
+          "content_type": "RoundResult",
+          "attacks": [
+            {
+              "content_type": "AttackResult",
+              "src_card": 9,
+              "abilities": [
+                {
+                  "content_type": "PhysicalAttack",
+                  "_s": 0,
+                  "_t": 0,
+                  "attack": {
+                    "src": "ATK",
+                    "dmg": 150
+                  },
+                  "target_card": {
+                    "pos": 1,
+                    "hp": 0,
+                    "count": 0
+                  }
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 0,
+              "abilities": [
+                {
+                  "content_type": "PhysicalAttack",
+                  "_s": 0,
+                  "_t": 0,
+                  "attack": {
+                    "src": "ATK",
+                    "dmg": 64
+                  },
+                  "target_card": {
+                    "pos": 8,
+                    "hp": 109381
+                  }
+                }
+              ]
+            },
+            {
+              "content_type": "AttackResult",
+              "src_card": 8,
+              "abilities": [
+                {
+                  "content_type": "PhysicalAttack",
+                  "_s": 0,
+                  "_t": 0,
+                  "attack": {
+                    "src": "ATK",
+                    "dmg": 2125
+                  },
+                  "target_card": {
+                    "pos": 0,
+                    "hp": 0,
+                    "gp": 53,
+                    "count": 0
+                  }
+                }
+              ]
+            },
+            {
+              "content_type": "BonusResult"
+            }
+          ]
+        }
+      ],
+      "period": 200
+    },
+    "damage_dealt": 619
+  },
+  "boss_siege_refill_result": {
+    "attacks_left": 0,
+    "refill_at": "2020-07-05T19:13:24.352Z",
+    "updated_at": "2020-07-05T18:42:27.283Z"
+  },
+  "mail": {
+    "inbox": [],
+    "sent": []
+  },
+  "online": {
+    "global": 2401,
+    "local": 165,
+    "clan_members": 1,
+    "clan_leaders": 518
+  },
+  "pending_heroes": [],
+  "backend_time": "2020-07-05T18:42:27.328Z",
+  "siege_period": 200
+}
