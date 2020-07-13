@@ -80,6 +80,17 @@ class Sequence_Number:
         except:
             pass
 
+    def print_requests(self, flow: http.HTTPFlow) -> None:
+
+        if not Tooling.is_interesting_request(flow):
+            return
+
+        content = json.loads(flow.request.get_content())
+
+        for request in content:
+            ctx.log.warn(
+                f"sequence_number: {request['sequence_number']}, 'seq_num' {request['seq_num']}, 'kind': {request['kind']}")
+
 
 this_class = Sequence_Number()
 

@@ -49,9 +49,6 @@ class Sieges:
                 return boss_id
         return None
 
-    def generate_attack_flow(self, flow: http.HTTPFlow):
-        pass
-
     def attack(self, boss_id, flow: http.HTTPFlow):
         with open(f"{os.path.dirname(os.path.abspath(__file__))}/boss_siege_attack.json", 'r') as f:
             json_content = json.load(f)
@@ -60,13 +57,23 @@ class Sieges:
         request_content = [json_content]
         fake_request.request.content = json.dumps(
             request_content).encode('utf-8')
-
-        self.sequence_number_modifier.try_update_request(fake_request)
+        ctx.log.warn("[#] I will send boss siege attack. update seq_num now.")
+        # self.sequence_number_modifier.try_update_request(fake_request)
         self.attacked_bosses.append(boss_id)
-        ctx.log.error("[#] I will send boss siege attack.")
-        ctx.log.error(str(self.attacked_bosses))
+
+        ctx.log.warn("[#] I will send boss siege attack.")
+        ctx.master.commands.call("replay.client", [fake_request])  # Fehle
+        # ctx.log.error(str(self.attacked_bosses))
 
     def check_response(self, flow: http.HTTPFlow):
+        if len(flow.response.get_content()) == 0:
+            return
+        content = flow.response.get_content().decode('utf-8')
+        if "error" in content:
+            ctx.log.error(content)
+            # ctx.log.error(json.dumps(content, indent=2))
+            # exit(1)
+        ctx.log.error(str(flow.response.get_content().decode('utf-8')))
         if not self.is_interesting_response(flow):
             return
         try:
@@ -82,6 +89,8 @@ class Sieges:
         boss_id = self.find_boss_id_to_attack(json_content)
         if not boss_id:
             ctx.log.warn("[+] no Boss found to attack.")
+        else:
+            self.attack(boss_id, flow)
 
 
 sequence_number_modifier = Sequence_Number()
@@ -89,19 +98,56 @@ this_class = Sieges(sequence_number_modifier)
 
 
 def request(flow: http.HTTPFlow) -> None:
-    # ctx.log.warn("----------------------------------------")
+    ctx.log.warn("----------------------------------------")
+    sequence_number_modifier.print_requests(flow)
     sequence_number_modifier.try_update_request(flow)
+    ctx.log.warn("------------after update------------")
+    sequence_number_modifier.print_requests(flow)
 
 
 def response(flow: http.HTTPFlow) -> None:
 
     this_class.check_response(flow)
-    return
+    # return
     # if "find_boss_for" in str(flow.request.get_content()):
     #     ctx.log.error(flow.response.get_content().decode('utf-8'))
-    # if flow.response.status_code == 400:
-    #     ctx.log.error(f"[-] An Error occured: Bad Statuscode:")
-    #     ctx.log.error(json.dumps(json.loads(flow.request.get_content()), indent=2))
-    #     ctx.log.error(json.dumps(json.loads(flow.response.get_content()), indent=2))
+    if flow.response.status_code == 400:
+        ctx.log.error(f"[-] An Error occured: Bad Statuscode:")
+        ctx.log.error(json.dumps(json.loads(flow.request.get_content()), indent=2))
+        ctx.log.error(json.dumps(json.loads(flow.response.get_content()), indent=2))
 
-    this_class.check_response(flow)
+    # this_class.check_response(flow)
+
+
+# Aktueller Fehler:
+#     sequence_number: 2, 'seq_num' 0, 'kind': mob_reward_consumed
+# sequence_number: 2, 'seq_num' 1, 'kind': find_boss_for_siege
+# sequence_number: 2, 'seq_num' 2, 'kind': quest_progress
+# sequence_number: 2, 'seq_num' 4, 'kind': boss_siege_attack
+# [-] An Error occured: Bad Statuscode:
+# [
+#     {
+#         "siege_id": "d95fdba3-898f-4352-84b9-d0bb65606d4a",
+#         "power_attack": false,
+#         "autorestore_is_on": true,
+#         "kind": "boss_siege_attack",
+#         "sequence_number": 2,
+#         "seq_num": 4
+#     }
+# ]
+# {
+#     "error": {
+#         "message": "[outside] Wrong action sequence number = 4 <> 3!",
+#         "action": {
+#             "siege_id": "d95fdba3-898f-4352-84b9-d0bb65606d4a",
+#             "power_attack": false,
+#             "autorestore_is_on": true,
+#             "kind": "boss_siege_attack",
+#             "sequence_number": 2,
+#             "seq_num": 4
+#         },
+#         "code": 400,
+#         "backend_time": "2020-07-12T19:06:03.020Z"
+#     }
+# }
+# se

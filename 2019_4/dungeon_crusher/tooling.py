@@ -27,7 +27,7 @@ class Tooling:
         return content
 
     @staticmethod
-    def is_interesting_request(self, flow: http.HTTPFlow):
+    def is_interesting_request(flow: http.HTTPFlow):
         url = flow.request.pretty_url
         if not url.startswith("https://soulhunters"):
             return False
