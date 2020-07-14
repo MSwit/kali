@@ -1,9 +1,11 @@
+from threading import Thread, Lock
 from tooling import Tooling
 from sequence_number import Sequence_Number
 from mitmproxy import http
 from mitmproxy import ctx
 import json
 import os
+import time
 
 
 class Sieges:
@@ -94,8 +96,9 @@ class Sieges:
             request_content).encode('utf-8')
 
         self.attacked_bosses.append(boss_id)
-
         ctx.log.warn("[#] I will send boss siege attack.")
+
+        time.sleep(1.5)
         ctx.master.commands.call("replay.client", [fake_request])
 
     def check_response(self, flow: http.HTTPFlow):
@@ -129,15 +132,24 @@ sequence_number_modifier = Sequence_Number()
 this_class = Sieges(sequence_number_modifier)
 
 
+mutex = Lock()
+
+
 def request(flow: http.HTTPFlow) -> None:
+
+    mutex.acquire()
+
     ctx.log.warn("----------------------------------------")
     sequence_number_modifier.print_requests(flow)
     sequence_number_modifier.try_update_request(flow)
     ctx.log.warn("------------after update------------")
     sequence_number_modifier.print_requests(flow)
 
+    mutex.release()
+
 
 def response(flow: http.HTTPFlow) -> None:
+    mutex.acquire()
 
     this_class.check_response(flow)
     # return
@@ -147,6 +159,9 @@ def response(flow: http.HTTPFlow) -> None:
         ctx.log.error(f"[-] An Error occured: Bad Statuscode:")
         ctx.log.error(json.dumps(json.loads(flow.request.get_content()), indent=2))
         ctx.log.error(json.dumps(json.loads(flow.response.get_content()), indent=2))
+
+    mutex.release()
+
 
 # aktueller stand...
 # mofified_sieges_2_onePlus_2_should_found_boss_but_didnt.bak
