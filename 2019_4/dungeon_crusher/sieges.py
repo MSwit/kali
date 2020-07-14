@@ -10,7 +10,8 @@ class Sieges:
 
     def __init__(self, sequence_number_modifier):
         self.sequence_number_modifier = sequence_number_modifier
-        self.my_id = "e786b343-35e8-4f59-9b86-256e188783d7"
+        # self.my_id = "e786b343-35e8-4f59-9b86-256e188783d7" # nexus
+        self.my_id = "a10e9130-7530-4839-9a11-825b99a10895"  # oneplus3t
         self.attacked_bosses = []
 
     def is_interesting_response(self, flow: http.HTTPFlow):
@@ -24,6 +25,13 @@ class Sieges:
 
     def get_good_boss_id(self, siege):
 
+        if self.my_id == "e786b343-35e8-4f59-9b86-256e188783d7":
+            return self.get_good_boss_id_nexus(siege)
+        elif self.my_id == "a10e9130-7530-4839-9a11-825b99a10895":
+            return self.get_good_boss_id_oneplus3t(siege)
+
+    def get_good_boss_id_nexus(self, siege):
+
         boss_id = siege['id']
 
         if boss_id in self.attacked_bosses:
@@ -34,6 +42,33 @@ class Sieges:
                 if siege['current_hp'] < 3000000:
 
                     return siege['id']
+
+    def get_good_boss_id_oneplus3t(self, siege):
+        ctx.log.warn(str(siege))
+        boss_id = siege['id']
+        try:
+            if siege['top_users']['finder'] == self.my_id:
+                if siege['top_attack_id'] == None:
+                    return siege['id']
+            if siege['current_hp'] > 200000000:  # TODO
+                my_scores = [score for score in siege['scores'] if score['user_id'] == self.my_id]
+                if my_scores:
+                    points = my_scores['points']
+                    if points > 0:
+                        ctx.log.warn(f"Already did dmg to boss: {points}")
+                    else:
+                        return boss_id
+        except Exception as e:
+            ctx.log.error(str(e))
+
+        return None
+
+        if boss_id in self.attacked_bosses:
+            return  # TODO, we will attack big bosses multiple times later on.
+
+        if siege['top_users']['finder'] == self.my_id:
+            if siege['top_attack_id'] == None:
+                return siege['id']
 
     def find_boss_id_to_attack(self, json_content):
         try:
