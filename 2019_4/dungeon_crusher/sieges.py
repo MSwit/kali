@@ -6,6 +6,8 @@ from mitmproxy import ctx
 import json
 import os
 import time
+from simple_flow import SimpleFlow
+# import mitm_logging
 
 
 class Sieges:
@@ -101,31 +103,38 @@ class Sieges:
         time.sleep(1.5)
         ctx.master.commands.call("replay.client", [fake_request])
 
-    def check_response(self, flow: http.HTTPFlow):
-        if len(flow.response.get_content()) == 0:
+    def check_response_simple(self, simple_flow):
+        if not simple_flow.response:
             return
-        content = flow.response.get_content().decode('utf-8')
+
+        content = simple_flow.response
+
         if "error" in content:
             ctx.log.error(content)
 
-        ctx.log.error(str(flow.response.get_content().decode('utf-8')))
-        if not self.is_interesting_response(flow):
+        ctx.log.error(str(content))
+        if not self.is_interesting_response(simple_flow.flow):
             return
         try:
-            if "boss_config_id" not in str(flow.response.get_content()):
+            if "boss_config_id" not in str(simple_flow.flow.response.get_content()):
                 return
         except:
             pass
-        if 'boss_siege_attack_result' in flow.response.get_content().decode('utf-8'):
+        if 'boss_siege_attack_result' in simple_flow.flow.response.get_content().decode('utf-8'):  # re-attack?
             return
 
-        json_content = json.loads(flow.response.get_content().decode('utf-8'))
+        json_content = json.loads(simple_flow.flow.response.get_content().decode('utf-8'))
 
         boss_id = self.find_boss_id_to_attack(json_content)
         if not boss_id:
             ctx.log.warn("[+] no Boss found to attack.")
         else:
-            self.attack(boss_id, flow)
+            self.attack(boss_id, simple_flow.flow)
+
+    def check_response(self, flow: http.HTTPFlow):
+        pass
+        simple_flow = SimpleFlow.from_flow(flow)
+        # self.check_response_simple(simple_flow)
 
 
 sequence_number_modifier = Sequence_Number()
@@ -139,11 +148,11 @@ def request(flow: http.HTTPFlow) -> None:
 
     mutex.acquire()
 
-    ctx.log.warn("----------------------------------------")
-    sequence_number_modifier.print_requests(flow)
-    sequence_number_modifier.try_update_request(flow)
-    ctx.log.warn("------------after update------------")
-    sequence_number_modifier.print_requests(flow)
+    # ctx.log.warn("----------------------------------------")
+    # sequence_number_modifier.print_requests(flow)
+    # sequence_number_modifier.try_update_request(flow)
+    # ctx.log.warn("------------after update------------")
+    # sequence_number_modifier.print_requests(flow)
 
     mutex.release()
 
@@ -152,13 +161,13 @@ def response(flow: http.HTTPFlow) -> None:
     mutex.acquire()
 
     this_class.check_response(flow)
-    # return
-    # if "find_boss_for" in str(flow.request.get_content()):
-    #     ctx.log.error(flow.response.get_content().decode('utf-8'))
-    if flow.response.status_code == 400:
-        ctx.log.error(f"[-] An Error occured: Bad Statuscode:")
-        ctx.log.error(json.dumps(json.loads(flow.request.get_content()), indent=2))
-        ctx.log.error(json.dumps(json.loads(flow.response.get_content()), indent=2))
+    # # return
+    # # if "find_boss_for" in str(flow.request.get_content()):
+    # #     ctx.log.error(flow.response.get_content().decode('utf-8'))
+    # if flow.response.status_code == 400:
+    #     ctx.log.error(f"[-] An Error occured: Bad Statuscode:")
+    #     ctx.log.error(json.dumps(json.loads(flow.request.get_content()), indent=2))
+    #     ctx.log.error(json.dumps(json.loads(flow.response.get_content()), indent=2))
 
     mutex.release()
 
