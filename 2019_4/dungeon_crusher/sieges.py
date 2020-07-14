@@ -18,12 +18,12 @@ class Sieges:
         self.my_id = "a10e9130-7530-4839-9a11-825b99a10895"  # oneplus3t
         self.attacked_bosses = []
 
-    def is_interesting_response(self, flow: http.HTTPFlow):
-        url = flow.request.pretty_url
+    def is_interesting_response(self, simple_flow):
+        url = simple_flow.url
         if not url.startswith("https://soulhunters"):
             return False
 
-        if "boss_config_id" not in str(flow.response.get_content()):
+        if "boss_config_id" not in str(simple_flow.response):
             return False
         return True
 
@@ -112,18 +112,16 @@ class Sieges:
         if "error" in content:
             ctx.log.error(content)
 
-        ctx.log.error(str(content))
-        if not self.is_interesting_response(simple_flow.flow):
-            return
-        try:
-            if "boss_config_id" not in str(simple_flow.flow.response.get_content()):
-                return
-        except:
-            pass
-        if 'boss_siege_attack_result' in simple_flow.flow.response.get_content().decode('utf-8'):  # re-attack?
+        if not self.is_interesting_response(simple_flow):
             return
 
-        json_content = json.loads(simple_flow.flow.response.get_content().decode('utf-8'))
+        if "boss_config_id" not in str(simple_flow.response):
+            return
+
+        if 'boss_siege_attack_result' in simple_flow.response:  # re-attack?
+            return
+
+        json_content = simple_flow.response
 
         boss_id = self.find_boss_id_to_attack(json_content)
         if not boss_id:
@@ -134,7 +132,7 @@ class Sieges:
     def check_response(self, flow: http.HTTPFlow):
         pass
         simple_flow = SimpleFlow.from_flow(flow)
-        # self.check_response_simple(simple_flow)
+        self.check_response_simple(simple_flow)
 
 
 sequence_number_modifier = Sequence_Number()
