@@ -25,6 +25,7 @@ class Sequence_Number:
         if self.sequence_number == None:
             self.sequence_number = content['sequence_number']
             self.seq_num = content['seq_num']
+            ctx.log.error("[+] Setting initial sequence_number and seq_num")
             return content
 
         kind = content['kind']
@@ -88,8 +89,11 @@ class Sequence_Number:
         content = json.loads(flow.request.get_content())
 
         for request in content:
-            ctx.log.warn(
-                f"sequence_number: {request['sequence_number']}, 'seq_num' {request['seq_num']}, 'kind': {request['kind']}")
+            try:
+                ctx.log.warn(
+                    f"sequence_number: {request['sequence_number']}, 'seq_num' {request['seq_num']}, 'kind': {request['kind']}")
+            except:
+                ctx.log.warn(json.dumps(content))
 
 
 this_class = Sequence_Number()
