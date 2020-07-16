@@ -205,7 +205,7 @@ class Sieges:
             return
         attack_refill_json = {"kind": "boss_siege_refill_attack", "sequence_number": 11, "seq_num": 21}
         fake_request = self.api_session_flow.copy()
-        attack_refill_json = [attack_refill_json]
+        attack_refill_json = [attack_refill_json, attack_refill_json]
         fake_request.request.content = json.dumps(  # will update seq_num etc. in request(..)
             attack_refill_json).encode('utf-8')
 
@@ -250,7 +250,16 @@ mutex = Lock()
 
 def request(flow: http.HTTPFlow) -> None:
     ctx.log.warn("------------------ request starts -------------------")
-    mutex.acquire()
+    try:
+        if "\"sequence_number\"" in flow.request.get_content().decode('utf-8'):
+            ctx.log.error("[+] will aquire lock for:")
+            ctx.log.error(flow.request.get_content().decode('utf-8'))
+
+            mutex.acquire()
+            ctx.log.error("[+] lock aquired:")
+    except:
+        pass
+
     if flow.request.pretty_url == "https://soulhunters.beyondmars.io/api/session":
         this_class.api_session_flow = flow
         # ctx.log.error(f"Session flow set!")
@@ -275,11 +284,10 @@ def request(flow: http.HTTPFlow) -> None:
 
 
 def response(flow: http.HTTPFlow) -> None:
-    # mutex.acquire()
 
     try:
         if "boss_siege_refill_attack" in flow.request.get_content().decode('utf-8'):
-
+            # Die antwort kommt asynchron?
             ctx.log.error("boss_siege_refill_attack response:")
             ctx.log.error(flow.response.get_content().decode('utf-8'))
 
@@ -300,8 +308,12 @@ def response(flow: http.HTTPFlow) -> None:
     #     ctx.log.error(f"[-] An Error occured: Bad Statuscode:")
     #     ctx.log.error(json.dumps(json.loads(flow.request.get_content()), indent=2))
     #     ctx.log.error(json.dumps(json.loads(flow.response.get_content()), indent=2))
-
-    mutex.release()
+    try:
+        if "\"sequence_number\"" in flow.request.get_content().decode('utf-8'):
+            ctx.log.error("[+] Lock released!")
+            mutex.release()
+    except:
+        pass
 
 
 # aktueller stand...
