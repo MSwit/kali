@@ -36,3 +36,7 @@ class SimpleFlow:
 
     def to_json(self):
         return {'url': self.url, 'request': self.request, 'response': self.response}
+
+    @staticmethod
+    def from_json(json_flow):
+        return SimpleFlow(json_flow['url'], json_flow['request'], json_flow['response'], None)
