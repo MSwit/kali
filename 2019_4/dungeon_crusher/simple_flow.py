@@ -14,28 +14,25 @@ class SimpleFlow:
 
     @staticmethod
     def from_flow(flow: http.HTTPFlow) -> None:
-        try:
-            url = flow.request.pretty_url
-            request = SimpleFlow.json_from_http(flow.request)
-            response = SimpleFlow.json_from_http(flow.response)
 
-            simple_flow = SimpleFlow(url, request, response, flow.copy())
-            pass
-        except Exception as e:
-            ctx.log.error(str(e))
-            ctx.log.error(traceback.format_exc())
+        url = flow.request.pretty_url
+        request = SimpleFlow.json_from_http(flow.request)
+        response = SimpleFlow.json_from_http(flow.response)
+        simple_flow = SimpleFlow(url, request, response, flow.copy())
 
         return simple_flow
 
     @staticmethod
     def json_from_http(http_object):
-        try:
-            content = http_object.get_content()
-            if len(content) == 0:
-                return {}
+        content = http_object.get_content()
+        if len(content) == 0:
+            return {}
 
-            content = json.loads(content.decode('utf-8'))
+        try:
+            content = content.decode('utf-8')
             return content
         except Exception as e:
-            ctx.log.error(str(e))
-            ctx.log.error(traceback.format_exc())
+            return {}
+
+    def to_json(self):
+        return {'url': self.url, 'request': self.request, 'response': self.response}
