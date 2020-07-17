@@ -173,18 +173,20 @@ class Sieges:
                 siege = response['boss_siege_attack_result']['siege']
                 boss_id = None
                 # we wont reattack small bosses.
-                if siege['current_hp'] > 110000000:
-                    my_score_entry = [
-                        score for score in siege['scores'] if score['user_id'] == self.my_id][0]
-                    points = my_score_entry['points']
-                    if points == 0:
-                        boss_id = siege['id']
+
+                my_score_entry = [
+                    score for score in siege['scores'] if score['user_id'] == self.my_id][0]
+                points = my_score_entry['points']
+                if points == 0:
+                    boss_id = siege['id']
+                    ctx.log.error("[-] NO DMG DONE !")
+                    if siege['current_hp'] > 110000000:
                         if self.attacked_bosses[boss_id] < 2:
                             # self.attacked_bosses[boss_id] += 1
                             ctx.log.warn("[+] Found top boss to reattack.")
                             boss_id = siege['id']
-                    else:
-                        ctx.log.warn(f"Did dmg: {points}")
+                else:
+                    ctx.log.error(f"DID DMG: {points}")
                 self.try_refill()
 
             ctx.log.warn("[+] no Boss found to attack.")
@@ -256,7 +258,7 @@ def request(flow: http.HTTPFlow) -> None:
             ctx.log.error(flow.request.get_content().decode('utf-8'))
 
             mutex.acquire()
-            ctx.log.error("[+] lock aquired:")
+            # ctx.log.error("[+] lock aquired:")
     except:
         pass
 
@@ -270,26 +272,28 @@ def request(flow: http.HTTPFlow) -> None:
     # ctx.log.warn("----------------------------------------")
     sequence_number_modifier.try_update_request(flow)
     sequence_number_modifier.print_requests(flow)
-    try:
-        if "boss_siege_refill_attack" in flow.request.get_content().decode('utf-8'):
-            ctx.log.error("boss_siege_refill_attack request:")
-            ctx.log.error(flow.request.get_content().decode('utf-8'))
+    # try:
+    #     if "boss_siege_refill_attack" in flow.request.get_content().decode('utf-8'):
+    #         ctx.log.error("boss_siege_refill_attack request:")
+    #         ctx.log.error(flow.request.get_content().decode('utf-8'))
 
-    except:
-        pass
+    # except:
+    #     pass
     # ctx.log.warn("------------after update------------")
     # sequence_number_modifier.print_requests(flow)
 
     # mutex.release()
+    ctx.log.error("------------------ request ends -------------------")
 
 
 def response(flow: http.HTTPFlow) -> None:
-
+    ctx.log.warn("------------------ RESPONSE starts -------------------")
     try:
         if "boss_siege_refill_attack" in flow.request.get_content().decode('utf-8'):
-            # Die antwort kommt asynchron?
-            ctx.log.error("boss_siege_refill_attack response:")
-            ctx.log.error(flow.response.get_content().decode('utf-8'))
+            # Die antwort kommt asynchron? bzw. immer dnn, wenn ich keinen dmg gemacht habe, kommt keine antwort?
+            # ctx.log.error("boss_siege_refill_attack response:")
+            # ctx.log.error(flow.response.get_content().decode('utf-8'))
+            pass
 
     except:
         pass
@@ -314,6 +318,7 @@ def response(flow: http.HTTPFlow) -> None:
             mutex.release()
     except:
         pass
+    ctx.log.error("------------------ RESPONSE ends -------------------")
 
 
 # aktueller stand...
