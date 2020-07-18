@@ -1,5 +1,11 @@
 
+import os
 from sequence_number import Sequence_Number
+from sequence import Sequence
+from simple_flow import SimpleFlow
+
+
+test_data_path = os.path.dirname(os.path.realpath(__file__)) + "/testdata"
 
 
 def generate_request(sequence_number, seq_num, kind):
@@ -73,3 +79,12 @@ def test_battler_reward_chest_consumed_increase_by_1_or_2():
 
     updated_content = updater.generate_updated_json(chest_reward)
     assert updated_content['sequence_number'] == 6  # +2
+
+
+def test_dark_ritual_performed_resets_numbers():
+    print(test_data_path)
+    sequence = Sequence.from_file(f'{test_data_path}/unmodified_flow__dark_ritual_performed.json')
+
+    assert len(sequence.flows) == 138
+
+    assert True == False
