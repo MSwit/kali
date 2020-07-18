@@ -4,7 +4,9 @@ from sequence_number import Sequence_Number
 from mitmproxy import http
 from mitmproxy import ctx
 import json
+import sys
 import os
+import signal
 import time
 from simple_flow import SimpleFlow
 from collections import defaultdict
@@ -143,11 +145,21 @@ class Sieges:
             ctx.log.error(str(exc_tb.tb_lineno))
 
     def find_boss_to_attack(self, simple_flow):
-
-        request = simple_flow.request
-        response = simple_flow.response
+        request = simple_flow.get_request()
+        response = simple_flow.get_response()
 
         try:
+            error = response['error']
+            log_error(f"[-] Error: {error}")
+            return None
+        except:
+            pass
+        log_error("111111")
+
+        # log_error(str(type(request)))
+        # log_error(str(type(response)))
+        try:
+            log_error("111112")
             if type(request) is list and [r for r in request if r.get('kind') == "find_boss_for_siege"]:
 
                 for siege in response['sieges']:
@@ -162,14 +174,27 @@ class Sieges:
                         if boss_id not in self.attacked_bosses:
                             ctx.log.warn("[+] Found top boss to attack.")
                             return boss_id
-
+            log_error("111113")
             if "boss_siege_attack" in str(request):
+                log_error(str(type(response)))
+                response = json.loads(response)
+                log_error(str(type(response)))
+                response = json.loads(response)
+
+                log_error(str(type(response)))
+                log_error("4")
+                log_error(response)
+                log_error("5")
+                log_error(response['online'])
+                log_error("6")
                 siege = response['boss_siege_attack_result']['siege']
                 boss_id = None
                 # we wont reattack small bosses.
 
                 log_error("asdfasdfsf")
+                log_error("6")
                 log_error(siege['scores'])
+                log_error("7")
                 my_score_entry = [
                     score for score in siege['scores'] if score['user_id'] == self.my_id][0]
                 points = my_score_entry['points']
@@ -182,12 +207,11 @@ class Sieges:
                             return siege['id']
                 else:
                     log_error(f"DID DMG: {points}")
-                self.try_refill()
 
         except Exception as e:
             log_error(f"[-] Error: {str(e)}")
             log_error("")
-            import sys
+
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             msg = str(exc_type)
@@ -198,13 +222,15 @@ class Sieges:
             log_error(msg)
             log_error(f"[-] Error: {str(e)}")
 
+            # os.kill(os.getpid(), signal.SIGKILL)
+
     def try_refill(self):
         if not self.api_session_flow:
             log_error("[-] could not send refill request. No 'api/session' flow available")
             return
         attack_refill_json = {"kind": "boss_siege_refill_attack", "sequence_number": 11, "seq_num": 21}
         fake_request = self.api_session_flow.copy()
-        attack_refill_json = [attack_refill_json, attack_refill_json]
+        attack_refill_json = [attack_refill_json]
         fake_request.request.content = json.dumps(  # will update seq_num etc. in request(..)
             attack_refill_json).encode('utf-8')
 
@@ -219,11 +245,13 @@ class Sieges:
         boss_id = self.find_boss_to_attack(simple_flow)
         if boss_id:
             ctx.log.error(boss_id)
+
+            self.try_refill()
             self.attack(boss_id, simple_flow.flow)
 
     def check_response(self, flow: http.HTTPFlow):
         try:
-            simple_flow = SimpleFlow.from_flow(flow)
+            simple_flow = SimpleFlow.from_flow(flow)  # ??
             self.check_response_simple(simple_flow)
         except Exception as e:
             import traceback

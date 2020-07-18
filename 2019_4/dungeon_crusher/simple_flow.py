@@ -15,6 +15,9 @@ class SimpleFlow:
     def get_request(self):
         return json.dumps(self.request)
 
+    def get_response(self):
+        return json.dumps(self.response)
+
     @staticmethod
     def from_flow(flow: http.HTTPFlow) -> None:
 
