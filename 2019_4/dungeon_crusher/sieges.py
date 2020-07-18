@@ -168,22 +168,22 @@ class Sieges:
                 boss_id = None
                 # we wont reattack small bosses.
 
+                log_error("asdfasdfsf")
+                log_error(siege['scores'])
                 my_score_entry = [
                     score for score in siege['scores'] if score['user_id'] == self.my_id][0]
                 points = my_score_entry['points']
                 if points == 0:
                     boss_id = siege['id']
-                    ctx.log.error("[-] NO DMG DONE !")
+                    log_error("[-] NO DMG DONE !")
                     if siege['current_hp'] > 110000000:
                         if self.attacked_bosses[boss_id] < 2:
-                            # self.attacked_bosses[boss_id] += 1
-                            ctx.log.warn("[+] Found top boss to reattack.")
-                            boss_id = siege['id']
+                            log_error("[+] Found top boss to reattack.")
+                            return siege['id']
                 else:
-                    ctx.log.error(f"DID DMG: {points}")
+                    log_error(f"DID DMG: {points}")
                 self.try_refill()
 
-            log_warning("[+] no Boss found to attack.")
         except Exception as e:
             log_error(f"[-] Error: {str(e)}")
             log_error("")
@@ -200,7 +200,7 @@ class Sieges:
 
     def try_refill(self):
         if not self.api_session_flow:
-            ctx.log.error("[-] could not send refill request. No 'api/session' flow available")
+            log_error("[-] could not send refill request. No 'api/session' flow available")
             return
         attack_refill_json = {"kind": "boss_siege_refill_attack", "sequence_number": 11, "seq_num": 21}
         fake_request = self.api_session_flow.copy()
@@ -210,7 +210,7 @@ class Sieges:
 
         time.sleep(2)
 
-        ctx.log.warn("[#] I will send refill request")
+        log_error("[#] I will send refill request")
         time.sleep(1.5)
         # ctx.log.error(fake_request.request.get_content().decode('utf-8'))
         ctx.master.commands.call("replay.client", [fake_request])
