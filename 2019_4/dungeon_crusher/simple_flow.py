@@ -13,25 +13,22 @@ class SimpleFlow:
         self.flow = flow
 
     def get_request(self):
-        request = self.request
-        if len(request) == 0:
-            return {}
-        if type(request) is str:
-            request = json.loads(request)
-            if type(request) is str:
-                request = json.dumps(request)
-                raise Exception((request))
-        return request
+        return SimpleFlow.get_json_from_unknown(self.request)
 
     def get_response(self):
-        response = self.response
-        if type(response) is str:
-            response = json.loads(response)
-            if type(response) is str:
-                response = json.dumps(response)
-                raise Exception((request))
+        return SimpleFlow.get_json_from_unknown(self.response)
 
-        return response
+    @staticmethod
+    def get_json_from_unknown(unknown_object):
+        j = unknown_object
+        if len(str(j)) == 0:
+            return {}
+        if type(j) is str:
+            j = json.loads(j)
+            if type(j) is str:
+                j = json.dumps(j)
+                raise Exception((j))
+        return j
 
     @staticmethod
     def from_flow(flow: http.HTTPFlow) -> None:
