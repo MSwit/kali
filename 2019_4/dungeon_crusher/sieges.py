@@ -8,6 +8,8 @@ import os
 import time
 from simple_flow import SimpleFlow
 from collections import defaultdict
+from mitm_logging import log_error
+from mitm_logging import log_warning
 # import mitm_logging
 
 
@@ -144,28 +146,20 @@ class Sieges:
 
         request = simple_flow.request
         response = simple_flow.response
-        # ctx.log.warn("[+] will search for boss to attack")
-        # ctx.log.error(json.dumps(request, indent=2))
-        # ctx.log.error(str(request))
-        # if type(request) is list and [r for r in request if r.get('kind') == "find_boss_for_siege"]:
-        #     ctx.log.error("find_boss_for_siege is in request")
-        # else:
-        #     ctx.log.error(json.dumps(request))
-        try:
 
+        try:
             if type(request) is list and [r for r in request if r.get('kind') == "find_boss_for_siege"]:
-                # ctx.log.error("find_boss_for_siege is in request")
+
                 for siege in response['sieges']:
                     boss_id = siege['id']
+                    log_error("1")
                     if siege['top_users']['finder'] == self.my_id:
                         if siege['top_attack_id'] == None:
-                            # self.attacked_bosses[boss_id] += 1
-                            ctx.log.warn("[+] Found normal boss to attack.")
+                            log_warning("[+] Found normal boss to attack.")
                             return boss_id
 
                     if siege['current_hp'] > 110000000:
                         if boss_id not in self.attacked_bosses:
-                            # self.attacked_bosses[boss_id] += 1
                             ctx.log.warn("[+] Found top boss to attack.")
                             return boss_id
 
@@ -189,17 +183,20 @@ class Sieges:
                     ctx.log.error(f"DID DMG: {points}")
                 self.try_refill()
 
-            ctx.log.warn("[+] no Boss found to attack.")
+            log_warning("[+] no Boss found to attack.")
         except Exception as e:
-            ctx.log.warn(f"[-] Error: {str(e)}")
+            log_error(f"[-] Error: {str(e)}")
+            log_error("")
             import sys
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            ctx.log.error(str(exc_type))
-            ctx.log.error(str(fname))
-            ctx.log.error(str(exc_tb.tb_lineno))
-            ctx.log.error(json.dumps(response))
-            ctx.log.warn(f"[-] Error: {str(e)}")
+            msg = str(exc_type)
+            msg += "\n" + str(exc_tb.tb_lineno)
+            msg += "\n" + str(fname)
+            msg += "\n"
+            msg += "\n" + json.dumps(response)
+            log_error(msg)
+            log_error(f"[-] Error: {str(e)}")
 
     def try_refill(self):
         if not self.api_session_flow:

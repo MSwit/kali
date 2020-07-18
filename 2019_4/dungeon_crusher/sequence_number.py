@@ -5,6 +5,7 @@ from mitmproxy import ctx
 import json
 from tooling import Tooling
 from mitm_logging import log_error
+from simple_flow import SimpleFlow
 
 
 class Sequence_Number:
@@ -13,6 +14,7 @@ class Sequence_Number:
         self.sequence_number = None
         self.mob_reward_consumed_modifier = 1
         self.seq_num = None
+        self.debug = 0
 
     def generate_updated_json_list(self, json_content_list):
         content = json.loads(json.dumps(json_content_list))
@@ -49,14 +51,23 @@ class Sequence_Number:
 
         return content
 
-    def check(self, flow: http.HTTPFlow) -> None:
-        if not Tooling.is_interesting_request(flow):
-            return
+    def is_interesting_flow(self, flow: SimpleFlow) -> bool:
+        return "\"sequence_number\":" in str(flow.request)
 
-        json_content_list = json.loads(flow.request.get_content())
-        ctx.log.error("[-] Original request content: ")
-        ctx.log.error(
-            f"[-] {json.dumps(Tooling.remove_non_trivial_items_list(json_content_list), indent=2)}")
+    def check(self, flow: SimpleFlow) -> bool:
+        if not self.is_interesting_flow(flow):
+            return True
+        if type(flow.request) is dict:
+            print(flow.request)
+
+        # self.debug += 1
+
+        json_content_list = json.loads(flow.request)
+
+        # json_content_list = json.loads(flow.request.get_content())
+        # ctx.log.error("[-] Original request content: ")
+        # ctx.log.error(
+        #     f"[-] {json.dumps(Tooling.remove_non_trivial_items_list(json_content_list), indent=2)}")
 
         updated_content_list = self.generate_updated_json_list(json_content_list)
         if json_content_list != updated_content_list:
@@ -68,7 +79,8 @@ class Sequence_Number:
             ctx.log.error("[-] Updated request content: ")
             ctx.log.error(
                 f"[-]{json.dumps(Tooling.remove_non_trivial_items_list(updated_content_list), indent=2)}")
-            # exit(1)
+            return False
+        return True
 
     def try_update_request(self, flow: http.HTTPFlow) -> None:
         try:
@@ -103,6 +115,12 @@ this_class = Sequence_Number()
 
 def request(flow: http.HTTPFlow) -> None:
     # log_error(flow.request.pretty_url)
-    this_class.check(flow)
 
     # ctx.log.warn("-------------------------------------------")
+    pass
+
+
+def response(flow: http.HTTPFlow) -> None:
+    simple_flow = SimpleFlow.from_flow(flow)
+    this_class.check(simple_flow)
+    # pass

@@ -10,3 +10,11 @@ def log_error(object_to_be_logged):
         ctx.log.error(object_to_be_logged)
     else:
         print(object_to_be_logged)
+
+
+def log_warning(object_to_be_logged):
+    trace = traceback.format_stack()
+    if "mitmdump" in str(trace):
+        ctx.log.warn(object_to_be_logged)
+    else:
+        print(object_to_be_logged)

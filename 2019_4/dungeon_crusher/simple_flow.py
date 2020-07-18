@@ -12,6 +12,9 @@ class SimpleFlow:
         self.response = response
         self.flow = flow
 
+    def get_request(self):
+        return json.dumps(self.request)
+
     @staticmethod
     def from_flow(flow: http.HTTPFlow) -> None:
 
@@ -26,13 +29,13 @@ class SimpleFlow:
     def json_from_http(http_object):
         content = http_object.get_content()
         if len(content) == 0:
-            return {}
+            return ""
 
         try:
             content = content.decode('utf-8')
             return content
         except Exception as e:
-            return {}
+            return ""
 
     def to_json(self):
         return {'url': self.url, 'request': self.request, 'response': self.response}

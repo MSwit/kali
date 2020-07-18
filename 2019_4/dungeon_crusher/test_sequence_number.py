@@ -85,6 +85,7 @@ def test_dark_ritual_performed_resets_numbers():
     print(test_data_path)
     sequence = Sequence.from_file(f'{test_data_path}/unmodified_flow__dark_ritual_performed.json')
 
-    assert len(sequence.flows) == 138
+    sequence_sumber_modifier = Sequence_Number()
 
-    assert True == False
+    for flow in sequence.flows:
+        assert sequence_sumber_modifier.check(flow) == True
