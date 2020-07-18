@@ -13,10 +13,24 @@ class SimpleFlow:
         self.flow = flow
 
     def get_request(self):
-        return json.dumps(self.request)
+        request = self.request
+        if type(request) is str:
+            request = json.dumps(self.request)
+            if type(request) is str:
+                request = json.dumps(self.request)
+                if type(request) is str:
+                    raise
+        return request
 
     def get_response(self):
-        return json.dumps(self.response)
+        response = self.response
+        if type(response) is str:
+            response = json.dumps(self.response)
+            if type(response) is str:
+                response = json.dumps(self.response)
+                if type(response) is str:
+                    raise
+        return response
 
     @staticmethod
     def from_flow(flow: http.HTTPFlow) -> None:

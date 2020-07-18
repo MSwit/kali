@@ -154,12 +154,8 @@ class Sieges:
             return None
         except:
             pass
-        log_error("111111")
 
-        # log_error(str(type(request)))
-        # log_error(str(type(response)))
         try:
-            log_error("111112")
             if type(request) is list and [r for r in request if r.get('kind') == "find_boss_for_siege"]:
 
                 for siege in response['sieges']:
@@ -172,29 +168,13 @@ class Sieges:
 
                     if siege['current_hp'] > 110000000:
                         if boss_id not in self.attacked_bosses:
-                            ctx.log.warn("[+] Found top boss to attack.")
+                            log_warning("[+] Found top boss to attack.")
                             return boss_id
-            log_error("111113")
-            if "boss_siege_attack" in str(request):
-                log_error(str(type(response)))
-                response = json.loads(response)
-                log_error(str(type(response)))
-                response = json.loads(response)
 
-                log_error(str(type(response)))
-                log_error("4")
-                log_error(response)
-                log_error("5")
-                log_error(response['online'])
-                log_error("6")
+            if "boss_siege_attack" in str(request):
                 siege = response['boss_siege_attack_result']['siege']
                 boss_id = None
-                # we wont reattack small bosses.
 
-                log_error("asdfasdfsf")
-                log_error("6")
-                log_error(siege['scores'])
-                log_error("7")
                 my_score_entry = [
                     score for score in siege['scores'] if score['user_id'] == self.my_id][0]
                 points = my_score_entry['points']
