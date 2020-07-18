@@ -37,7 +37,7 @@ class Sequence:
         return {'flows': flows}
 
 
-file_to_store = "test.json"
+file_to_store = "siege_is_over_1.json"
 if os.path.exists(file_to_store):
     print(f"file {file_to_store} already exists.")
     os.kill(os.getpid(), signal.SIGKILL)
