@@ -4,6 +4,7 @@ from mitmproxy import http
 from mitmproxy import ctx
 import json
 from tooling import Tooling
+from mitm_logging import log_error
 
 
 class Sequence_Number:
@@ -25,7 +26,8 @@ class Sequence_Number:
         if self.sequence_number == None:
             self.sequence_number = content['sequence_number']
             self.seq_num = content['seq_num']
-            ctx.log.error("[+] Setting initial sequence_number and seq_num")
+
+            log_error("[+] Setting initial sequence_number and seq_num")
             return content
 
         kind = content['kind']
@@ -100,6 +102,7 @@ this_class = Sequence_Number()
 
 
 def request(flow: http.HTTPFlow) -> None:
+    # log_error(flow.request.pretty_url)
     this_class.check(flow)
 
     # ctx.log.warn("-------------------------------------------")
