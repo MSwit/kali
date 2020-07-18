@@ -6,6 +6,9 @@ import json
 from tooling import Tooling
 from mitm_logging import log_error
 from simple_flow import SimpleFlow
+import os
+import signal
+from time import sleep
 
 
 class Sequence_Number:
@@ -55,7 +58,18 @@ class Sequence_Number:
         return "\"sequence_number\":" in str(flow.request)
 
     def check(self, flow: SimpleFlow) -> bool:
+        log_error("asdf")
+        log_for_error_finding = False
+        request = flow.get_request()
+        if "dark_ritual_performed" in str(request):
+            log_error(request)
+            sleep(1)
+            log_for_error_finding = True
+            # os.kill(os.getpid(), signal.SIGKILL)
+
         if not self.is_interesting_flow(flow):
+            if log_for_error_finding:
+                print("uninteresting")
             return True
         if type(flow.request) is dict:
             print(flow.request)
@@ -70,6 +84,11 @@ class Sequence_Number:
         #     f"[-] {json.dumps(Tooling.remove_non_trivial_items_list(json_content_list), indent=2)}")
 
         updated_content_list = self.generate_updated_json_list(json_content_list)
+        if "dark_ritual_performed" in str(json_content_list):
+            log_error(updated_content_list[0]['sequence_number'])
+            log_error(json_content_list[0]['sequence_number'])
+            pass
+
         if json_content_list != updated_content_list:
             ctx.log.error("[-] request was updated. but it shouldn't.")
             ctx.log.error("[-] Original request content: ")
@@ -122,5 +141,16 @@ def request(flow: http.HTTPFlow) -> None:
 
 def response(flow: http.HTTPFlow) -> None:
     simple_flow = SimpleFlow.from_flow(flow)
+    log_error(str(simple_flow.get_response()))
+    if flow.response.status_code == 400:
+        error = simple_flow.get_response().get("error", {})
+        if error:
+            log_error(str(simple_flow.get_response()))
+            message = error['message']
+            if "[outside] Wrong action sequence number = " in message:
+                correct_seq_num = message.split(" ")[-1]
+                correct_seq_num = message.split("!")[0]
+                log_error(f"corret seq_num should be {correct_seq_num}")
+
     this_class.check(simple_flow)
     # pass

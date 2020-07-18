@@ -23,11 +23,14 @@ class SimpleFlow:
         j = unknown_object
         if len(str(j)) == 0:
             return {}
-        if type(j) is str:
-            j = json.loads(j)
+        try:
             if type(j) is str:
-                j = json.dumps(j)
-                raise Exception((j))
+                j = json.loads(j)
+                if type(j) is str:
+                    j = json.dumps(j)
+                    raise Exception((j))
+        except:
+            return {"no_json": j}
         return j
 
     @staticmethod

@@ -187,7 +187,7 @@ class Sieges:
                             return siege['id']
                 else:
                     log_error(f"DID DMG: {points}")
-
+            log_error("NO BOSS FOUND !")
         except Exception as e:
             log_error(f"[-] Error: {str(e)}")
             log_error("")
@@ -293,6 +293,7 @@ def request(flow: http.HTTPFlow) -> None:
 
 def response(flow: http.HTTPFlow) -> None:
     ctx.log.warn("------------------ RESPONSE starts -------------------")
+    ctx.log.error(flow.response.get_content().decode('utf-8'))
     try:
         if "boss_siege_refill_attack" in flow.request.get_content().decode('utf-8'):
             # Die antwort kommt asynchron? bzw. immer dnn, wenn ich keinen dmg gemacht habe, kommt keine antwort?
@@ -304,9 +305,18 @@ def response(flow: http.HTTPFlow) -> None:
         pass
 
     if flow.response.status_code == 400:
-        ctx.log.error("[-] Bad statuscode")
-        ctx.log.error(str(flow.request.get_content()))
-        ctx.log.error(str(flow.response.get_content()))
+        if flow.response.status_code == 400:
+            error = simple_flow.get_response().get("error", {})
+            if error:
+                log_error(str(simple_flow.get_response()))
+                message = error['message']
+                if "[outside] Wrong action sequence number = " in message:
+                    correct_seq_num = message.split(" ")[-1]
+                    correct_seq_num = message.split("!")[0]
+                    log_error(f"corret seq_num should be {correct_seq_num}")
+        # ctx.log.error("[-] Bad statuscode")
+        # ctx.log.error(str(flow.request.get_content()))
+        # ctx.log.error(str(flow.response.get_content()))
 
     this_class.check_response(flow)
 
