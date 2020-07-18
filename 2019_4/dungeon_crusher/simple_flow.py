@@ -14,22 +14,23 @@ class SimpleFlow:
 
     def get_request(self):
         request = self.request
+        if len(request) == 0:
+            return {}
         if type(request) is str:
-            request = json.dumps(self.request)
+            request = json.loads(request)
             if type(request) is str:
-                request = json.dumps(self.request)
-                if type(request) is str:
-                    raise
+                request = json.dumps(request)
+                raise Exception((request))
         return request
 
     def get_response(self):
         response = self.response
         if type(response) is str:
-            response = json.dumps(self.response)
+            response = json.loads(response)
             if type(response) is str:
-                response = json.dumps(self.response)
-                if type(response) is str:
-                    raise
+                response = json.dumps(response)
+                raise Exception((request))
+
         return response
 
     @staticmethod
