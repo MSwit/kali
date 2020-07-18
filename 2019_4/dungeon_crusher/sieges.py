@@ -1,4 +1,5 @@
 from threading import Thread, Lock
+import threading
 from tooling import Tooling
 from sequence_number import Sequence_Number
 from mitmproxy import http
@@ -12,6 +13,8 @@ from simple_flow import SimpleFlow
 from collections import defaultdict
 from mitm_logging import log_error
 from mitm_logging import log_warning
+from sequence import Sequence
+import datetime
 # import mitm_logging
 
 
@@ -39,6 +42,8 @@ class Sieges:
         self.user = "oneplus"
         self.attacked_bosses = defaultdict(int)
         self.api_session_flow = None
+        self.api_session_flow = None
+        self.peding_attack = False
 
     # def is_interesting_response(self, simple_flow):
     #     url = simple_flow.url
@@ -115,6 +120,10 @@ class Sieges:
         # return None
 
     def attack(self, boss_id, flow: http.HTTPFlow):
+        if self.peding_attack == True:
+            log_error(
+                "[-] Error: should attack, but there is another attack performing")
+            return
         try:
             with open(f"{os.path.dirname(os.path.abspath(__file__))}/boss_siege_attack.json", 'r') as f:
                 json_content = json.load(f)
@@ -126,9 +135,9 @@ class Sieges:
 
             self.attacked_bosses[boss_id] += 1
             ctx.log.warn("[#] I will send boss siege attack.")
-
             time.sleep(1.5)
 
+            self.peding_attack = True
             ctx.master.commands.call("replay.client", [fake_request])
         except Exception as e:
             import traceback
@@ -143,6 +152,18 @@ class Sieges:
             ctx.log.error(str(exc_type))
             ctx.log.error(str(fname))
             ctx.log.error(str(exc_tb.tb_lineno))
+
+    def is_search_for_boss_available(self, simple_flow):
+        if simple_flow.request:
+            return False
+        try:
+            sieges = simple_flow.get_response()['sieges']
+            if len(sieges) < 4:
+                if self.peding_attack == False:
+                    return True
+        except:
+            pass
+        return False
 
     def find_boss_to_attack(self, simple_flow):
         request = simple_flow.get_request()
@@ -172,6 +193,7 @@ class Sieges:
                             return boss_id
 
             if "boss_siege_attack" in str(request):
+                self.peding_attack = False
                 siege = response['boss_siege_attack_result']['siege']
                 boss_id = None
 
@@ -206,9 +228,11 @@ class Sieges:
 
     def try_refill(self):
         if not self.api_session_flow:
-            log_error("[-] could not send refill request. No 'api/session' flow available")
+            log_error(
+                "[-] could not send refill request. No 'api/session' flow available")
             return
-        attack_refill_json = {"kind": "boss_siege_refill_attack", "sequence_number": 11, "seq_num": 21}
+        attack_refill_json = {
+            "kind": "boss_siege_refill_attack", "sequence_number": 11, "seq_num": 21}
         fake_request = self.api_session_flow.copy()
         attack_refill_json = [attack_refill_json]
         fake_request.request.content = json.dumps(  # will update seq_num etc. in request(..)
@@ -228,6 +252,28 @@ class Sieges:
 
             self.try_refill()
             self.attack(boss_id, simple_flow.flow)
+        else:
+            available = self.is_search_for_boss_available(simple_flow)
+            if available:
+                self.try_search_for_boss()
+
+    def try_search_for_boss(self):
+        pass
+        if not self.api_session_flow:
+            log_error(
+                "[-] no api session flow set, yet. Cant search for new bosses.")
+            return
+        search_for_bosses_json = {
+            "kind": "find_boss_for_siege", "sequence_number": -1, "seq_num": -1}
+        fake_request = self.api_session_flow.copy()
+        search_for_bosses_json = [search_for_bosses_json]
+        fake_request.request.content = json.dumps(  # will update seq_num etc. in request(..)
+            search_for_bosses_json).encode('utf-8')
+
+        log_error("[#] I will send search for boss request")
+        time.sleep(1.5)
+
+        ctx.master.commands.call("replay.client", [fake_request])
 
     def check_response(self, flow: http.HTTPFlow):
         try:
@@ -248,25 +294,20 @@ class Sieges:
             ctx.log.error(str(exc_tb.tb_lineno))
 
 
-sequence_number_modifier = Sequence_Number()
-this_class = Sieges(sequence_number_modifier)
+def should_lock_unlock_flow(flow: http.HTTPFlow) -> bool:
+    return "https://soulhunters.beyondmars.io" in flow.request.pretty_url
 
 
-mutex = Lock()
-
-
-def request(flow: http.HTTPFlow) -> None:
-    ctx.log.warn("------------------ request starts -------------------")
-    try:
-        if "\"sequence_number\"" in flow.request.get_content().decode('utf-8'):
-            ctx.log.error("[+] will aquire lock for:")
-            ctx.log.error(flow.request.get_content().decode('utf-8'))
-
-            mutex.acquire()
-            # ctx.log.error("[+] lock aquired:")
-    except:
-        pass
-
+def process_request(flow: http.HTTPFlow) -> None:
+    if should_lock_unlock_flow(flow):
+        ctx.log.error("[+] will aquire lock:")
+        log_error(SimpleFlow.from_flow(flow).url)
+        log_error(SimpleFlow.from_flow(flow).get_request())
+        mutex.acquire()
+        unmodified_flow = SimpleFlow.from_flow(flow)
+    else:
+        return
+    return
     if flow.request.pretty_url == "https://soulhunters.beyondmars.io/api/session":
         this_class.api_session_flow = flow
         # ctx.log.error(f"Session flow set!")
@@ -288,12 +329,40 @@ def request(flow: http.HTTPFlow) -> None:
     # sequence_number_modifier.print_requests(flow)
 
     # mutex.release()
-    ctx.log.error("------------------ request ends -------------------")
 
 
-def response(flow: http.HTTPFlow) -> None:
-    ctx.log.warn("------------------ RESPONSE starts -------------------")
-    ctx.log.error(flow.response.get_content().decode('utf-8'))
+sequence_number_modifier = Sequence_Number()
+this_class = Sieges(sequence_number_modifier)
+
+
+mutex = Lock()
+
+sequence_filename = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".asdf"
+current_sequence = Sequence()
+unmodified_flow = None
+threading.TIMEOUT_MAX = 5
+
+
+def process_response(flow: http.HTTPFlow) -> None:
+    if should_lock_unlock_flow(flow):
+        ctx.log.error("[+] will relase lock after processing.....")
+
+    if "https://soulhunters.beyondmars.io" in flow.request.pretty_url:
+        try:
+            if unmodified_flow != None:
+                simple_flow = SimpleFlow.from_flow(flow)
+                unmodified_flow.response = simple_flow.response
+                current_sequence.append(unmodified_flow)
+                current_sequence.to_file(sequence_filename)
+                log_error("hopefully saved flows.")
+                unmodified_flow = None
+        except:
+            pass
+    else:
+        log_error("returning... not interesting")
+        return
+
+        # ctx.log.error(flow.response.get_content().decode('utf-8'))
     try:
         if "boss_siege_refill_attack" in flow.request.get_content().decode('utf-8'):
             # Die antwort kommt asynchron? bzw. immer dnn, wenn ich keinen dmg gemacht habe, kommt keine antwort?
@@ -327,13 +396,21 @@ def response(flow: http.HTTPFlow) -> None:
     #     ctx.log.error(f"[-] An Error occured: Bad Statuscode:")
     #     ctx.log.error(json.dumps(json.loads(flow.request.get_content()), indent=2))
     #     ctx.log.error(json.dumps(json.loads(flow.response.get_content()), indent=2))
-    try:
-        if "\"sequence_number\"" in flow.request.get_content().decode('utf-8'):
-            ctx.log.error("[+] Lock released!")
-            mutex.release()
-    except:
-        pass
-    ctx.log.error("------------------ RESPONSE ends -------------------")
+    if should_lock_unlock_flow(flow):
+        ctx.log.error("[+] will relase lock:")
+        mutex.release()
+
+
+def request(flow: http.HTTPFlow) -> None:
+    ctx.log.warn("------------------ REQUEST starts -------------------")
+    process_request(flow)
+    ctx.log.warn("------------------ REQUEST ends -------------------")
+
+
+def response(flow: http.HTTPFlow) -> None:
+    ctx.log.warn("------------------ RESPONSE starts -------------------")
+    process_response(flow)
+    ctx.log.warn("------------------ RESPONSE ende -------------------")
 
 
 # aktueller stand...

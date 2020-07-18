@@ -38,7 +38,9 @@ class SimpleFlow:
 
         url = flow.request.pretty_url
         request = SimpleFlow.json_from_http(flow.request)
-        response = SimpleFlow.json_from_http(flow.response)
+        response = None
+        if flow.response:
+            response = SimpleFlow.json_from_http(flow.response)
         simple_flow = SimpleFlow(url, request, response, flow.copy())
 
         return simple_flow

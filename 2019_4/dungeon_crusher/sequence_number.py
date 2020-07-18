@@ -32,7 +32,8 @@ class Sequence_Number:
             self.sequence_number = content['sequence_number']
             self.seq_num = content['seq_num']
 
-            log_error("[+] Setting initial sequence_number and seq_num")
+            log_error(
+                "[+] Setting initial sequence_number: {self.sequence_number} and seq_num: { self.seq_num}")
             return content
 
         kind = content['kind']
@@ -58,7 +59,6 @@ class Sequence_Number:
         return "\"sequence_number\":" in str(flow.request)
 
     def check(self, flow: SimpleFlow) -> bool:
-        log_error("asdf")
         log_for_error_finding = False
         request = flow.get_request()
         if "dark_ritual_performed" in str(request):
@@ -83,7 +83,8 @@ class Sequence_Number:
         # ctx.log.error(
         #     f"[-] {json.dumps(Tooling.remove_non_trivial_items_list(json_content_list), indent=2)}")
 
-        updated_content_list = self.generate_updated_json_list(json_content_list)
+        updated_content_list = self.generate_updated_json_list(
+            json_content_list)
         if "dark_ritual_performed" in str(json_content_list):
             log_error(updated_content_list[0]['sequence_number'])
             log_error(json_content_list[0]['sequence_number'])
@@ -107,7 +108,8 @@ class Sequence_Number:
                 return
             json_content = json.loads(flow.request.get_content())
             if type(json_content) is list:
-                new_json_content = self.generate_updated_json_list(json_content)
+                new_json_content = self.generate_updated_json_list(
+                    json_content)
             else:
                 new_json_content = self.generate_updated_json(json_content)
             flow.request.content = json.dumps(new_json_content).encode('utf-8')
