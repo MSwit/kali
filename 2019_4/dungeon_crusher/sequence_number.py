@@ -19,6 +19,9 @@ class Sequence_Number:
         self.seq_num = None
         self.debug = 0
 
+    def is_ready(self):
+        return self.seq_num != None
+
     def generate_updated_json_list(self, json_content_list):
         content = json.loads(json.dumps(json_content_list))
         for i, value in enumerate(json_content_list):

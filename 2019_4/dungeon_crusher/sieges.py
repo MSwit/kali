@@ -170,11 +170,16 @@ class Sieges:
                 self.try_search_for_boss()
 
     def try_search_for_boss(self):
-        pass
+
         if not self.api_session_flow:
             log_error(
                 "[-] no api session flow set, yet. Cant search for new bosses.")
             return
+        if not self.sequence_number_modifier.is_ready():
+            log_error(
+                "[-] Sequence number not initialized yet. Cant search for new bosses.")
+            return
+
         search_for_bosses_json = {
             "kind": "find_boss_for_siege", "sequence_number": -1, "seq_num": -1}
         fake_request = self.api_session_flow.copy()
