@@ -2,17 +2,25 @@ from mitmproxy import http
 from mitmproxy import ctx
 import json
 import traceback
+from mitm_logging import log_error
 
 
 class SimpleFlow:
 
-    def __init__(self, url, request, response, flow):
+    def __init__(self, url, original_request, modified_request, response, flow):
         self.url = url
-        self.request = request
+        self.original_request = original_request
+        self.modified_request = modified_request
         self.response = response
         self.flow = flow
 
     def get_request(self):
+        return SimpleFlow.get_json_from_unknown(self.original_request)
+
+    def get_mofied_request(self):
+        return SimpleFlow.get_json_from_unknown(self.modified_request)
+
+    def get_mofied_request(self):
         return SimpleFlow.get_json_from_unknown(self.request)
 
     def get_response(self):
@@ -41,7 +49,7 @@ class SimpleFlow:
         response = None
         if flow.response:
             response = SimpleFlow.json_from_http(flow.response)
-        simple_flow = SimpleFlow(url, request, response, flow.copy())
+        simple_flow = SimpleFlow(url, request, None, response, flow.copy())
 
         return simple_flow
 
@@ -50,7 +58,6 @@ class SimpleFlow:
         content = http_object.get_content()
         if len(content) == 0:
             return ""
-
         try:
             content = content.decode('utf-8')
             return content
@@ -58,8 +65,13 @@ class SimpleFlow:
             return ""
 
     def to_json(self):
-        return {'url': self.url, 'request': self.request, 'response': self.response}
+        return {'url': self.url, 'original_request': self.original_request, 'modified_request': self.modified_request, 'response': self.response}
 
     @staticmethod
     def from_json(json_flow):
-        return SimpleFlow(json_flow['url'], json_flow['request'], json_flow['response'], None)
+        request = json_flow.get('original_request', {})
+        if not request:
+            request = json_flow.get('request', {})
+        modified_request = json_flow.get('modified_request', {})
+
+        return SimpleFlow(json_flow['url'], request, modified_request, json_flow['response'], None)

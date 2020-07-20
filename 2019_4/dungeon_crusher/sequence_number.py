@@ -59,7 +59,7 @@ class Sequence_Number:
         return content
 
     def is_interesting_flow(self, flow: SimpleFlow) -> bool:
-        return "\"sequence_number\":" in str(flow.request)
+        return "\"sequence_number\":" in str(flow.get_request())
 
     def check(self, flow: SimpleFlow) -> bool:
         log_for_error_finding = False

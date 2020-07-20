@@ -1,4 +1,4 @@
-from threading import Thread, Lock
+from threading import Thread, Lock, Semaphore
 import threading
 from tooling import Tooling
 from sequence_number import Sequence_Number
@@ -10,6 +10,7 @@ import os
 import signal
 import time
 from simple_flow import SimpleFlow
+from partial_flow import PartialFlow
 from collections import defaultdict
 from mitm_logging import log_error
 from mitm_logging import log_warning
@@ -27,7 +28,6 @@ class Sieges:
         self.my_id = "a10e9130-7530-4839-9a11-825b99a10895"  # oneplus3t
         self.user = "oneplus"
         self.attacked_bosses = defaultdict(int)
-        self.api_session_flow = None
         self.api_session_flow = None
         self.peding_attack = False
 
@@ -66,8 +66,8 @@ class Sieges:
             ctx.log.error(str(exc_tb.tb_lineno))
 
     def is_search_for_boss_available(self, simple_flow):
-        if simple_flow.request:
-            return False
+        # if not simple_flow.request:
+        #     return False
         try:
             sieges = simple_flow.get_response()['sieges']
             if len(sieges) < 4:
@@ -191,10 +191,11 @@ class Sieges:
         time.sleep(1.5)
 
         ctx.master.commands.call("replay.client", [fake_request])
+        log_error("[#] I send search for boss request")
 
     def check_response(self, flow: http.HTTPFlow):
         try:
-            simple_flow = SimpleFlow.from_flow(flow)  # ??
+            simple_flow = SimpleFlow.from_flow(flow)
             self.check_response_simple(simple_flow)
         except Exception as e:
             import traceback
@@ -212,20 +213,25 @@ class Sieges:
 
 
 def should_lock_unlock_flow(flow: http.HTTPFlow) -> bool:
+    if "https://soulhunters.beyondmars.io/api/clans" in flow.request.pretty_url:
+        return False
     return "https://soulhunters.beyondmars.io" in flow.request.pretty_url
 
 
 def process_request(flow: http.HTTPFlow) -> None:
+    global unmodified_flow
+
     if should_lock_unlock_flow(flow):
         ctx.log.error("[+] will aquire lock:")
         log_error(SimpleFlow.from_flow(flow).url)
         log_error(SimpleFlow.from_flow(flow).get_request())
         mutex.acquire()
-        unmodified_flow = SimpleFlow.from_flow(flow)
+        unmodified_flow.add_request(flow)
     else:
         return
-    return
+
     if flow.request.pretty_url == "https://soulhunters.beyondmars.io/api/session":
+        log_warning("[+] goint to set 'api_session_flow'")
         this_class.api_session_flow = flow
     else:
         pass
@@ -234,36 +240,21 @@ def process_request(flow: http.HTTPFlow) -> None:
     sequence_number_modifier.print_requests(flow)
 
 
-sequence_number_modifier = Sequence_Number()
-this_class = Sieges(sequence_number_modifier)
-
-
-mutex = Lock()
-
-sequence_filename = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".asdf"
-current_sequence = Sequence()
-unmodified_flow = None
-threading.TIMEOUT_MAX = 5
-
-
 def process_response(flow: http.HTTPFlow) -> None:
+    global unmodified_flow
+    simple_flow = SimpleFlow.from_flow(flow)
     if should_lock_unlock_flow(flow):
-        ctx.log.error("[+] will relase lock after processing.....")
-
-    if "https://soulhunters.beyondmars.io" in flow.request.pretty_url:
-        try:
-            if unmodified_flow != None:
-                simple_flow = SimpleFlow.from_flow(flow)
-                unmodified_flow.response = simple_flow.response
-                current_sequence.append(unmodified_flow)
-                current_sequence.to_file(sequence_filename)
-                log_error("hopefully saved flows.")
-                unmodified_flow = None
-        except:
-            pass
+        ctx.log.error("[+] will release lock after processing.....")
+        if unmodified_flow.is_request_available():
+            unmodified_flow.add_response(flow)
+            current_sequence.append(unmodified_flow.combine())
+            unmodified_flow.reset()
+            current_sequence.to_file(sequence_filename)
+            log_warning("[+] Stored Session.")
     else:
         log_error("returning... not interesting")
         return
+
     try:
         if "boss_siege_refill_attack" in flow.request.get_content().decode('utf-8'):
             # Die antwort kommt asynchron? bzw. immer dnn, wenn ich keinen dmg gemacht habe, kommt keine antwort?
@@ -287,18 +278,40 @@ def process_response(flow: http.HTTPFlow) -> None:
 
     this_class.check_response(flow)
 
-    if should_lock_unlock_flow(flow):
-        ctx.log.error("[+] will relase lock:")
-        mutex.release()
+    try:
+        if should_lock_unlock_flow(flow):
+            ctx.log.error("[+] will relase lock:")
+            mutex.release()
+    except Exception as e:
+        log_error("-")
+        log_error(f"[-] Error: {str(e)}")
+
+
+sequence_number_modifier = Sequence_Number()
+this_class = Sieges(sequence_number_modifier)
+
+
+mutex = Semaphore(10)
+
+sequence_filename = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".asdf"
+current_sequence = Sequence()
+unmodified_flow = PartialFlow()
+# threading.TIMEOUT_MAX = 5
 
 
 def request(flow: http.HTTPFlow) -> None:
-    ctx.log.warn("------------------ REQUEST starts -------------------")
-    process_request(flow)
-    ctx.log.warn("------------------ REQUEST ends -------------------")
+    try:
+        ctx.log.warn("------------------ REQUEST starts -------------------")
+        process_request(flow)
+        ctx.log.warn("------------------ REQUEST ends -------------------")
+    except Exception as e:
+        log_error(str(e))
 
 
 def response(flow: http.HTTPFlow) -> None:
-    ctx.log.warn("------------------ RESPONSE starts -------------------")
-    process_response(flow)
-    ctx.log.warn("------------------ RESPONSE ende -------------------")
+    try:
+        ctx.log.warn("------------------ RESPONSE starts -------------------")
+        process_response(flow)
+        ctx.log.warn("------------------ RESPONSE ende -------------------")
+    except Exception as e:
+        log_error(str(e))

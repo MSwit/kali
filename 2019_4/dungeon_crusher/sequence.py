@@ -53,7 +53,8 @@ def response(flow: http.HTTPFlow) -> None:
         controll_sequence = Sequence.from_file(file_to_store)
 
         if json.dumps(this_class.to_json()) != json.dumps(controll_sequence.to_json()):
-            ctx.log.error("[-] Error. Reloaded sequence is not equal the original stored one.")
+            ctx.log.error(
+                "[-] Error. Reloaded sequence is not equal the original stored one.")
             exit(0)
     except Exception as e:
 
