@@ -17,7 +17,7 @@ class PartialFlow:
         self.request = SimpleFlow.json_from_http(flow.request)
 
     def set_modified_request(self, flow: http.HTTPFlow) -> None:
-        self.add_modified_request = SimpleFlow.json_from_http(flow.request)
+        self.modified_request = SimpleFlow.json_from_http(flow.request)
 
     def set_response(self, flow: http.HTTPFlow) -> None:
         self.response = SimpleFlow.json_from_http(flow.response)
