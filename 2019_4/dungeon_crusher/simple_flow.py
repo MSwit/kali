@@ -20,9 +20,6 @@ class SimpleFlow:
     def get_mofied_request(self):
         return SimpleFlow.get_json_from_unknown(self.modified_request)
 
-    def get_mofied_request(self):
-        return SimpleFlow.get_json_from_unknown(self.request)
-
     def get_response(self):
         return SimpleFlow.get_json_from_unknown(self.response)
 

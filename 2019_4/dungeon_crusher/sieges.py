@@ -226,7 +226,7 @@ def process_request(flow: http.HTTPFlow) -> None:
         log_error(SimpleFlow.from_flow(flow).url)
         log_error(SimpleFlow.from_flow(flow).get_request())
         mutex.acquire()
-        unmodified_flow.add_request(flow)
+        unmodified_flow.set_request(flow)
     else:
         return
 
@@ -246,7 +246,8 @@ def process_response(flow: http.HTTPFlow) -> None:
     if should_lock_unlock_flow(flow):
         ctx.log.error("[+] will release lock after processing.....")
         if unmodified_flow.is_request_available():
-            unmodified_flow.add_response(flow)
+            unmodified_flow.set_modified_request(flow)
+            unmodified_flow.set_response(flow)
             current_sequence.append(unmodified_flow.combine())
             unmodified_flow.reset()
             current_sequence.to_file(sequence_filename)
