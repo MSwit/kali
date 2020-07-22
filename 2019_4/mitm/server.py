@@ -6,6 +6,7 @@ from time import sleep
 app = Flask(__name__)
 
 
+# curl -x  localhost:8080 localhost:3001/person1 & curl -x  localhost:8080 localhost:3001/person2 &
 @app.route('/<name>')
 def hello(name):
     sleep(2)
