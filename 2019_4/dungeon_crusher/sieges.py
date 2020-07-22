@@ -1,9 +1,9 @@
-from threading import Thread, Lock, Semaphore
+#!/usr/bin/env python3
+from threading import Thread, Lock
 import threading
 from tooling import Tooling
 from sequence_number import Sequence_Number
 from mitmproxy import http
-from mitmproxy import ctx
 import json
 import sys
 import os
@@ -16,6 +16,10 @@ from mitm_logging import log_error
 from mitm_logging import log_warning
 from sequence import Sequence
 import datetime
+from mitmproxy.script import concurrent
+from mitmproxy import proxy, options
+from mitmproxy.tools.dump import DumpMaster
+from mitmproxy import ctx
 
 
 class Sieges:
@@ -46,7 +50,7 @@ class Sieges:
                 request_content).encode('utf-8')
 
             self.attacked_bosses[boss_id] += 1
-            ctx.log.warn("[#] I will send boss siege attack.")
+            log_warning("[#] I will send boss siege attack.")
             time.sleep(1.5)
 
             self.peding_attack = True
@@ -54,16 +58,16 @@ class Sieges:
         except Exception as e:
             import traceback
 
-            ctx.log.error(f"[-] an error Occured: {e}")
+            log_error(f"[-] an error Occured: {e}")
             trace = traceback.format_stack()
-            ctx.log.error(str(trace))
-            ctx.log.error(str(e.__traceback__))
+            log_error(str(trace))
+            log_error(str(e.__traceback__))
             import sys
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            ctx.log.error(str(exc_type))
-            ctx.log.error(str(fname))
-            ctx.log.error(str(exc_tb.tb_lineno))
+            log_error(str(exc_type))
+            log_error(str(fname))
+            log_error(str(exc_tb.tb_lineno))
 
     def is_search_for_boss_available(self, simple_flow):
         # if not simple_flow.request:
@@ -160,7 +164,7 @@ class Sieges:
     def check_response_simple(self, simple_flow):
         boss_id = self.find_boss_to_attack(simple_flow)
         if boss_id:
-            ctx.log.error(boss_id)
+            log_error(boss_id)
 
             self.try_refill()
             self.attack(boss_id, simple_flow.flow)
@@ -200,16 +204,16 @@ class Sieges:
         except Exception as e:
             import traceback
 
-            ctx.log.error(f"[-] an error Occured: {e}")
+            log_error(f"[-] an error Occured: {e}")
             trace = traceback.format_stack()
-            ctx.log.error(str(trace))
-            ctx.log.error(str(e.__traceback__))
+            log_error(str(trace))
+            log_error(str(e.__traceback__))
             import sys
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            ctx.log.error(str(exc_type))
-            ctx.log.error(str(fname))
-            ctx.log.error(str(exc_tb.tb_lineno))
+            log_error(str(exc_type))
+            log_error(str(fname))
+            log_error(str(exc_tb.tb_lineno))
 
 
 def should_lock_unlock_flow(flow: http.HTTPFlow) -> bool:
@@ -222,10 +226,10 @@ def process_request(flow: http.HTTPFlow) -> None:
     global unmodified_flow
 
     if should_lock_unlock_flow(flow):
-        ctx.log.error("[+] will aquire lock:")
+        lock.acquire()
+        log_error("[+] will aquire lock:")
         log_error(SimpleFlow.from_flow(flow).url)
         log_error(SimpleFlow.from_flow(flow).get_request())
-        mutex.acquire()
         unmodified_flow.set_request(flow)
     else:
         return
@@ -244,7 +248,7 @@ def process_response(flow: http.HTTPFlow) -> None:
     global unmodified_flow
     simple_flow = SimpleFlow.from_flow(flow)
     if should_lock_unlock_flow(flow):
-        ctx.log.error("[+] will release lock after processing.....")
+        log_error("[+] will release lock after processing.....")
         if unmodified_flow.is_request_available():
             unmodified_flow.set_modified_request(flow)
             unmodified_flow.set_response(flow)
@@ -259,8 +263,8 @@ def process_response(flow: http.HTTPFlow) -> None:
     try:
         if "boss_siege_refill_attack" in flow.request.get_content().decode('utf-8'):
             # Die antwort kommt asynchron? bzw. immer dnn, wenn ich keinen dmg gemacht habe, kommt keine antwort?
-            # ctx.log.error("boss_siege_refill_attack response:")
-            # ctx.log.error(flow.response.get_content().decode('utf-8'))
+            # log_error("boss_siege_refill_attack response:")
+            # log_error(flow.response.get_content().decode('utf-8'))
             pass
 
     except:
@@ -281,8 +285,8 @@ def process_response(flow: http.HTTPFlow) -> None:
 
     try:
         if should_lock_unlock_flow(flow):
-            ctx.log.error("[+] will relase lock:")
-            mutex.release()
+            log_error("[+] will relase lock:")
+            lock.release()
     except Exception as e:
         log_error("-")
         log_error(f"[-] Error: {str(e)}")
@@ -292,27 +296,30 @@ sequence_number_modifier = Sequence_Number()
 this_class = Sieges(sequence_number_modifier)
 
 
-mutex = Semaphore(10)
+lock = Lock()
 
 sequence_filename = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".asdf"
 current_sequence = Sequence()
 unmodified_flow = PartialFlow()
-# threading.TIMEOUT_MAX = 5
 
 
+@concurrent
 def request(flow: http.HTTPFlow) -> None:
     try:
-        ctx.log.warn("------------------ REQUEST starts -------------------")
+        log_warning(
+            "------------------ REQUEST starts -------------------")
         process_request(flow)
-        ctx.log.warn("------------------ REQUEST ends -------------------")
+        log_warning("------------------ REQUEST ends -------------------")
     except Exception as e:
         log_error(str(e))
 
 
 def response(flow: http.HTTPFlow) -> None:
     try:
-        ctx.log.warn("------------------ RESPONSE starts -------------------")
+        log_warning(
+            "------------------ RESPONSE starts -------------------")
         process_response(flow)
-        ctx.log.warn("------------------ RESPONSE ende -------------------")
+        log_warning(
+            "------------------ RESPONSE ende -------------------")
     except Exception as e:
         log_error(str(e))
