@@ -51,7 +51,7 @@ class Sieges:
 
             self.attacked_bosses[boss_id] += 1
             log_warning("[#] I will send boss siege attack.")
-            time.sleep(1.5)
+            time.sleep(0.5)
 
             self.peding_attack = True
             ctx.master.commands.call("replay.client", [fake_request])
@@ -154,10 +154,10 @@ class Sieges:
         fake_request.request.content = json.dumps(  # will update seq_num etc. in request(..)
             attack_refill_json).encode('utf-8')
 
-        time.sleep(2)
+        time.sleep(0.5)
 
         log_error("[#] I will send refill request")
-        time.sleep(1.5)
+        time.sleep(0.5)
 
         ctx.master.commands.call("replay.client", [fake_request])
 
@@ -192,7 +192,7 @@ class Sieges:
             search_for_bosses_json).encode('utf-8')
 
         log_error("[#] I will send search for boss request")
-        time.sleep(1.5)
+        time.sleep(0.5)
 
         ctx.master.commands.call("replay.client", [fake_request])
         log_error("[#] I send search for boss request")
