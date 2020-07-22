@@ -6,7 +6,7 @@ from threading import Lock
 import asyncio
 
 
-# https: // stackoverflow.com/a/287944/4082686
+# https://stackoverflow.com/a/287944/4082686
 def log_warn(text):
     print("\033[94m" + text + "\033[0m")
 
