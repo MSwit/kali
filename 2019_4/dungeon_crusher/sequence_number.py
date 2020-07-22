@@ -36,7 +36,7 @@ class Sequence_Number:
             self.seq_num = content['seq_num']
 
             log_error(
-                "[+] Setting initial sequence_number: {self.sequence_number} and seq_num: { self.seq_num}")
+                f"[+] Setting initial sequence_number: {self.sequence_number} and seq_num: { self.seq_num}")
             return content
 
         kind = content['kind']
