@@ -9,6 +9,8 @@ from simple_flow import SimpleFlow
 import os
 import signal
 from time import sleep
+from mitm_logging import log_error
+from mitm_logging import log_warning
 
 
 class Sequence_Number:
@@ -77,15 +79,7 @@ class Sequence_Number:
         if type(flow.request) is dict:
             print(flow.request)
 
-        # self.debug += 1
-
         json_content_list = json.loads(flow.request)
-
-        # json_content_list = json.loads(flow.request.get_content())
-        # ctx.log.error("[-] Original request content: ")
-        # ctx.log.error(
-        #     f"[-] {json.dumps(Tooling.remove_non_trivial_items_list(json_content_list), indent=2)}")
-
         updated_content_list = self.generate_updated_json_list(
             json_content_list)
         if "dark_ritual_performed" in str(json_content_list):
@@ -94,13 +88,13 @@ class Sequence_Number:
             pass
 
         if json_content_list != updated_content_list:
-            ctx.log.error("[-] request was updated. but it shouldn't.")
-            ctx.log.error("[-] Original request content: ")
-            ctx.log.error(
+            log_error("[-] request was updated. but it shouldn't.")
+            log_error("[-] Original request content: ")
+            log_error(
                 f"[-] {json.dumps(Tooling.remove_non_trivial_items_list(json_content_list), indent=2)}")
 
-            ctx.log.error("[-] Updated request content: ")
-            ctx.log.error(
+            log_error("[-] Updated request content: ")
+            log_error(
                 f"[-]{json.dumps(Tooling.remove_non_trivial_items_list(updated_content_list), indent=2)}")
             return False
         return True
@@ -128,10 +122,10 @@ class Sequence_Number:
 
         for request in content:
             try:
-                ctx.log.warn(
+                log_warning(
                     f"sequence_number: {request['sequence_number']}, 'seq_num' {request['seq_num']}, 'kind': {request['kind']}")
             except:
-                ctx.log.warn(json.dumps(content))
+                log_warning(json.dumps(content))
 
 
 this_class = Sequence_Number()
@@ -140,7 +134,7 @@ this_class = Sequence_Number()
 def request(flow: http.HTTPFlow) -> None:
     # log_error(flow.request.pretty_url)
 
-    # ctx.log.warn("-------------------------------------------")
+    # log_warning("-------------------------------------------")
     pass
 
 
