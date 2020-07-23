@@ -1,0 +1,16 @@
+{\"boss_id\":370,\"heroes_loss\":[170,440,100,140,110,260],\"kind\":\"rating_boss_started\",\"sequence_number\":1,\"seq_num\":4}
+
+https://soulhunters.beyondmars.io/api/session
+"[{\"boss_id\":370,\"hero_id\":420,\"kind\":\"rating_boss_killed_hero\",\"sequence_number\":1,\"seq_num\":5},{\"boss_id\":370,\"result\":0,\"signature\":544329202,\"kind\":\"rating_boss_finished\",\"sequence_number\":2,\"seq_num\":6}]",
+
+"url": "https://soulhunters.beyondmars.io/api/session",
+{\"boss_id\":400,\"heroes_loss\":[371,440,236],\"kind\":\"rating_boss_started\",\"sequence_number\":5,\"seq_num\":11}
+
+"url": "https://soulhunters.beyondmars.io/api/session",
+"original_request": "[{\"boss_id\":400,\"hero_id\":410,\"kind\":\"rating_boss_killed_hero\",\"sequence_number\":5,\"seq_num\":12},{\"boss_id\":400,\"result\":0,\"signature\":633824272,\"kind\":\"rating_boss_finished\",\"sequence_number\":6,\"seq_num\":13}]",
+
+{\"boss_id\":430,\"heroes_loss\":[180,390,2105,430,230,371],\"kind\":\"rating_boss_started\",\"sequence_number\":7,\"seq_num\":17}]"
+
+
+# Zero losses !
+[{\"boss_id\":430,\"result\":0,\"signature\":723319342,\"kind\":\"rating_boss_finished\",\"sequence_number\":8,\"seq_num\":18}]",
