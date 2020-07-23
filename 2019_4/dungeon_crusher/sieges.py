@@ -35,6 +35,10 @@ class Sieges:
         self.api_session_flow = None
         self.peding_attack = False
 
+    def try_set_session_request(self, flow):
+        if "https://soulhunters.beyondmars.io/api/session" in flow.request.pretty_url:  # TODO refactor
+            self.api_session_flow = flow.copy()
+
     def attack(self, boss_id, flow: http.HTTPFlow):
         if self.peding_attack == True:
             log_error(
@@ -162,6 +166,7 @@ class Sieges:
         ctx.master.commands.call("replay.client", [fake_request])
 
     def check_response_simple(self, simple_flow):
+
         boss_id = self.find_boss_to_attack(simple_flow)
         if boss_id:
             log_error(boss_id)
@@ -224,21 +229,16 @@ def should_lock_unlock_flow(flow: http.HTTPFlow) -> bool:
 
 def process_request(flow: http.HTTPFlow) -> None:
     global unmodified_flow
+    this_class.try_set_session_request(flow)
 
     if should_lock_unlock_flow(flow):
         lock.acquire()
-        log_error("[+] will aquire lock:")
+        # log_error("[+] will aquire lock:")
         log_error(SimpleFlow.from_flow(flow).url)
         log_error(SimpleFlow.from_flow(flow).get_request())
         unmodified_flow.set_request(flow)
     else:
         return
-
-    if flow.request.pretty_url == "https://soulhunters.beyondmars.io/api/session":
-        log_warning("[+] goint to set 'api_session_flow'")
-        this_class.api_session_flow = flow
-    else:
-        pass
 
     sequence_number_modifier.try_update_request(flow)
     sequence_number_modifier.print_requests(flow)
@@ -256,19 +256,6 @@ def process_response(flow: http.HTTPFlow) -> None:
             unmodified_flow.reset()
             current_sequence.to_file(sequence_filename)
             log_warning("[+] Stored Session.")
-    else:
-        log_error("returning... not interesting")
-        return
-
-    try:
-        if "boss_siege_refill_attack" in flow.request.get_content().decode('utf-8'):
-            # Die antwort kommt asynchron? bzw. immer dnn, wenn ich keinen dmg gemacht habe, kommt keine antwort?
-            # log_error("boss_siege_refill_attack response:")
-            # log_error(flow.response.get_content().decode('utf-8'))
-            pass
-
-    except:
-        pass
 
     if flow.response.status_code == 400:
         if flow.response.status_code == 400:
@@ -285,7 +272,7 @@ def process_response(flow: http.HTTPFlow) -> None:
 
     try:
         if should_lock_unlock_flow(flow):
-            log_error("[+] will relase lock:")
+            # log_error("[+] will relase lock:")
             lock.release()
     except Exception as e:
         log_error("-")
