@@ -103,6 +103,9 @@ class Sequence_Number:
         try:
             if len(flow.request.get_content()) == 0:
                 return
+            if self.try_handle_relogin(flow):
+                return
+
             json_content = json.loads(flow.request.get_content())
             if type(json_content) is list:
                 new_json_content = self.generate_updated_json_list(
@@ -126,6 +129,26 @@ class Sequence_Number:
                     f"sequence_number: {request['sequence_number']}, 'seq_num' {request['seq_num']}, 'kind': {request['kind']}")
             except:
                 log_warning(json.dumps(content))
+
+    def is_relogin(self, simple_flow: SimpleFlow):
+
+        if "https://soulhunters.beyondmars.io/api/session" in simple_flow.url:
+            try:
+                if simple_flow.get_request().get('provider', '') == 'android':
+                    return True
+            except:
+                pass
+        return False
+
+    def try_handle_relogin(self, flow: http.HTTPFlow):
+        simple_flow = SimpleFlow.from_flow(flow)
+        if self.is_relogin(simple_flow):
+            log_warning("Detect relogin")
+            self.seq_num = None
+            self.sequence_number = None
+            return True
+
+        return False
 
 
 this_class = Sequence_Number()
