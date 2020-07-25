@@ -111,6 +111,12 @@ class Sieges:
                             log_warning("[+] Found top boss to attack.")
                             return boss_id
 
+                    if siege['current_hp'] < 1000000:
+                        if boss_id not in self.attacked_bosses:
+                            log_warning(
+                                "[+] Found boss to attack because of low HP.")
+                            return boss_id
+
             if "boss_siege_attack" in str(request):
                 self.peding_attack = False
                 siege = response['boss_siege_attack_result']['siege']
