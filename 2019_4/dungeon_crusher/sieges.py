@@ -74,8 +74,6 @@ class Sieges:
             log_error(str(exc_tb.tb_lineno))
 
     def is_search_for_boss_available(self, simple_flow):
-        # if not simple_flow.request:
-        #     return False
         try:
             sieges = simple_flow.get_response()['sieges']
             if len(sieges) < 4:
@@ -90,8 +88,7 @@ class Sieges:
         response = simple_flow.get_response()
 
         try:
-            error = response['error']
-            log_error(f"[-] Error: {error}")
+            log_error(f"[-] Error: {response['error']}")  # TODO move.
             return None
         except:
             pass
@@ -165,7 +162,7 @@ class Sieges:
 
         time.sleep(0.5)
 
-        log_error("[#] I will send refill request")
+        # log_error("[#] I will send refill request")
         time.sleep(0.5)
 
         ctx.master.commands.call("replay.client", [fake_request])
@@ -201,7 +198,6 @@ class Sieges:
         fake_request.request.content = json.dumps(  # will update seq_num etc. in request(..)
             search_for_bosses_json).encode('utf-8')
 
-        log_error("[#] I will send search for boss request")
         time.sleep(0.5)
 
         ctx.master.commands.call("replay.client", [fake_request])
@@ -238,7 +234,6 @@ def process_request(flow: http.HTTPFlow) -> None:
 
     if should_lock_unlock_flow(flow):
         lock.acquire()
-        # log_error("[+] will aquire lock:")
         log_error(SimpleFlow.from_flow(flow).url)
         log_error(SimpleFlow.from_flow(flow).get_request())
         unmodified_flow.set_request(flow)
@@ -253,14 +248,12 @@ def process_response(flow: http.HTTPFlow) -> None:
     global unmodified_flow
     simple_flow = SimpleFlow.from_flow(flow)
     if should_lock_unlock_flow(flow):
-        log_error("[+] will release lock after processing.....")
         if unmodified_flow.is_request_available():
             unmodified_flow.set_modified_request(flow)
             unmodified_flow.set_response(flow)
             current_sequence.append(unmodified_flow.combine())
             unmodified_flow.reset()
             current_sequence.to_file(sequence_filename)
-            log_warning("[+] Stored Session.")
 
     if flow.response.status_code == 400:
         if flow.response.status_code == 400:
@@ -277,7 +270,6 @@ def process_response(flow: http.HTTPFlow) -> None:
 
     try:
         if should_lock_unlock_flow(flow):
-            # log_error("[+] will relase lock:")
             lock.release()
     except Exception as e:
         log_error("-")
@@ -298,20 +290,20 @@ unmodified_flow = PartialFlow()
 @concurrent
 def request(flow: http.HTTPFlow) -> None:
     try:
-        log_warning(
-            "------------------ REQUEST starts -------------------")
+        # log_warning(
+        #     "------------------ REQUEST starts -------------------")
         process_request(flow)
-        log_warning("------------------ REQUEST ends -------------------")
+        # log_warning("------------------ REQUEST ends -------------------")
     except Exception as e:
         log_error(str(e))
 
 
 def response(flow: http.HTTPFlow) -> None:
     try:
-        log_warning(
-            "------------------ RESPONSE starts -------------------")
+        # log_warning(
+        #     "------------------ RESPONSE starts -------------------")
         process_response(flow)
-        log_warning(
-            "------------------ RESPONSE ende -------------------")
+        # log_warning(
+        #     "------------------ RESPONSE ende -------------------")
     except Exception as e:
         log_error(str(e))
