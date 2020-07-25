@@ -101,7 +101,6 @@ class Sieges:
 
                 for siege in response['sieges']:
                     boss_id = siege['id']
-                    log_error("1")
                     if siege['top_users']['finder'] == self.my_id:
                         if siege['top_attack_id'] == None:
                             log_warning("[+] Found normal boss to attack.")
