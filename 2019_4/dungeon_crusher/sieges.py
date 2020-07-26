@@ -113,11 +113,6 @@ class Sieges:
                             log_warning("[+] Found top boss to attack.")
                             return boss_id
 
-                    if siege['current_hp'] < 1000000:
-                        if boss_id not in self.attacked_bosses:
-                            log_warning(
-                                "[+] Found boss to attack because of low HP.")
-                            return boss_id
 
             if "boss_siege_attack" in str(request):
                 self.peding_attack = False
@@ -136,6 +131,15 @@ class Sieges:
                             return siege['id']
                 else:
                     log_error(f"DID DMG: {points}")
+
+            if "https://soulhunters.beyondmars.io/api/boss_sieges/sieges" in simple_flow.url:
+                for siege in response['sieges']:
+                    boss_id = siege['id']
+                    if siege['current_hp'] < 700000:
+                        if self.attacked_bosses[boss_id] < 2:
+                            log_warning(
+                                f"[+] Found boss to attack because of low HP ({siege['current_hp']}).")
+                            return boss_id
             log_error("NO BOSS FOUND !")
         except Exception as e:
             log_error(f"[-] Error: {str(e)}")
