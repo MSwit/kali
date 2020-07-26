@@ -1,6 +1,8 @@
 import json
 from mitmproxy import http
 from mitmproxy import ctx
+from mitm_logging import log_error
+import traceback
 
 
 class Tooling:
@@ -39,3 +41,23 @@ class Tooling:
         if type(json_content) is not list:
             return False
         return True
+
+    @staticmethod
+    def log_stacktrace(exception):
+        import traceback
+        import sys
+        import os
+        log_error(f"[-] an error Occured: {exception}")
+        trace = traceback.format_stack()
+        log_error(str(trace))
+        log_error("---")
+        # log_error(str(exception.__traceback__))
+        # log_error("---")
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        log_error(str(exc_type))
+        log_error("---")
+        log_error(str(fname))
+        log_error("---")
+        log_error(str(exc_tb.tb_lineno))
+        log_error("------")
