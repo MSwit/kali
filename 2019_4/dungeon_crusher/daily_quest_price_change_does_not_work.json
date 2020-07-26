@@ -1,0 +1,32 @@
+ [
+  {
+    "price": 30,
+    "kind": "quest_timer_skip",
+    "sequence_number": 0,
+    "seq_num": 0
+  }
+]  
+  {"price": 10, "kind": "quest_timer_skip", "sequence_number": 0, "seq_num": 0}  
+  [{"price": 10, "kind": "quest_timer_skip", "sequence_number": 0, "seq_num": 0}]  
+  -----------------  
+  [
+  {
+    "price": 10,
+    "kind": "quest_timer_skip",
+    "sequence_number": 0,
+    "seq_num": 0
+  }
+]  
+  {
+  "error": {
+    "message": "[quest_timer_skip] Wrong price: client = 10 <> server = 30, quest info = {\"nb\"=>336, \"generated_at\"=>\"2020-07-26T14:14:15.496Z\", \"complete_till\"=>\"2020-07-26T22:14:15.496Z\", \"skipped_at\"=>\"2020-07-26T14:14:15.497Z\", \"skipped\"=>2, \"points_rewarded\"=>[1, 2, 3, 4]}",
+    "action": {
+      "price": 10,
+      "kind": "quest_timer_skip",
+      "sequence_number": 0,
+      "seq_num": 0
+    },
+    "code": 400,
+    "backend_time": "2020-07-26T16:29:42.717Z"
+  }
+}  
