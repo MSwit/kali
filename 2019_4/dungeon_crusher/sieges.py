@@ -226,19 +226,13 @@ def should_lock_unlock_flow(flow: http.HTTPFlow) -> bool:
 
 
 def process_request(flow: http.HTTPFlow) -> None:
-    log_error("1")
+
     this_class.try_set_session_request(flow)
-    log_error("2")
+
     if should_lock_unlock_flow(flow):
         lock.acquire()
-        log_error("3")
-
         log_error(SimpleFlow.from_flow(flow).url)
-        log_error("4")
         log_error(SimpleFlow.from_flow(flow).get_request())
-        log_error("5")
-
-        log_error("6")
     else:
         return
 
