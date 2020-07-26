@@ -40,14 +40,12 @@ class SimpleFlow:
 
     @staticmethod
     def from_flow(flow: http.HTTPFlow) -> None:
-
         url = flow.request.pretty_url
         request = SimpleFlow.json_from_http(flow.request)
         response = None
         if flow.response:
             response = SimpleFlow.json_from_http(flow.response)
         simple_flow = SimpleFlow(url, request, None, response, flow.copy())
-
         return simple_flow
 
     @staticmethod
@@ -62,7 +60,7 @@ class SimpleFlow:
             return ""
 
     def to_json(self):
-        return {'url': self.url, 'original_request': self.original_request, 'modified_request': self.modified_request, 'response': self.response}
+        return {'url': self.url, 'original_request': self.get_request(), 'modified_request': self.get_mofied_request(), 'response': self.get_response()}
 
     @staticmethod
     def from_json(json_flow):
