@@ -54,10 +54,13 @@ class Tooling:
         # log_error(str(exception.__traceback__))
         # log_error("---")
         exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        log_error(str(exc_type))
-        log_error("---")
-        log_error(str(fname))
-        log_error("---")
-        log_error(str(exc_tb.tb_lineno))
-        log_error("------")
+        for entry in os.path.split(exc_tb.tb_frame.f_code.co_filename):
+            # fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            log_error(str(exc_type))
+            # log_error("---")
+            # log_error(str(fname) + " asdfasf")
+            # log_error("---")
+            log_error(str(exc_tb.tb_lineno))
+            # log_error("------")
+            # log_error(type(entry))
+            log_error("entry: " + str(entry))

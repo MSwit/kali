@@ -217,18 +217,7 @@ class Sieges:
             simple_flow = SimpleFlow.from_flow(flow)
             self.check_response_simple(simple_flow)
         except Exception as e:
-            import traceback
-
-            log_error(f"[-] an error Occured: {e}")
-            trace = traceback.format_stack()
-            log_error(str(trace))
-            log_error(str(e.__traceback__))
-            import sys
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            log_error(str(exc_type))
-            log_error(str(fname))
-            log_error(str(exc_tb.tb_lineno))
+            Tooling.log_stacktrace(e)
 
 
 def should_lock_unlock_flow(flow: http.HTTPFlow) -> bool:
