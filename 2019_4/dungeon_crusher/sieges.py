@@ -14,7 +14,7 @@ from partial_flow import PartialFlow
 from collections import defaultdict
 from mitm_logging import log_error
 from mitm_logging import log_warning
-from sequence import Sequence
+from sequence import SequenceHandler
 import datetime
 from mitmproxy.script import concurrent
 from mitmproxy import proxy, options
@@ -112,7 +112,6 @@ class Sieges:
                         if boss_id not in self.attacked_bosses:
                             log_warning("[+] Found top boss to attack.")
                             return boss_id
-
 
             if "boss_siege_attack" in str(request):
                 self.peding_attack = False
@@ -227,14 +226,19 @@ def should_lock_unlock_flow(flow: http.HTTPFlow) -> bool:
 
 
 def process_request(flow: http.HTTPFlow) -> None:
-    global unmodified_flow
+    log_error("1")
     this_class.try_set_session_request(flow)
-
+    log_error("2")
     if should_lock_unlock_flow(flow):
         lock.acquire()
+        log_error("3")
+
         log_error(SimpleFlow.from_flow(flow).url)
+        log_error("4")
         log_error(SimpleFlow.from_flow(flow).get_request())
-        unmodified_flow.set_request(flow)
+        log_error("5")
+
+        log_error("6")
     else:
         return
 
@@ -243,15 +247,8 @@ def process_request(flow: http.HTTPFlow) -> None:
 
 
 def process_response(flow: http.HTTPFlow) -> None:
-    global unmodified_flow
+
     simple_flow = SimpleFlow.from_flow(flow)
-    if should_lock_unlock_flow(flow):
-        if unmodified_flow.is_request_available():
-            unmodified_flow.set_modified_request(flow)
-            unmodified_flow.set_response(flow)
-            current_sequence.append(unmodified_flow.combine())
-            unmodified_flow.reset()
-            current_sequence.to_file(sequence_filename)
 
     if flow.response.status_code == 400:
         if flow.response.status_code == 400:
@@ -270,8 +267,7 @@ def process_response(flow: http.HTTPFlow) -> None:
         if should_lock_unlock_flow(flow):
             lock.release()
     except Exception as e:
-        log_error("-")
-        log_error(f"[-] Error: {str(e)}")
+        Tooling.log_stacktrace(e)
 
 
 sequence_number_modifier = Sequence_Number()
@@ -280,20 +276,18 @@ this_class = Sieges(sequence_number_modifier)
 
 lock = Lock()
 
-sequence_filename = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".json"
-current_sequence = Sequence()
-unmodified_flow = PartialFlow()
 
-
+my_addons = [SequenceHandler()]
 @concurrent
 def request(flow: http.HTTPFlow) -> None:
+    [addon.handle_request(SimpleFlow.from_flow(flow)) for addon in my_addons]
     try:
         # log_warning(
         #     "------------------ REQUEST starts -------------------")
         process_request(flow)
         # log_warning("------------------ REQUEST ends -------------------")
     except Exception as e:
-        log_error(str(e))
+        Tooling.log_stacktrace(e)
 
 
 def response(flow: http.HTTPFlow) -> None:
@@ -304,4 +298,5 @@ def response(flow: http.HTTPFlow) -> None:
         # log_warning(
         #     "------------------ RESPONSE ende -------------------")
     except Exception as e:
-        log_error(str(e))
+        Tooling.log_stacktrace(e)
+    [addon.handle_response(SimpleFlow.from_flow(flow)) for addon in my_addons]
