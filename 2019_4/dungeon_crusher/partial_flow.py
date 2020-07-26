@@ -9,18 +9,18 @@ class PartialFlow:
     def __init__(self):
         self.url = None
         self.request = None
-        self.modified_request = {}
+        self.modified_request = None
         self.response = None
 
-    def set_request(self, flow: http.HTTPFlow) -> None:
-        self.url = flow.request.pretty_url
-        self.request = SimpleFlow.json_from_http(flow.request)
+    def set_request(self, flow: SimpleFlow) -> None:
+        self.url = flow.url
+        self.request = flow.get_request()
 
-    def set_modified_request(self, flow: http.HTTPFlow) -> None:
-        self.modified_request = SimpleFlow.json_from_http(flow.request)
+    def set_modified_request(self, flow: SimpleFlow) -> None:
+        self.modified_request = flow.get_mofied_request()
 
-    def set_response(self, flow: http.HTTPFlow) -> None:
-        self.response = SimpleFlow.json_from_http(flow.response)
+    def set_response(self, flow: SimpleFlow) -> None:
+        self.response = flow.get_response()
 
     def combine(self) -> SimpleFlow:
         if not self.url or self.request == None or self.response == None:
@@ -35,5 +35,5 @@ class PartialFlow:
     def reset(self):
         self.url = None
         self.request = None
-        self.modified_request = {}
+        self.modified_request = None
         self.response = None
