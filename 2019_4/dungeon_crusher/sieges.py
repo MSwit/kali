@@ -40,6 +40,9 @@ class Sieges:
             self.api_session_flow = flow.copy()
 
     def attack(self, boss_id, flow: http.HTTPFlow):
+        if not self.api_session_flow:
+            log_error(
+                "[-] Error: should attack, but there is no template stored yet.")
         if self.peding_attack == True:
             log_error(
                 "[-] Error: should attack, but there is another attack performing")
@@ -48,7 +51,7 @@ class Sieges:
             with open(f"{os.path.dirname(os.path.abspath(__file__))}/boss_siege_attack.json", 'r') as f:
                 json_content = json.load(f)
             json_content['siege_id'] = boss_id
-            fake_request = flow.copy()
+            fake_request = api_session_flow.copy()
             request_content = [json_content]
             fake_request.request.content = json.dumps(  # will update seq_num etc. in request(..)
                 request_content).encode('utf-8')
