@@ -3,6 +3,8 @@ from mitmproxy import http
 from mitmproxy import ctx
 from mitm_logging import log_error
 import traceback
+import sys
+import os
 
 
 class Tooling:
@@ -44,9 +46,7 @@ class Tooling:
 
     @staticmethod
     def log_stacktrace(exception):
-        import traceback
-        import sys
-        import os
+
         log_error(f"[-] an error Occured: {exception}")
         trace = traceback.format_stack()
         log_error(str(trace))

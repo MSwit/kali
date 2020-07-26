@@ -1,7 +1,6 @@
 from mitmproxy import http
 from mitmproxy import ctx
 import json
-import traceback
 from mitm_logging import log_error
 
 

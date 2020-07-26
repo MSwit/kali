@@ -65,18 +65,7 @@ class Sieges:
             self.peding_attack = True
             ctx.master.commands.call("replay.client", [fake_request])
         except Exception as e:
-            import traceback
-
-            log_error(f"[-] an error Occured: {e}")
-            trace = traceback.format_stack()
-            log_error(str(trace))
-            log_error(str(e.__traceback__))
-            import sys
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            log_error(str(exc_type))
-            log_error(str(fname))
-            log_error(str(exc_tb.tb_lineno))
+            tooling.log_stacktrace(e)
 
     def is_search_for_boss_available(self, simple_flow):
         try:
