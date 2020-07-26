@@ -291,7 +291,7 @@ this_class = Sieges(sequence_number_modifier)
 
 lock = Lock()
 
-sequence_filename = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".asdf"
+sequence_filename = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".json"
 current_sequence = Sequence()
 unmodified_flow = PartialFlow()
 
