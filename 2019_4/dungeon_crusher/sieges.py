@@ -103,7 +103,7 @@ class Sieges:
                             log_warning("[+] Found normal boss to attack.")
                             return boss_id
 
-                    if siege['current_hp'] > 110000000:
+                    if siege['current_hp'] > 120000000:
                         if boss_id not in self.attacked_bosses:
                             log_warning("[+] Found top boss to attack.")
                             return boss_id
@@ -125,7 +125,7 @@ class Sieges:
                 if points == 0:
                     boss_id = siege['id']
                     log_error("[-] NO DMG DONE !")
-                    if siege['current_hp'] > 110000000:
+                    if siege['current_hp'] > 120000000:
                         if self.attacked_bosses[boss_id] < 2:
                             log_error("[+] Found top boss to reattack.")
                             return siege['id']
