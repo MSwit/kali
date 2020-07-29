@@ -13,8 +13,8 @@ def test_fill_up_for_power_attack_3_attacks_left():
     modified_simple_flow = siege_attack_refiller.handle_request(simple_flow)
 
     assert len(modified_simple_flow.get_request()) == 1
-    assert modified_simple_flow.get_request()
-    [0]['kind'] == 'boss_siege_attack'  # unmodified
+    assert modified_simple_flow.get_request(
+    )[0]['kind'] == 'boss_siege_attack'  # unmodified
 
 
 def test_fill_up_for_power_attack_2_attacks_left():
@@ -68,7 +68,8 @@ def test_fill_up_for_power_attack_0_attacks_left():
     assert len(modified_simple_flow.get_request()) == 2
 
     assert modified_simple_flow.get_request(
-    )[0]['kind'] == 'boss_siege_refill_attack_max'
+    )[0]['kind'] == 'boss_siege_refill_attacks_max'
 
     assert modified_simple_flow.get_request(
-    )[2]['kind'] == 'boss_siege_attack'
+    )[1]['kind'] == 'boss_siege_attack'
+
