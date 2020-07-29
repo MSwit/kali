@@ -28,6 +28,22 @@ class SiegeAttackRefiller:
         self.attacks_left = -1
 
     def handle_request(self, simple_flow: SimpleFlow):
+
+        attack_request = simple_flow.get_request()[0]
+        if attack_request['power_attack'] == True:
+            if self.attacks_left == 3:
+                pass
+            if self.attacks_left == 2:
+                request = simple_flow.get_request().insert(0,
+                                                           {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
+                simple_flow.request = request
+            if self.attacks_left == 1:
+                request = simple_flow.get_request().insert(0,
+                                                           {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
+                request = simple_flow.get_request().insert(0,
+                                                           {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
+                simple_flow.request = request
+
         return simple_flow
 
     def handle_response(self):
