@@ -1,0 +1,54 @@
+anfangs weiß ich nicht, wieviele attacks übrig sind.
+2 möglichkeiten:
+1. attacken und schauen obs ging - wenn nicht, danach weiß ich auf jeden fall, wieviele attacks left sind.
+    - ist das wirklich so? oder bekommt man dann nur ein "not enought attacks left"?
+2. refillen und schauen was passiert?
+
+
+z.B. nur noch 2 übrig:
+Ich mache eine Power attack - was passiert?
+bekomme ich gesagt, dass ich nur noch 2 left habe?
+
+z.B. nur noch null übrig.
+Ich mache eine normale attack - was passiert?
+bekomme ich gesagt, dass ich nur noch 0 left habe?
+
+Ich mache erfolgreiche Attacke,
+merke mir meine "attacks left"
+- wenn ich eine normale attacke machen soll, und left > 0 ist, dann ok
+-- wenn left == 0 ist, add powert attacks (3) ?
+wenn ich eine power attack machen soll
+- fülle auf bis 3. If 0 then use power, else use x times normal refiller.
+
+
+-- generelles refreshen.
+if no boss to attack, and 4 bosses available
+- do nothing
+else if no bosses to attack:
+- keepalive for bosses send
+
+
+attack
+=> refill state x
+
+should i refill?
+if refill state > 0
+no
+
+if refill state == 0
+try refill big
+else
+refill 3x small
+
+
+should refill only if there is the need of.
+so, check available bosses.
+
+
+
+folgende punkte sind zu klären:
+
+wenn ich mit 0 attack eine normale attacke durchführe
+- was folgt als response? kann der refiller da ablesen was sache ist?
+wenn ich mit < 3 attack eine power attacke durchführe
+- was folgt als response? kann der refiller da ablesen was sache ist?
