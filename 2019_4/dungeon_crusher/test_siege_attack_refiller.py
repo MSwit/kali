@@ -73,3 +73,20 @@ def test_fill_up_for_power_attack_0_attacks_left():
     assert modified_simple_flow.get_request(
     )[1]['kind'] == 'boss_siege_attack'
 
+
+def test_fill_up_for_normal_attack_0_attacks_left():
+    siege_attack_refiller = SiegeAttackRefiller()
+    siege_attack_refiller.attacks_left = 0
+    simple_flow = SimpleFlow("some_url",
+                             [{"kind": "boss_siege_attack", "power_attack": False}],
+                             None, None, None)
+
+    modified_simple_flow = siege_attack_refiller.handle_request(simple_flow)
+
+    assert len(modified_simple_flow.get_request()) == 2
+
+    assert modified_simple_flow.get_request(
+    )[0]['kind'] == 'boss_siege_refill_attacks_max'  # NOTE will be improved later
+
+    assert modified_simple_flow.get_request(
+    )[1]['kind'] == 'boss_siege_attack'

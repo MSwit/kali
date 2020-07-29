@@ -49,6 +49,12 @@ class SiegeAttackRefiller:
                                                            {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
 
                 simple_flow.request = request
+        else:
+            if self.attacks_left == 0:
+                request = simple_flow.get_request().insert(0,
+                                                           {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
+
+                simple_flow.request = request
 
         return simple_flow
 
