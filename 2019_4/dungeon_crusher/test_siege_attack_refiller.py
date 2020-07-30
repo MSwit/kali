@@ -90,3 +90,13 @@ def test_fill_up_for_normal_attack_0_attacks_left():
 
     assert modified_simple_flow.get_request(
     )[1]['kind'] == 'boss_siege_attack'
+
+
+def test_read_normal_refill_response():
+    siege_attack_refiller = SiegeAttackRefiller()
+    siege_attack_refiller.attacks_left = -1
+    simple_flow = SimpleFlow("", {"kind": "boss_siege_refill_attack"},
+                             None, {"boss_siege_refill_result": {"attacks_left": 2, }}, flow=None)
+
+    siege_attack_refiller.handle_response(simple_flow)
+    assert siege_attack_refiller.attacks_left == 2
