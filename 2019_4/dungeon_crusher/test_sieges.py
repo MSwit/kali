@@ -4,6 +4,7 @@ from sequence_number import Sequence_Number
 from mitmproxy import ctx
 from simple_flow import SimpleFlow
 from sequence import Sequence
+import json
 my_id = "e786b343-35e8-4f59-9b86-256e188783d7"
 test_data_path = os.path.dirname(os.path.realpath(__file__)) + "/testdata"
 
@@ -60,3 +61,34 @@ def test_should_found_boss():
         flow.get_request())][0]
     boss_id = sieges.find_boss_to_attack(flow)
     assert boss_id == "b6759a52-e042-4a7e-876f-4154958f8e48"
+
+
+def test_siege_detail_request_no_boss_found():
+    sieges = Sieges(Sequence_Number())
+    url = "https://soulhunters.beyondmars.io/api/boss_sieges/sieges/03837759-952a-4e29-8bf3-be4155991bcb"
+    request_flow = SimpleFlow(url, {}, {}, json.loads(
+        siege_detail_response), None)
+    boss_id = sieges.find_boss_to_attack(request_flow)
+
+    assert boss_id == None
+
+
+siege_detail_response = '''
+ {
+    "id": "03837759-952a-4e29-8bf3-be4155991bcb",
+    "current_hp": 13000000,
+    "expires_at": "2020-07-30T16:55:44.501Z",
+    "created_at": "2020-07-30T16:25:44.501Z",
+    "updated_at": "2020-07-30T16:25:44.501Z",
+    "private": false,
+    "total_users": 1,
+    "top_users": {
+        "mvp": null,
+        "finder": "a10e9130-7530-4839-9a11-825b99a10895",
+        "last_hit": null
+    },
+    "top_attack_id": null,
+    "boss_config_id": 17656,
+    "scores": []
+}
+'''

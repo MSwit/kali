@@ -120,8 +120,13 @@ class Sieges:
                 else:
                     log_error(f"DID DMG: {points}")
 
-            if "https://soulhunters.beyondmars.io/api/boss_sieges/sieges" in simple_flow.url:
-                for siege in response['sieges']:
+            if "https://soulhunters.beyondmars.io/api/boss_sieges/sieges/" in simple_flow.url:
+                pass
+
+            if "https://soulhunters.beyondmars.io/api/boss_sieges/sieges" == simple_flow.url:
+                sieges = response['sieges']
+                for siege in sieges:
+                    print(response)
                     boss_id = siege['id']
                     if siege['current_hp'] < 700000:
                         if self.attacked_bosses[boss_id] < 2:
