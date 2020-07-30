@@ -59,5 +59,8 @@ class SiegeAttackRefiller:
         return simple_flow
 
     def handle_response(self, simple_flow: SimpleFlow) -> None:
-        self.attacks_left = simple_flow.get_response(
-        )['boss_siege_refill_result']['attacks_left']
+        try:
+            self.attacks_left = simple_flow.get_response(
+            )['boss_siege_refill_result']['attacks_left']
+        except:
+            pass
