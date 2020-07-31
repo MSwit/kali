@@ -12,8 +12,6 @@ import time
 from simple_flow import SimpleFlow
 from partial_flow import PartialFlow
 from collections import defaultdict
-from mitm_logging import log_error
-from mitm_logging import log_warning
 from sequence import SequenceHandler
 import datetime
 from mitmproxy.script import concurrent

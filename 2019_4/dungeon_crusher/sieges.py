@@ -126,7 +126,6 @@ class Sieges:
             if "https://soulhunters.beyondmars.io/api/boss_sieges/sieges" == simple_flow.url:
                 sieges = response['sieges']
                 for siege in sieges:
-                    print(response)
                     boss_id = siege['id']
                     if siege['current_hp'] < 700000:
                         if self.attacked_bosses[boss_id] < 2:
