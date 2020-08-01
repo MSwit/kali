@@ -19,7 +19,7 @@ class SimpleFlow:
     def get_request(self):
         return SimpleFlow.get_json_from_unknown(self.original_request)
 
-    def get_mofied_request(self):
+    def get_modified_request(self):
         return SimpleFlow.get_json_from_unknown(self.modified_request)
 
     def get_response(self):
@@ -62,7 +62,8 @@ class SimpleFlow:
             return ""
 
     def to_json(self):
-        return {'url': self.url, 'original_request': self.get_request(), 'modified_request': self.get_mofied_request(), 'response': self.get_response()}
+        return {'url': self.url, 'original_request': self.get_request(),
+                'modified_request': self.get_modified_request(), 'response': self.get_response()}
 
     @staticmethod
     def from_json(json_flow):

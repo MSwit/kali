@@ -38,9 +38,9 @@ def request(flow: http.HTTPFlow) -> None:
         log_warning(json.dumps(requests))
         simple_flow.modified_request = requests
         log_warning("-----------------")
-        log_error(json.dumps(simple_flow.get_mofied_request(), indent=2))
+        log_error(json.dumps(simple_flow.get_modified_request(), indent=2))
         flow.request.content = json.dumps(
-            simple_flow.get_mofied_request()).encode('utf-8')
+            simple_flow.get_modified_request()).encode('utf-8')
 
     except Exception as e:
         log_error(str(e))
