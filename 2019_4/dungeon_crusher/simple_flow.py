@@ -10,6 +10,9 @@ class SimpleFlow:
         self.url = url
         self.original_request = original_request
         self.modified_request = modified_request
+        if not self.modified_request:
+            self.modified_request = json.loads(
+                json.dumps(self.original_request))
         self.response = response
         self.flow = flow
 
