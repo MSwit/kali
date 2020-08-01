@@ -20,6 +20,7 @@ from mitmproxy.script import concurrent
 from mitmproxy import proxy, options
 from mitmproxy.tools.dump import DumpMaster
 from mitmproxy import ctx
+from siege_attack_refiller import SiegeAttackRefiller
 
 
 class Sieges:
@@ -96,7 +97,10 @@ class Sieges:
                         if siege['top_attack_id'] == None:
                             log_warning("[+] Found normal boss to attack.")
                             return boss_id
-
+                    if siege['top_users']['finder'] == self.my_id and siege['current_hp'] >= 500000000:
+                        if siege['top_attack_id'] == None:
+                            log_warning("[+] Found top normal boss to attack.")
+                            return boss_id
                     # if siege['current_hp'] > 120000000:
                     #     if boss_id not in self.attacked_bosses:
                     #         log_warning("[+] Found top boss to attack.")
@@ -149,24 +153,24 @@ class Sieges:
 
             # os.kill(os.getpid(), signal.SIGKILL)
 
-    def try_refill(self):
-        if not self.api_session_flow:
-            log_error(
-                "[-] could not send refill request. No 'api/session' flow available")
-            return
-        attack_refill_json = {
-            "kind": "boss_siege_refill_attack", "sequence_number": 11, "seq_num": 21}
-        fake_request = self.api_session_flow.copy()
-        attack_refill_json = [attack_refill_json]
-        fake_request.request.content = json.dumps(  # will update seq_num etc. in request(..)
-            attack_refill_json).encode('utf-8')
+    # def try_refill(self):
+    #     if not self.api_session_flow:
+    #         log_error(
+    #             "[-] could not send refill request. No 'api/session' flow available")
+    #         return
+    #     attack_refill_json = {
+    #         "kind": "boss_siege_refill_attack", "sequence_number": 11, "seq_num": 21}
+    #     fake_request = self.api_session_flow.copy()
+    #     attack_refill_json = [attack_refill_json]
+    #     fake_request.request.content = json.dumps(  # will update seq_num etc. in request(..)
+    #         attack_refill_json).encode('utf-8')
 
-        time.sleep(0.5)
+    #     time.sleep(0.5)
 
-        # log_error("[#] I will send refill request")
-        time.sleep(0.5)
+    #     # log_error("[#] I will send refill request")
+    #     time.sleep(0.5)
 
-        ctx.master.commands.call("replay.client", [fake_request])
+    #     ctx.master.commands.call("replay.client", [fake_request])
 
     def check_response_simple(self, simple_flow):
 
@@ -174,7 +178,7 @@ class Sieges:
         if boss_id:
             log_error(boss_id)
 
-            self.try_refill()
+            # self.try_refill()
             self.attack(boss_id, simple_flow.flow)
         else:
             available = self.is_search_for_boss_available(simple_flow)
@@ -258,7 +262,7 @@ this_class = Sieges(sequence_number_modifier)
 lock = Lock()
 
 
-my_addons = [SequenceHandler()]
+my_addons = [SequenceHandler(), SiegeAttackRefiller()]
 @concurrent
 def request(flow: http.HTTPFlow) -> None:
     simple_flow = SimpleFlow.from_flow(flow)
