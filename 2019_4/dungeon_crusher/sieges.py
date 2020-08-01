@@ -35,9 +35,9 @@ class Sieges:
         self.api_session_flow = None
         self.peding_attack = False
 
-    def try_set_session_request(self, flow):
-        if "https://soulhunters.beyondmars.io/api/session" in flow.request.pretty_url:  # TODO refactor
-            self.api_session_flow = flow.copy()
+    def try_set_session_request(self, simple_flow: SimpleFlow) -> None:
+        if "https://soulhunters.beyondmars.io/api/session" in simple_flow.url:  # TODO refactor
+            self.api_session_flow = simple_flow.flow.copy()
 
     def attack(self, boss_id, flow: http.HTTPFlow):
         if not self.api_session_flow:
@@ -92,15 +92,15 @@ class Sieges:
 
                 for siege in response['sieges']:
                     boss_id = siege['id']
-                    if siege['top_users']['finder'] == self.my_id:
+                    if siege['top_users']['finder'] == self.my_id and siege['current_hp'] == 13000000:
                         if siege['top_attack_id'] == None:
                             log_warning("[+] Found normal boss to attack.")
                             return boss_id
 
-                    if siege['current_hp'] > 120000000:
-                        if boss_id not in self.attacked_bosses:
-                            log_warning("[+] Found top boss to attack.")
-                            return boss_id
+                    # if siege['current_hp'] > 120000000:
+                    #     if boss_id not in self.attacked_bosses:
+                    #         log_warning("[+] Found top boss to attack.")
+                    #         return boss_id
 
             if "boss_siege_attack" in str(request):
                 self.peding_attack = False
@@ -204,54 +204,48 @@ class Sieges:
         ctx.master.commands.call("replay.client", [fake_request])
         log_error("[#] I send search for boss request")
 
-    def check_response(self, flow: http.HTTPFlow):
+    def check_response(self, simple_flow: SimpleFlow):
         try:
-            simple_flow = SimpleFlow.from_flow(flow)
             self.check_response_simple(simple_flow)
         except Exception as e:
             Tooling.log_stacktrace(e)
 
 
-def should_lock_unlock_flow(flow: http.HTTPFlow) -> bool:
-    if "https://soulhunters.beyondmars.io/api/clans" in flow.request.pretty_url:
+def should_lock_unlock_flow(simple_flow: SimpleFlow) -> bool:
+    if "https://soulhunters.beyondmars.io/api/clans" in simple_flow.url:
         return False
-    return "https://soulhunters.beyondmars.io" in flow.request.pretty_url
+    return "https://soulhunters.beyondmars.io" in simple_flow.url
 
 
-def process_request(flow: http.HTTPFlow) -> None:
+def process_request(simple_flow: SimpleFlow) -> None:
 
-    this_class.try_set_session_request(flow)
+    this_class.try_set_session_request(simple_flow)
 
-    if should_lock_unlock_flow(flow):
+    if should_lock_unlock_flow(simple_flow):
         lock.acquire()
-        log_error(SimpleFlow.from_flow(flow).url)
-        log_error(SimpleFlow.from_flow(flow).get_request())
     else:
         return
 
-    sequence_number_modifier.try_update_request(flow)
-    sequence_number_modifier.print_requests(flow)
+    sequence_number_modifier.try_update_request(simple_flow)
+    sequence_number_modifier.print_requests(simple_flow)
 
 
-def process_response(flow: http.HTTPFlow) -> None:
+def process_response(simple_flow: SimpleFlow) -> None:
 
-    simple_flow = SimpleFlow.from_flow(flow)
+    # if simple_flow.status_code == 400:
+    #     error = simple_flow.get_response().get("error", {})
+    #     if error:
+    #         log_error(str(simple_flow.get_response()))
+    #         message = error['message']
+    #         if "[outside] Wrong action sequence number = " in message:
+    #             correct_seq_num = message.split(" ")[-1]
+    #             correct_seq_num = message.split("!")[0]
+    #             log_error(f"corret seq_num should be {correct_seq_num}")
 
-    if flow.response.status_code == 400:
-        if flow.response.status_code == 400:
-            error = simple_flow.get_response().get("error", {})
-            if error:
-                log_error(str(simple_flow.get_response()))
-                message = error['message']
-                if "[outside] Wrong action sequence number = " in message:
-                    correct_seq_num = message.split(" ")[-1]
-                    correct_seq_num = message.split("!")[0]
-                    log_error(f"corret seq_num should be {correct_seq_num}")
-
-    this_class.check_response(flow)
+    this_class.check_response(simple_flow)
 
     try:
-        if should_lock_unlock_flow(flow):
+        if should_lock_unlock_flow(simple_flow):
             lock.release()
     except Exception as e:
         Tooling.log_stacktrace(e)
@@ -267,23 +261,31 @@ lock = Lock()
 my_addons = [SequenceHandler()]
 @concurrent
 def request(flow: http.HTTPFlow) -> None:
-    [addon.handle_request(SimpleFlow.from_flow(flow)) for addon in my_addons]
+    simple_flow = SimpleFlow.from_flow(flow)
+    log_error(simple_flow.url)
+    [addon.handle_request(simple_flow) for addon in my_addons]
     try:
         # log_warning(
         #     "------------------ REQUEST starts -------------------")
-        process_request(flow)
+        process_request(simple_flow)
+
+        flow.request.content = json.dumps(
+            simple_flow.get_modified_request()).encode('utf-8')
         # log_warning("------------------ REQUEST ends -------------------")
     except Exception as e:
         Tooling.log_stacktrace(e)
 
 
 def response(flow: http.HTTPFlow) -> None:
+    simple_flow = SimpleFlow.from_flow(flow)
+
     try:
         # log_warning(
         #     "------------------ RESPONSE starts -------------------")
-        process_response(flow)
+        process_response(simple_flow)
         # log_warning(
         #     "------------------ RESPONSE ende -------------------")
     except Exception as e:
         Tooling.log_stacktrace(e)
-    [addon.handle_response(SimpleFlow.from_flow(flow)) for addon in my_addons]
+    [addon.handle_response(simple_flow) for addon in my_addons]
+    pass

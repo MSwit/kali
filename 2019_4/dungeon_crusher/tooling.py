@@ -5,6 +5,7 @@ from mitm_logging import log_error
 import traceback
 import sys
 import os
+from simple_flow import SimpleFlow
 
 
 class Tooling:
@@ -31,14 +32,14 @@ class Tooling:
         return content
 
     @staticmethod
-    def is_interesting_request(flow: http.HTTPFlow):
-        url = flow.request.pretty_url
-        if not url.startswith("https://soulhunters"):
+    def is_interesting_request(simple_flow: SimpleFlow) -> bool:
+
+        if not simple_flow.url.startswith("https://soulhunters"):
             return False
-        if len(flow.request.get_content()) == 0:
+        if not simple_flow.get_modified_request():
             return False
 
-        json_content = json.loads(flow.request.get_content())
+        json_content = simple_flow.get_modified_request()
 
         if type(json_content) is not list:
             return False

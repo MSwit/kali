@@ -99,36 +99,34 @@ class Sequence_Number:
             return False
         return True
 
-    def try_update_request(self, flow: http.HTTPFlow) -> None:
+    def try_update_request(self, simple_flow: SimpleFlow) -> None:
         try:
-            if len(flow.request.get_content()) == 0:
+            if not simple_flow.get_modified_request():
                 return
-            if self.try_handle_relogin(flow):
+            if self.try_handle_relogin(simple_flow):
                 return
 
-            json_content = json.loads(flow.request.get_content())
+            json_content = simple_flow.get_modified_request()
             if type(json_content) is list:
                 new_json_content = self.generate_updated_json_list(
                     json_content)
             else:
                 new_json_content = self.generate_updated_json(json_content)
-            flow.request.content = json.dumps(new_json_content).encode('utf-8')
+            simple_flow.modified_request = new_json_content
         except:
             pass
 
-    def print_requests(self, flow: http.HTTPFlow) -> None:
+    def print_requests(self, simple_flow: SimpleFlow) -> None:
 
-        if not Tooling.is_interesting_request(flow):
+        if not Tooling.is_interesting_request(simple_flow):
             return
 
-        content = json.loads(flow.request.get_content())
-
-        for request in content:
+        for request in simple_flow.get_modified_request():
             try:
                 log_warning(
                     f"sequence_number: {request['sequence_number']}, 'seq_num' {request['seq_num']}, 'kind': {request['kind']}")
             except:
-                log_warning(json.dumps(content))
+                log_warning(json.dumps(simple_flow.get_modified_request()))
 
     def is_relogin(self, simple_flow: SimpleFlow):
 
@@ -140,8 +138,7 @@ class Sequence_Number:
                 pass
         return False
 
-    def try_handle_relogin(self, flow: http.HTTPFlow):
-        simple_flow = SimpleFlow.from_flow(flow)
+    def try_handle_relogin(self, simple_flow: SimpleFlow):
         if self.is_relogin(simple_flow):
             log_warning("Detect relogin")
             self.seq_num = None
