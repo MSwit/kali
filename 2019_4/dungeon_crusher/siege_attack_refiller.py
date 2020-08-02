@@ -29,7 +29,9 @@ class SiegeAttackRefiller:
 
     def handle_request(self, simple_flow: SimpleFlow):
         try:
-            attack_request = simple_flow.modified_request[0]  # TODO
+
+            attack_request = [
+                request for request in simple_flow.modified_request if request['kind'] == 'boss_siege_attack'][0]
             if attack_request['power_attack'] == True:
                 if self.attacks_left == 3:
                     pass
