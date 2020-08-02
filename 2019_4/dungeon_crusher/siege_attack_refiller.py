@@ -46,8 +46,11 @@ class SiegeAttackRefiller:
                                                               {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
             else:
                 if self.attacks_left == 0:
-                    simple_flow.get_modified_request().insert(0,
-                                                              {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
+                    request = simple_flow.get_modified_request()
+                    request.insert(0,
+                                   {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
+                    simple_flow.modified_request = request
+                    log_error("going to add refill action")
         except:
             pass
 
