@@ -60,6 +60,15 @@ class SiegeAttackRefiller:
         try:
             self.attacks_left = simple_flow.get_response(
             )['boss_siege_refill_result']['attacks_left']
-
         except:
             pass
+
+        if self.attacks_left == -1:
+            response = simple_flow.get_response()
+            try:
+                error_msg = response['error']['message']
+                if error_msg.startswith("[boss_siege_attack] No attacks left"):
+                    log_error("Setting inital attacks to '0'.")
+                    self.attacks_left = 0
+            except:
+                pass
