@@ -27,10 +27,9 @@ exit(1)
 def request(flow: http.HTTPFlow) -> None:
     simple_flow = SimpleFlow.from_flow(flow)
 
-    log_error(json.dumps(simple_flow.get_request(), indent=2))
+    log_error(json.dumps(simple_flow.request, indent=2))
     try:
-        requests = simple_flow.get_request(
-        )
+        requests = simple_flow.request
         quest_timer_skip_request = [request for request in requests if request.get(
             'kind') == 'quest_timer_skip'][0]
         quest_timer_skip_request['price'] = 10
@@ -48,4 +47,4 @@ def request(flow: http.HTTPFlow) -> None:
 
 def response(flow: http.HTTPFlow) -> None:
     simple_flow = SimpleFlow.from_flow(flow)
-    log_error(json.dumps(simple_flow.get_response(), indent=2))
+    log_error(json.dumps(simple_flow.response, indent=2))

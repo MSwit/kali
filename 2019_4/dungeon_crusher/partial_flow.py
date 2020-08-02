@@ -14,13 +14,13 @@ class PartialFlow:
 
     def set_request(self, flow: SimpleFlow) -> None:
         self.url = flow.url
-        self.request = flow.get_request()
+        self.request = flow.request
 
     def set_modified_request(self, flow: SimpleFlow) -> None:
         self.modified_request = flow.modified_request
 
     def set_response(self, flow: SimpleFlow) -> None:
-        self.response = flow.get_response()
+        self.response = flow.response
 
     def combine(self) -> SimpleFlow:
         if not self.url or self.request == None or self.response == None:

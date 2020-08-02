@@ -133,7 +133,7 @@ class Sequence_Number:
 
         if "https://soulhunters.beyondmars.io/api/session" in simple_flow.url:
             try:
-                if simple_flow.get_request().get('provider', '') == 'android':
+                if simple_flow.request.get('provider', '') == 'android':
                     return True
             except:
                 pass

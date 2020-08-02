@@ -70,7 +70,7 @@ class Sieges:
 
     def is_search_for_boss_available(self, simple_flow):
         try:
-            sieges = simple_flow.get_response()['sieges']
+            sieges = simple_flow.response['sieges']
             if len(sieges) < 4:
                 log_error(f"Current siege count: {len(sieges)}")
                 log_error(f"pending attack? {self.pending_attack}")
@@ -99,8 +99,8 @@ class Sieges:
                 for siege in response['sieges']:
                     boss_id = siege['id']
 
-                    # and siege['current_hp'] == 13000000:
-                    if siege['top_users']['finder'] == self.my_id:
+                    #
+                    if siege['top_users']['finder'] == self.my_id and siege['current_hp'] == 13000000:
                         if siege['top_attack_id'] == None:
                             log_warning("[+] Found normal boss to attack.")
                             return boss_id
@@ -189,6 +189,7 @@ class Sieges:
             self.attack(boss_id, simple_flow.flow)
         else:
             available = self.is_search_for_boss_available(simple_flow)
+
             if available:
                 self.try_search_for_boss()
 
@@ -244,9 +245,9 @@ def process_request(simple_flow: SimpleFlow) -> None:
 def process_response(simple_flow: SimpleFlow) -> None:
 
     # if simple_flow.status_code == 400:
-    #     error = simple_flow.get_response().get("error", {})
+    #     error = simple_flow.response.get("error", {})
     #     if error:
-    #         log_error(str(simple_flow.get_response()))
+    #         log_error(str(simple_flow.response)
     #         message = error['message']
     #         if "[outside] Wrong action sequence number = " in message:
     #             correct_seq_num = message.split(" ")[-1]
