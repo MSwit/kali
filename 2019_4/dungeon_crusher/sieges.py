@@ -270,7 +270,7 @@ this_class = Sieges(sequence_number_modifier)
 lock = Lock()
 
 
-my_addons = [SequenceHandler(), SiegeAttackRefiller()]
+my_addons = [SequenceHandler(), SiegeAttackRefiller(), SiegeRefresher()]
 @concurrent
 def request(flow: http.HTTPFlow) -> None:
     simple_flow = SimpleFlow.from_flow(flow)
