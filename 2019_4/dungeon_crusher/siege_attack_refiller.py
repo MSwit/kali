@@ -34,27 +34,20 @@ class SiegeAttackRefiller:
                 if self.attacks_left == 3:
                     pass
                 if self.attacks_left == 2:
-                    request = simple_flow.get_modified_request().insert(0,
-                                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
-                    simple_flow.request = request
+                    simple_flow.get_modified_request().insert(0,
+                                                              {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
                 if self.attacks_left == 1:
-                    request = simple_flow.get_modified_request().insert(0,
-                                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
-                    request = simple_flow.get_modified_request().insert(0,
-                                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
-                    simple_flow.modified_request = request
-
+                    simple_flow.get_modified_request().insert(0,
+                                                              {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
+                    simple_flow.get_modified_request().insert(0,
+                                                              {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
                 if self.attacks_left == 0:
-                    request = simple_flow.get_modified_request().insert(0,
-                                                                        {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
-
-                    simple_flow.modified_request = request
+                    simple_flow.get_modified_request().insert(0,
+                                                              {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
             else:
                 if self.attacks_left == 0:
-                    request = simple_flow.get_modified_request().insert(0,
-                                                                        {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
-
-                    simple_flow.modified_request = request
+                    simple_flow.get_modified_request().insert(0,
+                                                              {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
         except:
             pass
 
