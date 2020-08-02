@@ -21,6 +21,7 @@ from mitmproxy import proxy, options
 from mitmproxy.tools.dump import DumpMaster
 from mitmproxy import ctx
 from siege_attack_refiller import SiegeAttackRefiller
+from siege_refresher import SiegeRefresher
 
 
 class Sieges:
