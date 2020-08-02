@@ -18,6 +18,8 @@ from mitmproxy.script import concurrent
 from mitmproxy import proxy, options
 from mitmproxy.tools.dump import DumpMaster
 from mitmproxy import ctx
+from mitm_logging import log_error
+from mitm_logging import log_warning
 
 
 class SiegeAttackRefiller:
@@ -63,12 +65,13 @@ class SiegeAttackRefiller:
         except:
             pass
 
-        if self.attacks_left == -1:
-            response = simple_flow.get_response()
-            try:
-                error_msg = response['error']['message']
-                if error_msg.startswith("[boss_siege_attack] No attacks left"):
-                    log_error("Setting inital attacks to '0'.")
-                    self.attacks_left = 0
-            except:
-                pass
+        response = simple_flow.get_response()
+        try:
+            error_msg = response['error']['message']
+            if error_msg.startswith("[boss_siege_attack] No attacks left"):
+                log_error("Setting inital attacks to '0'.")
+                self.attacks_left = 0
+            else:
+                log_error(error_msg)
+        except:
+            pass
