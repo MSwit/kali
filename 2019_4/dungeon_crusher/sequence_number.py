@@ -61,11 +61,11 @@ class Sequence_Number:
         return content
 
     def is_interesting_flow(self, flow: SimpleFlow) -> bool:
-        return "\"sequence_number\":" in str(flow.get_request())
+        return "\"sequence_number\":" in str(flow.modified_request)
 
     def check(self, flow: SimpleFlow) -> bool:
         log_for_error_finding = False
-        request = flow.get_request()
+        request = flow.modified_request
         if "dark_ritual_performed" in str(request):
             log_error(request)
             sleep(1)
@@ -76,10 +76,10 @@ class Sequence_Number:
             if log_for_error_finding:
                 print("uninteresting")
             return True
-        if type(flow.request) is dict:
-            print(flow.request)
+        if type(flow.modified_request) is dict:
+            print(flow.modified_request)
 
-        json_content_list = json.loads(flow.request)
+        json_content_list = flow.modified_request
         updated_content_list = self.generate_updated_json_list(
             json_content_list)
         if "dark_ritual_performed" in str(json_content_list):
@@ -100,13 +100,14 @@ class Sequence_Number:
         return True
 
     def try_update_request(self, simple_flow: SimpleFlow) -> None:
+        log_error(json.dumps(simple_flow.modified_request))
         try:
-            if not simple_flow.get_modified_request():
+            if not simple_flow.modified_request:
                 return
             if self.try_handle_relogin(simple_flow):
                 return
 
-            json_content = simple_flow.get_modified_request()
+            json_content = simple_flow.modified_request
             if type(json_content) is list:
                 new_json_content = self.generate_updated_json_list(
                     json_content)
@@ -121,12 +122,12 @@ class Sequence_Number:
         if not Tooling.is_interesting_request(simple_flow):
             return
 
-        for request in simple_flow.get_modified_request():
+        for request in simple_flow.modified_request:
             try:
                 log_warning(
                     f"sequence_number: {request['sequence_number']}, 'seq_num' {request['seq_num']}, 'kind': {request['kind']}")
             except:
-                log_warning(json.dumps(simple_flow.get_modified_request()))
+                log_warning(json.dumps(simple_flow.modified_request))
 
     def is_relogin(self, simple_flow: SimpleFlow):
 
@@ -160,11 +161,11 @@ def request(flow: http.HTTPFlow) -> None:
 
 def response(flow: http.HTTPFlow) -> None:
     simple_flow = SimpleFlow.from_flow(flow)
-    log_error(str(simple_flow.get_response()))
+    log_error(str(simple_flow.response))
     if flow.response.status_code == 400:
-        error = simple_flow.get_response().get("error", {})
+        error = simple_flow.response.get("error", {})
         if error:
-            log_error(str(simple_flow.get_response()))
+            log_error(str(simple_flow.response))
             message = error['message']
             if "[outside] Wrong action sequence number = " in message:
                 correct_seq_num = message.split(" ")[-1]

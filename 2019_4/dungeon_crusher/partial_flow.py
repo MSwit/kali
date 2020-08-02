@@ -17,7 +17,7 @@ class PartialFlow:
         self.request = flow.get_request()
 
     def set_modified_request(self, flow: SimpleFlow) -> None:
-        self.modified_request = flow.get_modified_request()
+        self.modified_request = flow.modified_request
 
     def set_response(self, flow: SimpleFlow) -> None:
         self.response = flow.get_response()

@@ -8,27 +8,22 @@ class SimpleFlow:
 
     def __init__(self, url, original_request, modified_request, response, flow):
         self.url = url
-        self.original_request = original_request
-        self.modified_request = modified_request
+        self.request = SimpleFlow.get_json_from_unknown(
+            original_request)
+        self.modified_request = SimpleFlow.get_json_from_unknown(
+            modified_request)
         if not self.modified_request:
             self.modified_request = json.loads(
-                json.dumps(self.original_request))
-        self.response = response
+                json.dumps(self.request))
+        self.response = SimpleFlow.get_json_from_unknown(response)
         self.flow = flow
-
-    def get_request(self):
-        return SimpleFlow.get_json_from_unknown(self.original_request)
-
-    def get_modified_request(self):
-        return SimpleFlow.get_json_from_unknown(self.modified_request)
-
-    def get_response(self):
-        return SimpleFlow.get_json_from_unknown(self.response)
 
     @staticmethod
     def get_json_from_unknown(unknown_object):
         j = unknown_object
         if len(str(j)) == 0:
+            return {}
+        if not unknown_object:
             return {}
         try:
             if type(j) is str:
@@ -62,8 +57,8 @@ class SimpleFlow:
             return ""
 
     def to_json(self):
-        return {'url': self.url, 'original_request': self.get_request(),
-                'modified_request': self.get_modified_request(), 'response': self.get_response()}
+        return {'url': self.url, 'original_request': self.request,
+                'modified_request': self.modified_request, 'response': self.response}
 
     @staticmethod
     def from_json(json_flow):

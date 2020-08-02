@@ -58,7 +58,7 @@ def test_should_found_boss():
     sieges = Sieges(Sequence_Number())
 
     flow = [flow for flow in sequence.flows if "find_boss_for_siege" in str(
-        flow.get_request())][0]
+        flow.request)][0]
     boss_id = sieges.find_boss_to_attack(flow)
     assert boss_id == "b6759a52-e042-4a7e-876f-4154958f8e48"
 

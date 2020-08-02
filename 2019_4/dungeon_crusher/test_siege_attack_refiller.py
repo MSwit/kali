@@ -11,7 +11,7 @@ def test_fill_up_for_power_attack_3_attacks_left():
                              None, None, None)
 
     siege_attack_refiller.handle_request(simple_flow)
-    modified_request = simple_flow.get_modified_request()
+    modified_request = simple_flow.modified_request
     assert len(modified_request) == 1
     assert modified_request[0]['kind'] == 'boss_siege_attack'  # unmodified
 
@@ -25,7 +25,7 @@ def test_fill_up_for_power_attack_2_attacks_left():
 
     siege_attack_refiller.handle_request(simple_flow)
 
-    modified_request = simple_flow.get_modified_request()
+    modified_request = simple_flow.modified_request
     assert len(modified_request) == 2
     assert modified_request[0]['kind'] == 'boss_siege_refill_attack'
     assert modified_request[1]['kind'] == 'boss_siege_attack'
@@ -40,7 +40,7 @@ def test_fill_up_for_power_attack_1_attacks_left():
 
     siege_attack_refiller.handle_request(simple_flow)
 
-    modified_request = simple_flow.get_modified_request()
+    modified_request = simple_flow.modified_request
     assert len(modified_request) == 3
     assert modified_request[0]['kind'] == 'boss_siege_refill_attack'
     assert modified_request[1]['kind'] == 'boss_siege_refill_attack'
@@ -56,7 +56,7 @@ def test_fill_up_for_power_attack_0_attacks_left():
 
     siege_attack_refiller.handle_request(simple_flow)
 
-    modified_request = simple_flow.get_modified_request()
+    modified_request = simple_flow.modified_request
     assert len(modified_request) == 2
     assert modified_request[0]['kind'] == 'boss_siege_refill_attacks_max'
     assert modified_request[1]['kind'] == 'boss_siege_attack'
@@ -71,7 +71,7 @@ def test_fill_up_for_normal_attack_0_attacks_left():
 
     siege_attack_refiller.handle_request(simple_flow)
 
-    modified_request = simple_flow.get_modified_request()
+    modified_request = simple_flow.modified_request
     assert len(modified_request) == 2
     assert modified_request[0]['kind'] == 'boss_siege_refill_attacks_max'
     assert modified_request[1]['kind'] == 'boss_siege_attack'

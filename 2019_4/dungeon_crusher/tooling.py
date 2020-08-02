@@ -36,10 +36,10 @@ class Tooling:
 
         if not simple_flow.url.startswith("https://soulhunters"):
             return False
-        if not simple_flow.get_modified_request():
+        if not simple_flow.modified_request:
             return False
 
-        json_content = simple_flow.get_modified_request()
+        json_content = simple_flow.modified_request
 
         if type(json_content) is not list:
             return False

@@ -72,17 +72,23 @@ class Sieges:
         try:
             sieges = simple_flow.get_response()['sieges']
             if len(sieges) < 4:
+                log_error(f"Current siege count: {len(sieges)}")
+                log_error(f"pending attack? {self.pending_attack}")
+                if self.pending_attack == False:
                     return True
         except:
             pass
         return False
 
     def find_boss_to_attack(self, simple_flow):
-        request = simple_flow.get_request()
-        response = simple_flow.get_response()
+        request = simple_flow.request
+        response = simple_flow.response
 
         try:
             log_error(f"[-] Error: {response['error']}")  # TODO move.
+            error_msg = response['error']['message']
+            if error_msg.startswith("[boss_siege_attack] No attacks left"):
+                self.pending_attack = False
             return None
         except:
             pass
@@ -92,7 +98,9 @@ class Sieges:
 
                 for siege in response['sieges']:
                     boss_id = siege['id']
-                    if siege['top_users']['finder'] == self.my_id and siege['current_hp'] == 13000000:
+
+                    # and siege['current_hp'] == 13000000:
+                    if siege['top_users']['finder'] == self.my_id:
                         if siege['top_attack_id'] == None:
                             log_warning("[+] Found normal boss to attack.")
                             return boss_id
@@ -273,7 +281,7 @@ def request(flow: http.HTTPFlow) -> None:
         process_request(simple_flow)
 
         flow.request.content = json.dumps(
-            simple_flow.get_modified_request()).encode('utf-8')
+            simple_flow.modified_request).encode('utf-8')
         # log_warning("------------------ REQUEST ends -------------------")
     except Exception as e:
         Tooling.log_stacktrace(e)
