@@ -34,7 +34,7 @@ class Sieges:
         self.user = "oneplus"
         self.attacked_bosses = defaultdict(int)
         self.api_session_flow = None
-        self.peding_attack = False
+        self.pending_attack = False
 
     def try_set_session_request(self, simple_flow: SimpleFlow) -> None:
         if "https://soulhunters.beyondmars.io/api/session" in simple_flow.url:  # TODO refactor
@@ -45,7 +45,7 @@ class Sieges:
             log_error(
                 "[-] Error: should attack, but there is no template stored yet.")
             return
-        if self.peding_attack == True:
+        if self.pending_attack == True:
             log_error(
                 "[-] Error: should attack, but there is another attack performing")
             return
@@ -63,7 +63,7 @@ class Sieges:
             log_warning("[#] I will send boss siege attack.")
             time.sleep(0.5)
 
-            self.peding_attack = True
+            self.pending_attack = True
             ctx.master.commands.call("replay.client", [fake_request])
         except Exception as e:
             tooling.log_stacktrace(e)
@@ -72,7 +72,6 @@ class Sieges:
         try:
             sieges = simple_flow.get_response()['sieges']
             if len(sieges) < 4:
-                if self.peding_attack == False:
                     return True
         except:
             pass
@@ -107,7 +106,7 @@ class Sieges:
                     #         return boss_id
 
             if "boss_siege_attack" in str(request):
-                self.peding_attack = False
+                self.pending_attack = False
                 siege = response['boss_siege_attack_result']['siege']
                 boss_id = None
 
