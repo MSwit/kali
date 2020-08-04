@@ -60,3 +60,34 @@ class SiegeBossAttack:
             "sequence_number": -1,
             "seq_num": -1
         }
+
+
+class SiegeBossAttack_Finder:
+
+    # def __init__(self):
+    def __init__(self, boss_hp, power_attack: bool):
+        self.my_id = "a10e9130-7530-4839-9a11-825b99a10895"
+        self.boss_hp = boss_hp
+        self.power_attack = power_attack
+
+    def get_attack_json_for_bosses(self, simple_flow: SimpleFlow):
+        if not "find_boss_for_siege" in str(simple_flow.request):
+            return None
+
+        sieges = simple_flow.response['sieges']
+        for siege in sieges:
+            if siege['top_users']['finder'] == self.my_id and siege['current_hp'] == self.boss_hp:
+                if siege['top_attack_id'] == None:
+                    return self.get_attack_json_for_boss_id(siege['id'])
+
+        return None
+
+    def get_attack_json_for_boss_id(self, boss_id):
+        return {
+            "siege_id": boss_id,
+            "power_attack": self.power_attack,
+            "autorestore_is_on": True,
+            "kind": "boss_siege_attack",
+            "sequence_number": -1,
+            "seq_num": -1
+        }
