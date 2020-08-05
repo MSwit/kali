@@ -94,3 +94,48 @@ class SiegeBossAttack_Finder:
             "sequence_number": -1,
             "seq_num": -1
         }
+
+
+class SiegeBoss_Finisher:
+    def __init__(self, maximal_boss_hp):
+        self.my_id = "a10e9130-7530-4839-9a11-825b99a10895"
+        self.maximal_boss_hp = maximal_boss_hp
+        self.attacked_bosses = defaultdict(int)
+
+    def get_attack_json_for_bosses(self, simple_flow: SimpleFlow):
+        sieges = []
+        try:
+            sieges = simple_flow.response['sieges']
+        except:
+            pass
+
+        try:
+            sieges = [simple_flow.response['boss_siege_attack_result']['siege']]
+        except:
+            log_error("asdfasdf")
+            pass
+
+        for siege in sieges:
+            if siege['current_hp'] <= self.maximal_boss_hp:
+                boss_id = siege['id']
+                if self.attacked_bosses[boss_id] == 0:  # currently not attacked
+                    self.attacked_bosses[boss_id] += 1
+                    return self.get_attack_json_for_boss_id(boss_id)
+                else:
+                    log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
+                    log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
+                    log_error(f"[-] Did not finished Boss with id {boss_id}")
+                    log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
+                    log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
+
+        return None
+
+    def get_attack_json_for_boss_id(self, boss_id):
+        return {
+            "siege_id": boss_id,
+            "power_attack": False,
+            "autorestore_is_on": True,
+            "kind": "boss_siege_attack",
+            "sequence_number": -1,
+            "seq_num": -1
+        }
