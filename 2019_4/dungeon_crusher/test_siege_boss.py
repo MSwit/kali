@@ -64,3 +64,11 @@ def test_simple_do_not_attack_if_hp_not_match():
         SimpleFlow("", {"kind": "find_boss_for_siege"}, None, {"sieges": [{"id": "some_boss_id", "current_hp": 12, "top_attack_id": None, "top_users": {"finder": "my_fake_id"}}]}, None))
 
     assert result == None
+
+
+def test_handle_error():
+    siege_analyser = SiegeBossAttack_Finder(boss_hp=13, power_attack=True)
+    siege_analyser.my_id = "my_fake_id"
+    result = siege_analyser.get_attack_json_for_bosses(SimpleFlow("", {"kind": "find_boss_for_siege"}, None, {"error": {"message": "[find_boss_for_siege] Boss siege limit reached!", "action": {
+        "kind": "find_boss_for_siege", "sequence_number": 15, "seq_num": 82}, "code": 400, "backend_time": "2020-08-05T17:22:07.888Z"}}, None))
+    assert result == None
