@@ -22,6 +22,7 @@ from mitmproxy.tools.dump import DumpMaster
 from mitmproxy import ctx
 from siege_attack_refiller import SiegeAttackRefiller
 from siege_refresher import SiegeRefresher
+from siege_boss import SiegeBossAttack_Finder
 
 
 class Sieges:
@@ -36,10 +37,29 @@ class Sieges:
         self.attacked_bosses = defaultdict(int)
         self.api_session_flow = None
         self.pending_attack = False
+        self.siege_boss_finder = [
+            SiegeBossAttack_Finder(13000000, False),
+            SiegeBossAttack_Finder(15000000, True),
+            SiegeBossAttack_Finder(21000000, True),
+            SiegeBossAttack_Finder(30000000, True)
+        ]
 
     def try_set_session_request(self, simple_flow: SimpleFlow) -> None:
         if "https://soulhunters.beyondmars.io/api/session" in simple_flow.url:  # TODO refactor
             self.api_session_flow = simple_flow.flow.copy()
+
+    def attack_with_json(self, attack_json):
+        fake_request = self.api_session_flow.copy()
+        request_content = [attack_json]
+        fake_request.request.content = json.dumps(  # will update seq_num etc. in request(..)
+            request_content).encode('utf-8')
+        boss_id = attack_json['siege_id']
+        self.attacked_bosses[boss_id] += 1
+        log_warning("[#] I will send boss siege attack.")
+        time.sleep(0.2)
+
+        self.pending_attack = True
+        ctx.master.commands.call("replay.client", [fake_request])
 
     def attack(self, boss_id, flow: http.HTTPFlow):
         if not self.api_session_flow:
@@ -100,7 +120,7 @@ class Sieges:
                 for siege in response['sieges']:
                     boss_id = siege['id']
 
-                    #
+                    # and siege['current_hp'] == 13000000:
                     if siege['top_users']['finder'] == self.my_id and siege['current_hp'] == 13000000:
                         if siege['top_attack_id'] == None:
                             log_warning("[+] Found normal boss to attack.")
@@ -109,10 +129,10 @@ class Sieges:
                         if siege['top_attack_id'] == None:
                             log_warning("[+] Found top normal boss to attack.")
                             return boss_id
-                    # if siege['current_hp'] > 120000000:
-                    #     if boss_id not in self.attacked_bosses:
-                    #         log_warning("[+] Found top boss to attack.")
-                    #         return boss_id
+                    if siege['current_hp'] > 220000000:
+                        if boss_id not in self.attacked_bosses:
+                            log_warning("[+] Found top boss to attack.")
+                            return boss_id
 
             if "boss_siege_attack" in str(request):
                 self.pending_attack = False
@@ -180,14 +200,25 @@ class Sieges:
 
     #     ctx.master.commands.call("replay.client", [fake_request])
 
+    def get_attack_json(self, simple_flow: SimpleFlow):
+        for finder in self.siege_boss_finder:
+            attack_json = finder.get_attack_json_for_bosses(simple_flow)
+            if attack_json:
+                return attack_json
+
     def check_response_simple(self, simple_flow):
+
+        attack_json = self.get_attack_json(simple_flow)
+        if attack_json:
+            self.attack_with_json(attack_json)
+            return
 
         boss_id = self.find_boss_to_attack(simple_flow)
         if boss_id:
             log_error(boss_id)
 
             # self.try_refill()
-            self.attack(boss_id, simple_flow.flow)
+            # self.attack(boss_id, simple_flow.flow)
         else:
             available = self.is_search_for_boss_available(simple_flow)
 

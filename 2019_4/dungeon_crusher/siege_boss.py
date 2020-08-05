@@ -73,8 +73,13 @@ class SiegeBossAttack_Finder:
     def get_attack_json_for_bosses(self, simple_flow: SimpleFlow):
         if not "find_boss_for_siege" in str(simple_flow.request):
             return None
+        try:
+            sieges = simple_flow.response['sieges']
+        except Exception as e:
+            log_error(str(e))
+            log_error(json.dumps(simple_flow.response))
+            exit(1)
 
-        sieges = simple_flow.response['sieges']
         for siege in sieges:
             if siege['top_users']['finder'] == self.my_id and siege['current_hp'] == self.boss_hp:
                 if siege['top_attack_id'] == None:
