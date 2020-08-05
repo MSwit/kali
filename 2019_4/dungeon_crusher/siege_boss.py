@@ -116,14 +116,17 @@ class SiegeBoss_Finisher:
             pass
 
         for siege in sieges:
-            if siege['current_hp'] <= self.maximal_boss_hp:
+            if siege['current_hp'] <= self.maximal_boss_hp and siege['current_hp'] > 0:
                 boss_id = siege['id']
                 if self.attacked_bosses[boss_id] == 0:  # currently not attacked
                     self.attacked_bosses[boss_id] += 1
+                    log_error(
+                        f"[+] SiegeBossFinisher: get_attack_json_for_bosses: current_boss_hp == {siege['current_hp']}")
                     return self.get_attack_json_for_boss_id(boss_id)
                 else:
                     log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
                     log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
+                    log_error(f"Attacks: {self.attacked_bosses[boss_id]}")
                     log_error(f"[-] Did not finished Boss with id {boss_id}")
                     log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
                     log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")

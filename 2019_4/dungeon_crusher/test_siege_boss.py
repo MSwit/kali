@@ -139,3 +139,14 @@ def test_finsiher_do_not_finish_twice():
             "siege": {"id": "some_boss_id", "current_hp": 41}}}, None))
 
     assert result == None
+
+
+def test_finsiher_do_not_attack_boss_with_0_hp():
+    finisher = SiegeBoss_Finisher(42)
+    simple_flow = SimpleFlow("", None, None, {"boss_siege_attack_result": {
+        "status": 200,
+        "siege": {"id": "some_boss_id", "current_hp": 0}}}, None)
+
+    result = finisher.get_attack_json_for_bosses(simple_flow)
+
+    assert result == None
