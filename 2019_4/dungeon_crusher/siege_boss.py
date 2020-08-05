@@ -26,7 +26,6 @@ from siege_refresher import SiegeRefresher
 
 class SiegeBossAttack:
 
-    # def __init__(self):
     def __init__(self, must_be_finder: bool, current_hp, minimum_hp, maximum_hp, power_attack: bool):
         self.my_id = "my_id"
         self.must_be_finder = must_be_finder
@@ -64,7 +63,6 @@ class SiegeBossAttack:
 
 class SiegeBossAttack_Finder:
 
-    # def __init__(self):
     def __init__(self, boss_hp, power_attack: bool):
         self.my_id = "a10e9130-7530-4839-9a11-825b99a10895"
         self.boss_hp = boss_hp

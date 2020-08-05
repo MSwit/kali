@@ -181,25 +181,6 @@ class Sieges:
 
             # os.kill(os.getpid(), signal.SIGKILL)
 
-    # def try_refill(self):
-    #     if not self.api_session_flow:
-    #         log_error(
-    #             "[-] could not send refill request. No 'api/session' flow available")
-    #         return
-    #     attack_refill_json = {
-    #         "kind": "boss_siege_refill_attack", "sequence_number": 11, "seq_num": 21}
-    #     fake_request = self.api_session_flow.copy()
-    #     attack_refill_json = [attack_refill_json]
-    #     fake_request.request.content = json.dumps(  # will update seq_num etc. in request(..)
-    #         attack_refill_json).encode('utf-8')
-
-    #     time.sleep(0.5)
-
-    #     # log_error("[#] I will send refill request")
-    #     time.sleep(0.5)
-
-    #     ctx.master.commands.call("replay.client", [fake_request])
-
     def get_attack_json(self, simple_flow: SimpleFlow):
         for finder in self.siege_boss_finder:
             attack_json = finder.get_attack_json_for_bosses(simple_flow)
