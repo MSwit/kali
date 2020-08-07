@@ -28,9 +28,7 @@ class SiegeRefresher:
         if simple_flow.url == "https://soulhunters.beyondmars.io/api/boss_sieges/sieges" or simple_flow.url == "https://gw.soulhunters.beyondmars.io/api/boss_sieges/sieges":
             self.update_flow = simple_flow.flow.copy()
             self.update_flow.request.content = json.dumps({}).encode('utf-8')
-        else:
-            log_error("wrong url for siege_refresher_flow")
-            log_error(simple_flow.url)
+
         try:
             sieges = simple_flow.response['sieges']
             log_error(f"[+] Current siege count: {len(sieges)}.........")

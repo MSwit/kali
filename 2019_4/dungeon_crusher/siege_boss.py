@@ -112,7 +112,6 @@ class SiegeBoss_Finisher:
         try:
             sieges = [simple_flow.response['boss_siege_attack_result']['siege']]
         except:
-            log_error("asdfasdf")
             pass
 
         for siege in sieges:
