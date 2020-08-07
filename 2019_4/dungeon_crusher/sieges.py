@@ -21,8 +21,9 @@ from mitmproxy import proxy, options
 from mitmproxy.tools.dump import DumpMaster
 from mitmproxy import ctx
 from siege_attack_refiller import SiegeAttackRefiller
-from siege_refresher import SiegeRefresher
+import siege_refresher
 from siege_boss import SiegeBossAttack_Finder
+from siege_boss import SiegeBoss_Finisher
 
 
 class Sieges:
@@ -41,11 +42,12 @@ class Sieges:
             SiegeBossAttack_Finder(13000000, False),
             SiegeBossAttack_Finder(15000000, True),
             SiegeBossAttack_Finder(21000000, True),
-            SiegeBossAttack_Finder(30000000, True)
+            SiegeBossAttack_Finder(30000000, True),
+            SiegeBoss_Finisher(3000000)
         ]
 
     def try_set_session_request(self, simple_flow: SimpleFlow) -> None:
-        if "https://soulhunters.beyondmars.io/api/session" in simple_flow.url:  # TODO refactor
+        if "https://soulhunters.beyondmars.io/api/session" in simple_flow.url or "https://gw.soulhunters.beyondmars.io/api/session" in simple_flow.url:  # TODO refactor
             self.api_session_flow = simple_flow.flow.copy()
 
     def attack_with_json(self, attack_json):
@@ -122,9 +124,16 @@ class Sieges:
 
                     # and siege['current_hp'] == 13000000:
                     if siege['top_users']['finder'] == self.my_id and siege['current_hp'] == 13000000:
+                        log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
+                        log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
+                        log_error(
+                            "[-] Erorr: should be handelet by other code: boss hp == 13mio")
+                        log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
+                        log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
                         if siege['top_attack_id'] == None:
                             log_warning("[+] Found normal boss to attack.")
                             return boss_id
+
                     if siege['top_users']['finder'] == self.my_id and siege['current_hp'] >= 500000000:
                         if siege['top_attack_id'] == None:
                             log_warning("[+] Found top normal boss to attack.")
@@ -145,17 +154,16 @@ class Sieges:
                 if points == 0:
                     boss_id = siege['id']
                     log_error("[-] NO DMG DONE !")
-                    if siege['current_hp'] > 120000000:
+                    if siege['current_hp'] > 220000000:
                         if self.attacked_bosses[boss_id] < 2:
-                            log_error("[+] Found top boss to reattack.")
                             return siege['id']
                 else:
                     log_error(f"DID DMG: {points}")
 
-            if "https://soulhunters.beyondmars.io/api/boss_sieges/sieges/" in simple_flow.url:
+            if "https://soulhunters.beyondmars.io/api/boss_sieges/sieges/" in simple_flow.url or "https://gw.soulhunters.beyondmars.io/api/boss_sieges/sieges/" in simple_flow.url:
                 pass
 
-            if "https://soulhunters.beyondmars.io/api/boss_sieges/sieges" == simple_flow.url:
+            if "https://soulhunters.beyondmars.io/api/boss_sieges/sieges" == simple_flow.url or "https://gw.soulhunters.beyondmars.io/api/boss_sieges/sieges" == simple_flow.url:
                 sieges = response['sieges']
                 for siege in sieges:
                     boss_id = siege['id']
@@ -163,6 +171,14 @@ class Sieges:
                         if self.attacked_bosses[boss_id] < 2:
                             log_warning(
                                 f"[+] Found boss to attack because of low HP ({siege['current_hp']}).")
+                            log_error("[+] Found top boss to reattack.")
+
+                            log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
+                            log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
+                            log_error(
+                                f"[-] Erorr: should be handelet by other code: boss hp low!. hp == {siege['current_hp'] }")
+                            log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
+                            log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
                             return boss_id
             log_error("NO BOSS FOUND !")
         except Exception as e:
@@ -199,7 +215,7 @@ class Sieges:
             log_error(boss_id)
 
             # self.try_refill()
-            # self.attack(boss_id, simple_flow.flow)
+            self.attack(boss_id, simple_flow.flow)
         else:
             available = self.is_search_for_boss_available(simple_flow)
 
@@ -237,9 +253,9 @@ class Sieges:
 
 
 def should_lock_unlock_flow(simple_flow: SimpleFlow) -> bool:
-    if "https://soulhunters.beyondmars.io/api/clans" in simple_flow.url:
+    if "https://soulhunters.beyondmars.io/api/clans" in simple_flow.url or "https://gw.soulhunters.beyondmars.io/api/clans" in simple_flow.url:
         return False
-    return "https://soulhunters.beyondmars.io" in simple_flow.url
+    return "https://soulhunters.beyondmars.io" in simple_flow.url or "https://gw.soulhunters.beyondmars.io" in simple_flow.url
 
 
 def process_request(simple_flow: SimpleFlow) -> None:
@@ -283,11 +299,17 @@ this_class = Sieges(sequence_number_modifier)
 lock = Lock()
 
 
-my_addons = [SequenceHandler(), SiegeAttackRefiller(), SiegeRefresher()]
+my_addons = [SequenceHandler(),
+             SiegeAttackRefiller(),
+             siege_refresher.this_class  # prevent two instances
+             ]
+
+
 @concurrent
 def request(flow: http.HTTPFlow) -> None:
     simple_flow = SimpleFlow.from_flow(flow)
     log_error(simple_flow.url)
+
     [addon.handle_request(simple_flow) for addon in my_addons]
     try:
         # log_warning(

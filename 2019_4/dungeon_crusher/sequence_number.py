@@ -131,7 +131,7 @@ class Sequence_Number:
 
     def is_relogin(self, simple_flow: SimpleFlow):
 
-        if "https://soulhunters.beyondmars.io/api/session" in simple_flow.url:
+        if "https://soulhunters.beyondmars.io/api/session" in simple_flow.url or "https://gw.soulhunters.beyondmars.io/api/session" in simple_flow.url:
             try:
                 if simple_flow.request.get('provider', '') == 'android':
                     return True

@@ -25,7 +25,7 @@ from mitm_logging import log_warning
 class SiegeAttackRefiller:
 
     def __init__(self):
-        self.attacks_left = -1
+        self.attacks_left = 0
 
     def handle_request(self, simple_flow: SimpleFlow):
         try:
@@ -44,15 +44,26 @@ class SiegeAttackRefiller:
                     simple_flow.modified_request.insert(0,
                                                         {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
                 if self.attacks_left == 0:
+                    # simple_flow.modified_request.insert(0,
+                    #                                     {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
+
                     simple_flow.modified_request.insert(0,
-                                                        {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
+                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
+                    simple_flow.modified_request.insert(0,
+                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
+                    simple_flow.modified_request.insert(0,
+                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
             else:
                 if self.attacks_left == 0:
 
                     simple_flow.modified_request.insert(0,
-                                                        {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
+                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
 
                     log_error("going to add refill action")
+
+                    # TODO
+                    # handle : [-] Error: {'message': 'Failed to consume 56:1 - only 0 items available!', 'action': {'kind': 'boss_siege_refill_attacks_max', 'sequence_number': 16, 'seq_num': 35}, 'code': 400, 'backend_time': '2020-08-04T12:46:24.566Z'}
+
         except:
             pass
 
