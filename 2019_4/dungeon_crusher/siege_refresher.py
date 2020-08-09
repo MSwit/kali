@@ -17,7 +17,6 @@ class SiegeRefresher:
     def __init__(self):
         self.update_flow = None
         self.refresh_thread = None
-        self.refresh_timer()
 
     def handle_request(self, simple_flow: SimpleFlow) -> None:
         pass
