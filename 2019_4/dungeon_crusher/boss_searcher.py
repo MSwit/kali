@@ -4,7 +4,11 @@ from simple_flow import SimpleFlow
 from sequence_number import Sequence_Number
 from mitmproxy import http
 from mitmproxy import ctx
+from mitmproxy.script import concurrent
 from mitm_logging import log_error
+import json
+import time
+from threading import Lock
 
 
 class BossSearcher:
@@ -99,13 +103,25 @@ class BossSearcher:
 sequence_number_modifier = Sequence_Number()
 this_class = BossSearcher(sequence_number_modifier)
 
+lock = Lock()
 
+
+@concurrent
 def request(flow: http.HTTPFlow) -> None:
+    lock.acquire()
     simple_flow = SimpleFlow.from_flow(flow)
-    this_class.handle_response(simple_flow)
+    sequence_number_modifier.try_update_request(simple_flow)
+    this_class.handle_request(simple_flow)
+
+    flow.request.content = json.dumps(
+        simple_flow.modified_request).encode('utf-8')
 
 
 def response(flow: http.HTTPFlow) -> None:
-
     simple_flow = SimpleFlow.from_flow(flow)
+    if flow.response.status_code == 400:
+        log_error("[-] Error: bad statuscode")
+        log_error(json.dumps(simple_flow.response, indent=2))
+        exit(1)
     this_class.handle_response(simple_flow)
+    lock.release()
