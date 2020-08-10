@@ -127,6 +127,8 @@ class SiegeBoss_Finisher:
                     log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
                     log_error(f"Attacks: {self.attacked_bosses[boss_id]}")
                     log_error(f"[-] Did not finished Boss with id {boss_id}")
+                    log_error(f"Current Boss hp : {siege['current_hp']}")
+                    log_error(json.dumps(siege, indent=2))
                     log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
                     log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
 
