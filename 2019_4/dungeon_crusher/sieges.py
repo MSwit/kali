@@ -30,9 +30,6 @@ class Sieges:
 
     def __init__(self, sequence_number_modifier):
         self.sequence_number_modifier = sequence_number_modifier
-        # self.my_id = "e786b343-35e8-4f59-9b86-256e188783d7" # nexus
-        # self.user = "nexus"
-
         self.my_id = "a10e9130-7530-4839-9a11-825b99a10895"  # oneplus3t
         self.user = "oneplus"
         self.attacked_bosses = defaultdict(int)
