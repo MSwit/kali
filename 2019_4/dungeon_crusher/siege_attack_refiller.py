@@ -44,20 +44,20 @@ class SiegeAttackRefiller:
                     simple_flow.modified_request.insert(0,
                                                         {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
                 if self.attacks_left == 0:
-                    # simple_flow.modified_request.insert(0,
-                    #                                     {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
+                    simple_flow.modified_request.insert(0,
+                                                        {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
 
-                    simple_flow.modified_request.insert(0,
-                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
-                    simple_flow.modified_request.insert(0,
-                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
-                    simple_flow.modified_request.insert(0,
-                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
+                    # simple_flow.modified_request.insert(0,
+                    #                                     {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
+                    # simple_flow.modified_request.insert(0,
+                    #                                     {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
+                    # simple_flow.modified_request.insert(0,
+                    #                                     {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
             else:
                 if self.attacks_left == 0:
 
                     simple_flow.modified_request.insert(0,
-                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
+                                                        {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
 
                     log_error("going to add refill action")
 
