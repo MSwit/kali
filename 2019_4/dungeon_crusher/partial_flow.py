@@ -26,6 +26,7 @@ class PartialFlow:
         if not self.url or self.request == None or self.response == None:
             log_error(
                 "[-] Cant combine PartialFlow to Simpleflow. Data missing.")
+            exit(1)
 
         return SimpleFlow(self.url, self.request, self.modified_request, self.response, None)
 
