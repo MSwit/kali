@@ -34,7 +34,6 @@ class Sieges:
         self.user = "oneplus"
         self.attacked_bosses = defaultdict(int)
         self.api_session_flow = None
-        self.pending_attack = False
         self.siege_boss_finder = [
             SiegeBossAttack_Finder(13000000, False),
             SiegeBossAttack_Finder(15000000, True),
@@ -87,18 +86,6 @@ class Sieges:
             ctx.master.commands.call("replay.client", [fake_request])
         except Exception as e:
             tooling.log_stacktrace(e)
-
-    def is_search_for_boss_available(self, simple_flow):
-        try:
-            sieges = simple_flow.response['sieges']
-            if len(sieges) < 4:
-                log_error(f"Current siege count: {len(sieges)}")
-                log_error(f"pending attack? {self.pending_attack}")
-                if self.pending_attack == False:
-                    return True
-        except:
-            pass
-        return False
 
     def find_boss_to_attack(self, simple_flow):
         request = simple_flow.request
@@ -210,37 +197,7 @@ class Sieges:
         boss_id = self.find_boss_to_attack(simple_flow)
         if boss_id:
             log_error(boss_id)
-
-            # self.try_refill()
             self.attack(boss_id, simple_flow.flow)
-        else:
-            available = self.is_search_for_boss_available(simple_flow)
-
-            if available:
-                self.try_search_for_boss()
-
-    def try_search_for_boss(self):
-
-        if not self.api_session_flow:
-            log_error(
-                "[-] no api session flow set, yet. Cant search for new bosses.")
-            return
-        if not self.sequence_number_modifier.is_ready():
-            log_error(
-                "[-] Sequence number not initialized yet. Cant search for new bosses.")
-            return
-
-        search_for_bosses_json = {
-            "kind": "find_boss_for_siege", "sequence_number": -1, "seq_num": -1}
-        fake_request = self.api_session_flow.copy()
-        search_for_bosses_json = [search_for_bosses_json]
-        fake_request.request.content = json.dumps(  # will update seq_num etc. in request(..)
-            search_for_bosses_json).encode('utf-8')
-
-        time.sleep(0.5)
-
-        ctx.master.commands.call("replay.client", [fake_request])
-        log_error("[#] I send search for boss request")
 
     def check_response(self, simple_flow: SimpleFlow):
         try:
@@ -296,10 +253,11 @@ this_class = Sieges(sequence_number_modifier)
 lock = Lock()
 
 
+boss_searcher = BossSearcher(sequence_number_modifier)
 my_addons = [SequenceHandler(),
              SiegeAttackRefiller(),
-             siege_refresher.this_class  # prevent two instances
-             ]
+             siege_refresher.this_class,  # prevent two instances
+             boss_searcher]
 
 
 @concurrent
