@@ -17,6 +17,7 @@ class SimpleFlow:
                 json.dumps(self.request))
         self.response = SimpleFlow.get_json_from_unknown(response)
         self.flow = flow
+        self.status_code = None
 
     @staticmethod
     def get_json_from_unknown(unknown_object):
@@ -40,9 +41,13 @@ class SimpleFlow:
         url = flow.request.pretty_url
         request = SimpleFlow.json_from_http(flow.request)
         response = None
+        status_code = None
         if flow.response:
             response = SimpleFlow.json_from_http(flow.response)
+            status_code = flow.response.status_code
         simple_flow = SimpleFlow(url, request, None, response, flow.copy())
+        simple_flow.status_code = status_code
+
         return simple_flow
 
     @staticmethod
@@ -57,7 +62,7 @@ class SimpleFlow:
             return ""
 
     def to_json(self):
-        return {'url': self.url, 'original_request': self.request,
+        return {'url': self.url, 'status_code': self.status_code, 'original_request': self.request,
                 'modified_request': self.modified_request, 'response': self.response}
 
     @staticmethod
@@ -66,5 +71,7 @@ class SimpleFlow:
         if not request:
             request = json_flow.get('request', {})
         modified_request = json_flow.get('modified_request', {})
-
-        return SimpleFlow(json_flow['url'], request, modified_request, json_flow['response'], None)
+        simple_flow = SimpleFlow(
+            json_flow['url'], request, modified_request, json_flow['response'], None)
+        simple_flow.status_code = json_flow.get('status_code', None)
+        return simple_flow
