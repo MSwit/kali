@@ -56,17 +56,12 @@ class Sieges:
         log_warning("[#] I will send boss siege attack.")
         time.sleep(0.2)
 
-        self.pending_attack = True
         ctx.master.commands.call("replay.client", [fake_request])
 
     def attack(self, boss_id, flow: http.HTTPFlow):
         if not self.api_session_flow:
             log_error(
                 "[-] Error: should attack, but there is no template stored yet.")
-            return
-        if self.pending_attack == True:
-            log_error(
-                "[-] Error: should attack, but there is another attack performing")
             return
 
         try:
@@ -263,7 +258,6 @@ my_addons = [SequenceHandler(),
 @concurrent
 def request(flow: http.HTTPFlow) -> None:
     simple_flow = SimpleFlow.from_flow(flow)
-    log_error(simple_flow.url)
 
     [addon.handle_request(simple_flow) for addon in my_addons]
     try:
