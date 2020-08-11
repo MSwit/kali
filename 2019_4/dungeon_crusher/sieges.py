@@ -265,6 +265,9 @@ my_addons = [SequenceHandler(),
 @concurrent
 def request(flow: http.HTTPFlow) -> None:
     simple_flow = SimpleFlow.from_flow(flow)
+    if not "soulhunters.beyondmars" in simple_flow.url:
+        flow.kill
+        return
 
     [addon.handle_request(simple_flow) for addon in my_addons]
     try:
