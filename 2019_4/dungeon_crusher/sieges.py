@@ -222,15 +222,22 @@ def process_request(simple_flow: SimpleFlow) -> None:
 
 def process_response(simple_flow: SimpleFlow) -> None:
 
-    # if simple_flow.status_code == 400:
-    #     error = simple_flow.response.get("error", {})
-    #     if error:
-    #         log_error(str(simple_flow.response)
-    #         message = error['message']
-    #         if "[outside] Wrong action sequence number = " in message:
-    #             correct_seq_num = message.split(" ")[-1]
-    #             correct_seq_num = message.split("!")[0]
-    #             log_error(f"corret seq_num should be {correct_seq_num}")
+    if simple_flow.status_code == 400:
+        error = simple_flow.response.get("error", {})
+        if error:
+            log_error(json.dumps(simple_flow.response, indent=2))
+            message = error['message']
+            if "[outside] Wrong action sequence number = " in message:
+                correct_seq_num = message.split(" ")[-1]
+                correct_seq_num = message.split("!")[0]
+                log_error(f"corret seq_num should be {correct_seq_num}")
+                exit(1)
+            if "Sequence number mismatch" in message:
+                log_error(f"corret seq_num should be {message}")
+                exit(1)
+
+            if "[find_boss_for_siege] Boss siege limit reached!" in message:
+                pass
 
     this_class.check_response(simple_flow)
 
