@@ -262,11 +262,17 @@ my_addons = [SequenceHandler(),
              boss_searcher]
 
 
+def should_anaylse_Request(simple_flow):
+    return True
+
+
 @concurrent
 def request(flow: http.HTTPFlow) -> None:
     simple_flow = SimpleFlow.from_flow(flow)
     if not "soulhunters.beyondmars" in simple_flow.url:
         flow.kill()
+        return
+    if not should_anaylse_Request():
         return
 
     [addon.handle_request(simple_flow) for addon in my_addons]
@@ -284,7 +290,8 @@ def request(flow: http.HTTPFlow) -> None:
 
 def response(flow: http.HTTPFlow) -> None:
     simple_flow = SimpleFlow.from_flow(flow)
-
+    if not should_anaylse_Request():
+        return
     try:
         # log_warning(
         #     "------------------ RESPONSE starts -------------------")
