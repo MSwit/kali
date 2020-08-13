@@ -44,7 +44,7 @@ class BossSearcher:
                 log_error("[+] Killed a boss. So i can search for another")
                 return True
         except Exception as e:
-            print(str(e))
+            pass
 
         try:
             siege_count = len(simple_flow.response['sieges'])
@@ -52,7 +52,6 @@ class BossSearcher:
             if siege_count < 4:
                 return True
         except Exception as e:
-            print(str(e))
             pass
         return False
 
