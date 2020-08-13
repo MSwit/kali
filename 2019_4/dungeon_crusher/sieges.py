@@ -272,7 +272,7 @@ def request(flow: http.HTTPFlow) -> None:
     if not "soulhunters.beyondmars" in simple_flow.url:
         flow.kill()
         return
-    if not should_anaylse_Request():
+    if not should_anaylse_Request(simple_flow):
         return
 
     [addon.handle_request(simple_flow) for addon in my_addons]
@@ -290,7 +290,7 @@ def request(flow: http.HTTPFlow) -> None:
 
 def response(flow: http.HTTPFlow) -> None:
     simple_flow = SimpleFlow.from_flow(flow)
-    if not should_anaylse_Request():
+    if not should_anaylse_Request(simple_flow):
         return
     try:
         # log_warning(
