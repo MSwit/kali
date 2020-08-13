@@ -222,7 +222,7 @@ def process_request(simple_flow: SimpleFlow) -> None:
 
 def process_response(simple_flow: SimpleFlow) -> None:
 
-    if simple_flow.status_code == 400:
+    if simple_flow.status_code >= 400:
         error = simple_flow.response.get("error", {})
         if error:
             log_error(json.dumps(simple_flow.response, indent=2))
@@ -233,7 +233,10 @@ def process_response(simple_flow: SimpleFlow) -> None:
                 log_error(f"corret seq_num should be {correct_seq_num}")
                 exit(1)
             if "Sequence number mismatch" in message:
-                log_error(f"corret seq_num should be {message}")
+                log_error(f"[-] Error:  {message}")
+                exit(1)
+            if "Session started on other device" in message:
+                log_error(f"[-] Error:  {message}")
                 exit(1)
 
             if "[find_boss_for_siege] Boss siege limit reached!" in message:
