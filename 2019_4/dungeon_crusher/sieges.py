@@ -135,7 +135,7 @@ class Sieges:
                     boss_id = siege['id']
                     log_error("[-] NO DMG DONE !")
                     if siege['current_hp'] > 220000000:
-                        if self.attacked_bosses[boss_id] < 2:
+                        if self.attacked_bosses[boss_id] < 4:
                             return siege['id']
                 else:
                     log_error(f"DID DMG: {points}")
