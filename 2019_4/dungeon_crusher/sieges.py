@@ -24,6 +24,7 @@ from siege_attack_refiller import SiegeAttackRefiller
 import siege_refresher
 from siege_boss import SiegeBossAttack_Finder
 from siege_boss import SiegeBoss_Finisher
+from boss_searcher import BossSearcher
 
 
 class Sieges:
