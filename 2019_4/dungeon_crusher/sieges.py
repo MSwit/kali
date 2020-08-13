@@ -37,9 +37,10 @@ class Sieges:
         self.siege_boss_finder = [
             SiegeBossAttack_Finder(13000000, False),
             SiegeBossAttack_Finder(15000000, True),
+            SiegeBossAttack_Finder(18000000, True),
             SiegeBossAttack_Finder(21000000, True),
-            SiegeBossAttack_Finder(30000000, True),
-            SiegeBoss_Finisher(3000000)
+            # SiegeBossAttack_Finder(30000000, True),
+            SiegeBoss_Finisher(1000000)
         ]
 
     def try_set_session_request(self, simple_flow: SimpleFlow) -> None:
