@@ -69,6 +69,7 @@ class BossSearcher:
 
     def handle_response(self, simple_flow: SimpleFlow) -> None:
         if "find_boss_for_siege" in str(simple_flow.modified_request):
+            self.pending_replay = False
             self.queued_requests -= 1
             if self.queued_requests < 0:
                 raise Exception("[-] queued_requests cant be negative")
@@ -89,6 +90,8 @@ class BossSearcher:
         search_for_bosses_json = {
             "kind": "find_boss_for_siege", "sequence_number": -1, "seq_num": -1}
         fake_request = self.api_session_flow.copy()
+        self.pending_replay = True
+
         search_for_bosses_json = [search_for_bosses_json]
         fake_request.request.content = json.dumps(
             search_for_bosses_json).encode('utf-8')
