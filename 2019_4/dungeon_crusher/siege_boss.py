@@ -143,3 +143,49 @@ class SiegeBoss_Finisher:
             "sequence_number": -1,
             "seq_num": -1
         }
+
+
+class TopBossAttack_Finder():
+
+    def __init__(self, minimum_hp, max_attack_count):
+        self.my_id = "a10e9130-7530-4839-9a11-825b99a10895"
+        self.minimum_hp = minimum_hp
+        self.max_attack_count = max_attack_count
+        self.attacked_bosses = defaultdict(int)
+
+    def get_attack_json_for_bosses(self, simple_flow: SimpleFlow):
+        sieges = []
+
+        if "find_boss_for_siege" in str(simple_flow.request):
+            try:
+                sieges = simple_flow.response['sieges']
+            except:
+                pass
+            for siege in sieges:
+                if siege['current_hp'] >= self.minimum_hp:
+                    boss_id = siege['id']
+                    self.attacked_bosses[boss_id] += 1
+                    return self.get_attack_json_for_boss_id(boss_id)
+
+        try:
+            siege = simple_flow.response['boss_siege_attack_result']['siege']
+        except:
+            return None
+        my_score_entry = [
+            score for score in siege['scores'] if score['user_id'] == self.my_id][0]
+        points = my_score_entry['points']
+        boss_id = siege['id']
+        if points == 0 and self.attacked_bosses[boss_id] <= self.max_attack_count:
+            self.attacked_bosses[boss_id] += 1
+            return self.get_attack_json_for_boss_id(boss_id)
+        return None
+
+    def get_attack_json_for_boss_id(self, boss_id):
+        return {
+            "siege_id": boss_id,
+            "power_attack": False,
+            "autorestore_is_on": True,
+            "kind": "boss_siege_attack",
+            "sequence_number": -1,
+            "seq_num": -1
+        }

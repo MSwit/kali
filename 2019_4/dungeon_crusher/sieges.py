@@ -24,6 +24,7 @@ from siege_attack_refiller import SiegeAttackRefiller
 import siege_refresher
 from siege_boss import SiegeBossAttack_Finder
 from siege_boss import SiegeBoss_Finisher
+from siege_boss import TopBossAttack_Finder
 from boss_searcher import BossSearcher
 
 
@@ -39,6 +40,7 @@ class Sieges:
             SiegeBossAttack_Finder(13000000, False),
             SiegeBossAttack_Finder(15000000, True),
             SiegeBossAttack_Finder(18000000, True),
+            TopBossAttack_Finder(500000000, 4),
             SiegeBossAttack_Finder(21000000, True),
             # SiegeBossAttack_Finder(30000000, True),
             SiegeBoss_Finisher(1000000)
