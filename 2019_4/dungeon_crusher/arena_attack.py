@@ -46,7 +46,7 @@ def update_request(flow: http.HTTPFlow) -> None:
 def is_interesting_request(flow: http.HTTPFlow):
 
     url = flow.request.pretty_url
-    if not url.startswith("https://soulhunters"):
+    if not url.startswith("https://gw.soulhunters"):
         ctx.log.error(f"uninteresting {url}")
         return False
     if len(flow.request.get_content()) == 0:
@@ -83,4 +83,4 @@ def response(flow: http.HTTPFlow) -> None:
             ctx.log.error(json.dumps(response, indent=2))
     except:
         pass
-    flow.kill()
+    # flow.kill()
