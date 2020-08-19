@@ -63,10 +63,11 @@ class SiegeBossAttack:
 
 class SiegeBossAttack_Finder:
 
-    def __init__(self, boss_hp, power_attack: bool):
+    def __init__(self, boss_hp, power_attack: bool, has_to_be_finder: bool = True):
         self.my_id = "a10e9130-7530-4839-9a11-825b99a10895"
         self.boss_hp = boss_hp
         self.power_attack = power_attack
+        self.has_to_be_finder = has_to_be_finder
 
     def get_attack_json_for_bosses(self, simple_flow: SimpleFlow):
         if not "find_boss_for_siege" in str(simple_flow.request):
@@ -79,7 +80,7 @@ class SiegeBossAttack_Finder:
 
         sieges = simple_flow.response['sieges']
         for siege in sieges:
-            if siege['top_users']['finder'] == self.my_id and siege['current_hp'] == self.boss_hp:
+            if (siege['top_users']['finder'] == self.my_id or not self.has_to_be_finder) and siege['current_hp'] == self.boss_hp:
                 if siege['top_attack_id'] == None:
                     return self.get_attack_json_for_boss_id(siege['id'])
 

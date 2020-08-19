@@ -26,6 +26,8 @@ from siege_boss import SiegeBossAttack_Finder
 from siege_boss import SiegeBoss_Finisher
 from siege_boss import TopBossAttack_Finder
 from boss_searcher import BossSearcher
+from mob_reward_consumed import MobRewardLogger
+import mob_reward_consumed
 
 
 class Sieges:
@@ -37,13 +39,13 @@ class Sieges:
         self.attacked_bosses = defaultdict(int)
         self.api_session_flow = None
         self.siege_boss_finder = [
-            SiegeBossAttack_Finder(13000000, False),
-            SiegeBossAttack_Finder(15000000, True),
-            SiegeBossAttack_Finder(18000000, True),
             TopBossAttack_Finder(500000000, 4),
+            SiegeBossAttack_Finder(13000000, True),
+            SiegeBossAttack_Finder(15000000, True, False),
+            SiegeBossAttack_Finder(18000000, True, False),
             SiegeBossAttack_Finder(21000000, True),
             # SiegeBossAttack_Finder(30000000, True),
-            SiegeBoss_Finisher(1000000)
+            SiegeBoss_Finisher(2000000)
         ]
 
     def try_set_session_request(self, simple_flow: SimpleFlow) -> None:
@@ -62,124 +64,6 @@ class Sieges:
 
         ctx.master.commands.call("replay.client", [fake_request])
 
-    def attack(self, boss_id, flow: http.HTTPFlow):
-        if not self.api_session_flow:
-            log_error(
-                "[-] Error: should attack, but there is no template stored yet.")
-            return
-
-        try:
-            with open(f"{os.path.dirname(os.path.abspath(__file__))}/boss_siege_attack.json", 'r') as f:
-                json_content = json.load(f)
-            json_content['siege_id'] = boss_id
-            fake_request = self.api_session_flow.copy()
-            request_content = [json_content]
-            fake_request.request.content = json.dumps(  # will update seq_num etc. in request(..)
-                request_content).encode('utf-8')
-
-            self.attacked_bosses[boss_id] += 1
-            log_warning("[#] I will send boss siege attack.")
-            time.sleep(0.5)
-
-            self.pending_attack = True
-            ctx.master.commands.call("replay.client", [fake_request])
-        except Exception as e:
-            tooling.log_stacktrace(e)
-
-    def find_boss_to_attack(self, simple_flow):
-        request = simple_flow.request
-        response = simple_flow.response
-
-        try:
-            log_error(f"[-] Error: {response['error']}")  # TODO move.
-            error_msg = response['error']['message']
-            if error_msg.startswith("[boss_siege_attack] No attacks left"):
-                self.pending_attack = False
-            return None
-        except:
-            pass
-
-        try:
-            if type(request) is list and [r for r in request if r.get('kind') == "find_boss_for_siege"]:
-
-                for siege in response['sieges']:
-                    boss_id = siege['id']
-
-                    # and siege['current_hp'] == 13000000:
-                    if siege['top_users']['finder'] == self.my_id and siege['current_hp'] == 13000000:
-                        log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
-                        log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
-                        log_error(
-                            "[-] Erorr: should be handelet by other code: boss hp == 13mio")
-                        log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
-                        log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
-                        if siege['top_attack_id'] == None:
-                            log_warning("[+] Found normal boss to attack.")
-                            return boss_id
-
-                    if siege['top_users']['finder'] == self.my_id and siege['current_hp'] >= 500000000:
-                        if siege['top_attack_id'] == None:
-                            log_warning("[+] Found top normal boss to attack.")
-                            return boss_id
-                    if siege['current_hp'] > 220000000:
-                        if boss_id not in self.attacked_bosses:
-                            log_warning("[+] Found top boss to attack.")
-                            return boss_id
-
-            if "boss_siege_attack" in str(request):
-                self.pending_attack = False
-                siege = response['boss_siege_attack_result']['siege']
-                boss_id = None
-
-                my_score_entry = [
-                    score for score in siege['scores'] if score['user_id'] == self.my_id][0]
-                points = my_score_entry['points']
-                if points == 0:
-                    boss_id = siege['id']
-                    log_error("[-] NO DMG DONE !")
-                    if siege['current_hp'] > 220000000:
-                        if self.attacked_bosses[boss_id] < 4:
-                            return siege['id']
-                else:
-                    log_error(f"DID DMG: {points}")
-
-            if "https://soulhunters.beyondmars.io/api/boss_sieges/sieges/" in simple_flow.url or "https://gw.soulhunters.beyondmars.io/api/boss_sieges/sieges/" in simple_flow.url:
-                pass
-
-            if "https://soulhunters.beyondmars.io/api/boss_sieges/sieges" == simple_flow.url or "https://gw.soulhunters.beyondmars.io/api/boss_sieges/sieges" == simple_flow.url:
-                sieges = response['sieges']
-                for siege in sieges:
-                    boss_id = siege['id']
-                    if siege['current_hp'] < 700000:
-                        if self.attacked_bosses[boss_id] < 2:
-                            log_warning(
-                                f"[+] Found boss to attack because of low HP ({siege['current_hp']}).")
-                            log_error("[+] Found top boss to reattack.")
-
-                            log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
-                            log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
-                            log_error(
-                                f"[-] Erorr: should be handelet by other code: boss hp low!. hp == {siege['current_hp'] }")
-                            log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
-                            log_error("[-] WARNING !!!!!!!!!!!!!!!!!!!!!!!!!")
-                            return boss_id
-            log_error("NO BOSS FOUND !")
-        except Exception as e:
-            log_error(f"[-] Error: {str(e)}")
-            log_error("")
-
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            msg = str(exc_type)
-            msg += "\n" + str(exc_tb.tb_lineno)
-            msg += "\n" + str(fname)
-            msg += "\n"
-            msg += "\n" + json.dumps(response)
-            log_error(msg)
-            log_error(f"[-] Error: {str(e)}")
-
-            # os.kill(os.getpid(), signal.SIGKILL)
-
     def get_attack_json(self, simple_flow: SimpleFlow):
         for finder in self.siege_boss_finder:
             attack_json = finder.get_attack_json_for_bosses(simple_flow)
@@ -192,11 +76,6 @@ class Sieges:
         if attack_json:
             self.attack_with_json(attack_json)
             return
-
-        boss_id = self.find_boss_to_attack(simple_flow)
-        if boss_id:
-            log_error(boss_id)
-            self.attack(boss_id, simple_flow.flow)
 
     def check_response(self, simple_flow: SimpleFlow):
         try:
@@ -266,7 +145,8 @@ boss_searcher = BossSearcher(sequence_number_modifier)
 my_addons = [SequenceHandler(),
              SiegeAttackRefiller(),
              siege_refresher.this_class,  # prevent two instances
-             boss_searcher]
+             boss_searcher,
+             MobRewardLogger(mob_reward_consumed.filename)]
 
 
 def should_anaylse_Request(simple_flow):
