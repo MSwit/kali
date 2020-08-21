@@ -61,6 +61,7 @@ class SequenceHandler:
 
             self.sequence.append(simple_flow)
             self.sequence.to_file(self.sequence_filename)
+            # TODO ignore https://gw.soulhunters.beyondmars.io/api/boss_sieges/scores
 
 
 this_class = SequenceHandler()
