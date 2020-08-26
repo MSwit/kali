@@ -54,6 +54,15 @@ class Sequence_Number:
         if kind == 'state_updated':
             self.sequence_number += 1
 
+        if kind in "bank_lot_consumed":
+            bank_lot_id = json_content['bank_lot_id']
+            if bank_lot_id == 811:
+                pass
+            if bank_lot_id == 801:
+                self.sequence_number = 0
+            if bank_lot_id == 200:
+                self.sequence_number = 0
+
         self.seq_num += 1
         content['seq_num'] = self.seq_num
         content['sequence_number'] = self.sequence_number
