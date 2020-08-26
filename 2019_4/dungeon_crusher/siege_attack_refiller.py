@@ -75,7 +75,7 @@ class SiegeAttackRefiller:
         except:
             pass
 
-        log_error(f"Attacks left should be: {self.attacks_left}.........")
+        # log_error(f"Attacks left should be: {self.attacks_left}.........")
         response = simple_flow.response
         try:
             error_msg = response['error']['message']
