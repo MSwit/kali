@@ -17,6 +17,7 @@ class SiegeRefresher:
     def __init__(self):
         self.update_flow = None
         self.refresh_thread = None
+        self.possible_pending_refresh_flow = False
 
     def handle_request(self, simple_flow: SimpleFlow) -> None:
         pass
@@ -27,6 +28,9 @@ class SiegeRefresher:
         if simple_flow.url == "https://soulhunters.beyondmars.io/api/boss_sieges/sieges" or simple_flow.url == "https://gw.soulhunters.beyondmars.io/api/boss_sieges/sieges":
             self.update_flow = simple_flow.flow.copy()
             self.update_flow.request.content = json.dumps({}).encode('utf-8')
+            self.possible_pending_refresh_flow = False
+        # else:
+        #     log_error(json.dumps(simple_flow.modified_request, indent=2))
 
         try:
             sieges = simple_flow.response['sieges']
@@ -43,10 +47,15 @@ class SiegeRefresher:
 
     def replay_siege_update_flow(self):
         if self.update_flow:
-            log_warning(
-                f"last siege refresh is very old. Going to generate a request")
-            ctx.master.commands.call(
-                "replay.client", [self.update_flow.copy()])
+            if not self.possible_pending_refresh_flow:
+                log_warning(
+                    f"last siege refresh is very old. Going to generate a request")
+                ctx.master.commands.call(
+                    "replay.client", [self.update_flow.copy()])
+                self.possible_pending_refresh_flow = True
+            else:
+                log_warning(
+                    "[+] There might be another refresh flow pending, so i skip this time.")
         else:
             log_error(
                 "[-] could not replay siege refresher. No basic flow available")
