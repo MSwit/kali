@@ -41,6 +41,7 @@ class Sieges:
         self.siege_boss_finder = [
             TopBossAttack_Finder(500000000, 4),
             SiegeBossAttack_Finder(11500000, False),
+            SiegeBossAttack_Finder(12850000, True, False),
             SiegeBossAttack_Finder(13000000, True),
             SiegeBossAttack_Finder(15000000, True, False),
             SiegeBossAttack_Finder(18000000, True, False),
