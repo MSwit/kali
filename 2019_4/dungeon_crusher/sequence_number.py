@@ -58,6 +58,8 @@ class Sequence_Number:
             bank_lot_id = json_content['bank_lot_id']
             if bank_lot_id == 811:
                 pass
+            if bank_lot_id == 800:
+                self.sequence_number = 0
             if bank_lot_id == 801:
                 self.sequence_number = 0
             if bank_lot_id == 200:
