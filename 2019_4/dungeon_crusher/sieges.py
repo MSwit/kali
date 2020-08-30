@@ -49,6 +49,7 @@ class Sieges:
             # SiegeBossAttack_Finder(30000000, True),
             SiegeBoss_Finisher(2000000)
         ]
+        self.error = False
 
     def try_set_session_request(self, simple_flow: SimpleFlow) -> None:
         if "https://soulhunters.beyondmars.io/api/session" in simple_flow.url or "https://gw.soulhunters.beyondmars.io/api/session" in simple_flow.url:  # TODO refactor
@@ -116,16 +117,15 @@ def process_response(simple_flow: SimpleFlow) -> None:
                 correct_seq_num = message.split(" ")[-1]
                 correct_seq_num = message.split("!")[0]
                 log_error(f"corret seq_num should be {correct_seq_num}")
-                exit(1)
             if "Sequence number mismatch" in message:
                 log_error(f"[-] Error:  {message}")
-                exit(1)
             if "Session started on other device" in message:
                 log_error(f"[-] Error:  {message}")
-                exit(1)
 
             if "[find_boss_for_siege] Boss siege limit reached!" in message:
                 pass
+            else:
+                self.error = True
 
     this_class.check_response(simple_flow)
 
@@ -190,4 +190,6 @@ def response(flow: http.HTTPFlow) -> None:
     except Exception as e:
         Tooling.log_stacktrace(e)
     [addon.handle_response(simple_flow) for addon in my_addons]
+    if this_class.error:
+        exit(1)
     pass
