@@ -28,6 +28,8 @@ from siege_boss import TopBossAttack_Finder
 from boss_searcher import BossSearcher
 from mob_reward_consumed import MobRewardLogger
 import mob_reward_consumed
+from boss_config_id_logger import BossConfigIdLogger
+import boss_config_id_logger
 
 
 class Sieges:
@@ -149,7 +151,7 @@ my_addons = [SequenceHandler(),
              SiegeAttackRefiller(),
              siege_refresher.this_class,  # prevent two instances
              boss_searcher,
-             MobRewardLogger(mob_reward_consumed.filename)]
+             MobRewardLogger(mob_reward_consumed.filename), BossConfigIdLogger(boss_config_id_logger.filename)]
 
 
 def should_anaylse_Request(simple_flow):
