@@ -78,6 +78,8 @@ class Sieges:
 
     def check_response_simple(self, simple_flow):
 
+        if not self.api_session_flow:
+            return
         attack_json = self.get_attack_json(simple_flow)
         if attack_json:
             self.attack_with_json(attack_json)
