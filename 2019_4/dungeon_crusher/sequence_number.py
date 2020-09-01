@@ -48,6 +48,14 @@ class Sequence_Number:
                 self.mob_reward_consumed_modifier = 2
             self.sequence_number += self.mob_reward_consumed_modifier
 
+        if kind in "quest_points_reward_consumed":
+            # Dont know if the error message belongs to the followed requests as well.
+            id = json_content['reward_id']
+            if id == 4:
+                self.sequence_number += 6
+            if id == 1 or id == 2 or id == 3:
+                pass
+
         if kind in "battler_reward_chest_consumed":
             self.sequence_number += self.mob_reward_consumed_modifier
 
