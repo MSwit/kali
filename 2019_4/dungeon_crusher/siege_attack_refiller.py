@@ -61,7 +61,7 @@ class SiegeAttackRefiller:
                     simple_flow.modified_request.insert(0,
                                                         {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
 
-                    log_error("going to add refill action")
+                    # log_error("going to add refill action")
 
                     # TODO
                     # handle : [-] Error: {'message': 'Failed to consume 56:1 - only 0 items available!', 'action': {'kind': 'boss_siege_refill_attacks_max', 'sequence_number': 16, 'seq_num': 35}, 'code': 400, 'backend_time': '2020-08-04T12:46:24.566Z'}
