@@ -70,6 +70,7 @@ def response(flow: http.HTTPFlow) -> None:
     simple_flow = SimpleFlow.from_flow(flow)
     if "rating_boss_finished" in str(simple_flow.request):
         flow.kill()
+        exit(1)
 
 
 # Error:
