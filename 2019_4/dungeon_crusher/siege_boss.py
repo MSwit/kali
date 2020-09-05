@@ -165,6 +165,8 @@ class TopBossAttack_Finder():
             for siege in sieges:
                 if siege['current_hp'] >= self.minimum_hp:
                     boss_id = siege['id']
+                    log_error(
+                        f"[+] going to attack boss with currenthp {siege['current_hp']}")
                     self.attacked_bosses[boss_id] += 1
                     return self.get_attack_json_for_boss_id(boss_id)
 
@@ -177,8 +179,17 @@ class TopBossAttack_Finder():
         points = my_score_entry['points']
         boss_id = siege['id']
         if points == 0 and self.attacked_bosses[boss_id] <= self.max_attack_count:
-            self.attacked_bosses[boss_id] += 1
-            return self.get_attack_json_for_boss_id(boss_id)
+            log_error(
+                f"[-] Did not do dmg to boss with currenthp {siege['current_hp']}")
+            if siege['current_hp'] != 0:
+                log_error(
+                    f"going to reattack (current attack count = { self.attacked_bosses[boss_id]}")
+                self.attacked_bosses[boss_id] += 1
+                return self.get_attack_json_for_boss_id(boss_id)
+
+        else:
+            log_error(
+                f"[-] Did {points} dmg to Boss with currenthp {siege['current_hp']}")
         return None
 
     def get_attack_json_for_boss_id(self, boss_id):
