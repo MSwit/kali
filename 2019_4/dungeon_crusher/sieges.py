@@ -130,7 +130,7 @@ def process_response(simple_flow: SimpleFlow) -> None:
             if "[find_boss_for_siege] Boss siege limit reached!" in message:
                 pass
             else:
-                self.error = True
+                this_class.error = True
 
     this_class.check_response(simple_flow)
 
