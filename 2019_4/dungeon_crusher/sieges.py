@@ -43,7 +43,7 @@ class Sieges:
         self.api_session_flow = None
         self.replayer = replayer
         self.siege_boss_finder = [
-            TopBossAttack_Finder(200000000, 4),
+            TopBossAttack_Finder(100000000, 4),
             #SiegeBossAttack_Finder(11500000, False),
             #SiegeBossAttack_Finder(12850000, True, False),
             SiegeBossAttack_Finder(9000000, False),
@@ -184,7 +184,7 @@ def request(flow: http.HTTPFlow) -> None:
         return
     log_warning(
         "------------------ REQUEST starts -------------------")
-    # log_error("starting request.")
+    
     [addon.handle_request(simple_flow) for addon in my_addons]
     try:
         process_request(simple_flow)
