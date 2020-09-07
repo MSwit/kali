@@ -9,15 +9,16 @@ from mitm_logging import log_error
 import json
 import time
 from threading import Lock
+from client_replay import ClientReplay
 
 
 class BossSearcher:
 
-    def __init__(self, sequence_number_modifier):
-        self.pending_replay = False
-        self.queued_requests = 0
+    def __init__(self, sequence_number_modifier, replayer):
         self.api_session_flow = None
+        self.replayer = replayer
         self.sequence_number_modifier = sequence_number_modifier
+
 
     def is_relogin(self, simple_flow: SimpleFlow):  # TODO refactor
 
@@ -29,15 +30,8 @@ class BossSearcher:
                 pass
         return False
 
-    def possible_unconsumed_searches(self):
-
-        if self.pending_replay:
-            return self.queued_requests + 1
-        return self.queued_requests
-
     def should_search(self,  simple_flow: SimpleFlow) -> bool:
-        if self.possible_unconsumed_searches() > 0:
-            return False
+        
         try:
             current_boss_hp = simple_flow.response['boss_siege_attack_result']['current_hp']
             if current_boss_hp == 0:
@@ -60,20 +54,12 @@ class BossSearcher:
             self.api_session_flow = simple_flow.flow.copy()
 
     def handle_request(self, simple_flow: SimpleFlow) -> None:
-        if "find_boss_for_siege" in str(simple_flow.modified_request):
-            self.queued_requests += 1
         self.try_set_session_request(simple_flow)
 
-        if self.is_relogin(simple_flow):
-            self.queued_requests = 0
-
     def handle_response(self, simple_flow: SimpleFlow) -> None:
-        if "find_boss_for_siege" in str(simple_flow.modified_request):
-            self.pending_replay = False
-            self.queued_requests -= 1
-            if self.queued_requests < 0:
-                raise Exception("[-] queued_requests cant be negative")
-        if self.should_search(simple_flow):
+        log_error(f"[++++++++++] boss_searcher. replayer is idle? : {replayer.isIdle()}")
+        if replayer.isIdle() and  self.should_search(simple_flow):
+            log_error(f"replayer is idle? : {replayer.isIdle() }")
             self.try_search_for_boss()
 
     def try_search_for_boss(self):
@@ -90,20 +76,21 @@ class BossSearcher:
         search_for_bosses_json = {
             "kind": "find_boss_for_siege", "sequence_number": -1, "seq_num": -1}
         fake_request = self.api_session_flow.copy()
-        self.pending_replay = True
+        
 
         search_for_bosses_json = [search_for_bosses_json]
         fake_request.request.content = json.dumps(
             search_for_bosses_json).encode('utf-8')
 
-        time.sleep(0.5)
+        # time.sleep(0.5)
 
-        ctx.master.commands.call("replay.client", [fake_request])
-        log_error("[#] I send search for boss request")
+        log_error("[+] \tI send search for boss request")
+        self.replayer.replay(fake_request)
 
 
 sequence_number_modifier = Sequence_Number()
-this_class = BossSearcher(sequence_number_modifier)
+replayer = ClientReplay()
+this_class = BossSearcher(sequence_number_modifier, replayer)
 
 lock = Lock()
 

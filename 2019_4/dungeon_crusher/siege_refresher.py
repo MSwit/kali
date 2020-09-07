@@ -17,18 +17,19 @@ class SiegeRefresher:
     def __init__(self):
         self.update_flow = None
         self.refresh_thread = None
-        self.possible_pending_refresh_flow = False
+        self.replayer = None
+        
 
     def handle_request(self, simple_flow: SimpleFlow) -> None:
         pass
 
     def handle_response(self, simple_flow: SimpleFlow) -> None:
-        log_error("[+] SiegeRefresher:handle_response called")
+        # log_error("[+] SiegeRefresher:handle_response called")
 
         if simple_flow.url == "https://soulhunters.beyondmars.io/api/boss_sieges/sieges" or simple_flow.url == "https://gw.soulhunters.beyondmars.io/api/boss_sieges/sieges":
             self.update_flow = simple_flow.flow.copy()
             self.update_flow.request.content = json.dumps({}).encode('utf-8')
-            self.possible_pending_refresh_flow = False
+            
         # else:
         #     log_error(json.dumps(simple_flow.modified_request, indent=2))
 
@@ -47,18 +48,17 @@ class SiegeRefresher:
 
     def replay_siege_update_flow(self):
         if self.update_flow:
-            if not self.possible_pending_refresh_flow:
-                log_warning(
+            if self.replayer.isIdle():
+                log_error(
                     f"last siege refresh is very old. Going to generate a request")
-                ctx.master.commands.call(
-                    "replay.client", [self.update_flow.copy()])
-                self.possible_pending_refresh_flow = True
+                self.replayer.replay(self.update_flow)
+                
+                
             else:
-                log_warning(
-                    "[+] There might be another refresh flow pending, so i skip this time.")
+                log_error(
+                    "[+] cant refresh sieges. Replayer issnt idle.")
         else:
-            log_error(
-                "[-] could not replay siege refresher. No basic flow available")
+            pass
         self.refresh_timer()
 
 

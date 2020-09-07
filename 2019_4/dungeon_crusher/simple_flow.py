@@ -45,7 +45,7 @@ class SimpleFlow:
         if flow.response:
             response = SimpleFlow.json_from_http(flow.response)
             status_code = flow.response.status_code
-        simple_flow = SimpleFlow(url, request, None, response, flow.copy())
+        simple_flow = SimpleFlow(url, request, None, response, flow)
         simple_flow.status_code = status_code
 
         return simple_flow

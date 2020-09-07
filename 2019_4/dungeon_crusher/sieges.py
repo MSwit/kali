@@ -30,27 +30,33 @@ from mob_reward_consumed import MobRewardLogger
 import mob_reward_consumed
 from boss_config_id_logger import BossConfigIdLogger
 import boss_config_id_logger
+from client_replay import ClientReplay
 
 
 class Sieges:
 
-    def __init__(self, sequence_number_modifier):
+    def __init__(self, sequence_number_modifier, replayer):
         self.sequence_number_modifier = sequence_number_modifier
         self.my_id = "a10e9130-7530-4839-9a11-825b99a10895"  # oneplus3t
         self.user = "oneplus"
         self.attacked_bosses = defaultdict(int)
         self.api_session_flow = None
+        self.replayer = replayer
         self.siege_boss_finder = [
-            TopBossAttack_Finder(500000000, 4),
-            SiegeBossAttack_Finder(11500000, False),
-            SiegeBossAttack_Finder(12850000, True, False),
-            SiegeBossAttack_Finder(13000000, True),
-            SiegeBossAttack_Finder(15000000, True, False),
-            SiegeBossAttack_Finder(18000000, True, False),
-            SiegeBossAttack_Finder(21000000, True, False),
-            SiegeBossAttack_Finder(25700000, True),
+            TopBossAttack_Finder(200000000, 4),
+            #SiegeBossAttack_Finder(11500000, False),
+            #SiegeBossAttack_Finder(12850000, True, False),
+            SiegeBossAttack_Finder(9000000, False),
+            SiegeBossAttack_Finder(11000000, False),
+            SiegeBossAttack_Finder(13000000, False),
+            # SiegeBossAttack_Finder(15000000, True),
+            # SiegeBossAttack_Finder(17850000, True),
+            # SiegeBossAttack_Finder(18000000, True),
+            # SiegeBossAttack_Finder(21000000, True),
+            # SiegeBossAttack_Finder(25000000, True),
+            # SiegeBossAttack_Finder(25700000, True),
             # SiegeBossAttack_Finder(30000000, True),
-            SiegeBoss_Finisher(2000000)
+            SiegeBoss_Finisher(1200000)
         ]
         self.error = False
 
@@ -67,8 +73,8 @@ class Sieges:
         self.attacked_bosses[boss_id] += 1
         log_warning("[#] I will send boss siege attack.")
         time.sleep(0.2)
-
-        ctx.master.commands.call("replay.client", [fake_request])
+        self.replayer.replay(fake_request)
+        # ctx.master.commands.call("replay.client", [fake_request])
 
     def get_attack_json(self, simple_flow: SimpleFlow):
         for finder in self.siege_boss_finder:
@@ -77,8 +83,7 @@ class Sieges:
                 return attack_json
 
     def check_response_simple(self, simple_flow):
-
-        if not self.api_session_flow:
+        if not self.api_session_flow or not self.replayer.isIdle():
             return
         attack_json = self.get_attack_json(simple_flow)
         if attack_json:
@@ -118,6 +123,7 @@ def process_response(simple_flow: SimpleFlow) -> None:
         if error:
             log_error(json.dumps(simple_flow.response, indent=2))
             message = error['message']
+
             if "[outside] Wrong action sequence number = " in message:
                 correct_seq_num = message.split(" ")[-1]
                 correct_seq_num = message.split("!")[0]
@@ -141,19 +147,26 @@ def process_response(simple_flow: SimpleFlow) -> None:
         Tooling.log_stacktrace(e)
 
 
+replayer = ClientReplay()
 sequence_number_modifier = Sequence_Number()
-this_class = Sieges(sequence_number_modifier)
+this_class = Sieges(sequence_number_modifier, replayer)
 
 
 lock = Lock()
 
+boss_searcher = BossSearcher(sequence_number_modifier, replayer)
+refresher = siege_refresher.this_class # prevent two instances
+refresher.replayer = replayer
 
-boss_searcher = BossSearcher(sequence_number_modifier)
-my_addons = [SequenceHandler(),
+
+my_addons = [replayer,
+            SequenceHandler(),
              SiegeAttackRefiller(),
-             siege_refresher.this_class,  # prevent two instances
              boss_searcher,
-             MobRewardLogger(mob_reward_consumed.filename), BossConfigIdLogger(boss_config_id_logger.filename)]
+             refresher, 
+             MobRewardLogger(mob_reward_consumed.filename), 
+            #  BossConfigIdLogger(boss_config_id_logger.filename)
+             ]
 
 
 def should_anaylse_Request(simple_flow):
@@ -162,17 +175,18 @@ def should_anaylse_Request(simple_flow):
 
 @concurrent
 def request(flow: http.HTTPFlow) -> None:
+   
     simple_flow = SimpleFlow.from_flow(flow)
     if not "soulhunters.beyondmars" in simple_flow.url:
         flow.kill()
         return
     if not should_anaylse_Request(simple_flow):
         return
-
+    log_warning(
+        "------------------ REQUEST starts -------------------")
+    # log_error("starting request.")
     [addon.handle_request(simple_flow) for addon in my_addons]
     try:
-        # log_warning(
-        #     "------------------ REQUEST starts -------------------")
         process_request(simple_flow)
 
         flow.request.content = json.dumps(
@@ -183,18 +197,22 @@ def request(flow: http.HTTPFlow) -> None:
 
 
 def response(flow: http.HTTPFlow) -> None:
+    
+    log_error("response starts")
     simple_flow = SimpleFlow.from_flow(flow)
     if not should_anaylse_Request(simple_flow):
         return
+    replayer.handle_response(simple_flow) # TODO, its bad to handle this addon in a special way.
     try:
-        # log_warning(
-        #     "------------------ RESPONSE starts -------------------")
+        log_warning(
+            "------------------ RESPONSE starts -------------------")
         process_response(simple_flow)
-        # log_warning(
-        #     "------------------ RESPONSE ende -------------------")
+        
     except Exception as e:
         Tooling.log_stacktrace(e)
     [addon.handle_response(simple_flow) for addon in my_addons]
     if this_class.error:
         exit(1)
     pass
+    log_warning(
+                "------------------ RESPONSE ende -------------------")
