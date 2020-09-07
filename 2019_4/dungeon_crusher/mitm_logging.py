@@ -16,7 +16,14 @@ class bcolors:
 
 def log_error(object_to_be_logged):
     if "do not know" != traceback.format_stack():
-        print(f"{bcolors.FAIL}  {str(object_to_be_logged)}  {bcolors.ENDC}")
+        if type(object_to_be_logged) is not str:
+            str_object = str(object_to_be_logged)
+            msg = (str_object[:100] + '..') if len(str_object) > 100 else str_object
+        else:
+           msg = object_to_be_logged
+        
+        
+        print(f"{bcolors.FAIL}  {msg}  {bcolors.ENDC}")
     # trace = traceback.format_stack()
     # if "mitmdump" in str(trace):
 

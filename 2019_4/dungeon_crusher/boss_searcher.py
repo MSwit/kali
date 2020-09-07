@@ -57,9 +57,9 @@ class BossSearcher:
         self.try_set_session_request(simple_flow)
 
     def handle_response(self, simple_flow: SimpleFlow) -> None:
-        log_error(f"[++++++++++] boss_searcher. replayer is idle? : {replayer.isIdle()}")
-        if replayer.isIdle() and  self.should_search(simple_flow):
-            log_error(f"replayer is idle? : {replayer.isIdle() }")
+        log_error(f"[++++++++++] boss_searcher. replayer is idle? : {self.replayer.isIdle()}")
+        if self.replayer.isIdle() and  self.should_search(simple_flow):
+            log_error(f"replayer is idle? : {self.replayer.isIdle() }")
             self.try_search_for_boss()
 
     def try_search_for_boss(self):
@@ -85,6 +85,8 @@ class BossSearcher:
         # time.sleep(0.5)
 
         log_error("[+] \tI send search for boss request")
+        log_error("[+] boss_searcher: because of many errors, i will check the state of the replayer again:")
+        log_error(f"replayer is idle? : {self.replayer.isIdle() }")
         self.replayer.replay(fake_request)
 
 

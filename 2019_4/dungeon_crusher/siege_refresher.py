@@ -35,7 +35,7 @@ class SiegeRefresher:
 
         try:
             sieges = simple_flow.response['sieges']
-            log_error(f"[+] Current siege count: {len(sieges)}.........")
+            log_error(f"[+] Detect Current siege count: {len(sieges)}........., re-schedule timer")
             self.refresh_timer()
         except:
             pass
