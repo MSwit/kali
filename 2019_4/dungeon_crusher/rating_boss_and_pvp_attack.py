@@ -95,3 +95,49 @@ def response(flow: http.HTTPFlow) -> None:
 #     "backend_time": "2020-09-04T18:14:42.273Z"
 #   }
 # }
+
+
+# Arena kiste
+#   [
+#   {
+#     "hero_id": 2104,
+#     "new_rarity": 160,
+#     "kind": "hero_hidden_rarity_upgraded",
+#     "sequence_number": 9,
+#     "seq_num": 50
+#   }
+# ]
+
+# [
+#   {
+#     "level": 3353,
+#     "consumed_loot": [
+#       {
+#         "config_id": 105090,
+#         "amount": 1
+#       }
+#     ],
+#     "kind": "mob_reward_consumed",
+#     "sequence_number": 15,
+#     "seq_num": 20
+#   },
+#   {
+#     "level": 3354,
+#     "consumed_loot": [
+#       {
+#         "config_id": 100520,
+#         "amount": 1
+#       }
+#     ],
+#     "kind": "mob_reward_consumed",
+#     "sequence_number": 17,
+#     "seq_num": 21
+#   },
+#   {
+#     "level": 3355,
+#     "consumed_loot": [
+#       {
+#         "config_id": 21,
+#         "amount": 550648
+#       }
+#     ],
