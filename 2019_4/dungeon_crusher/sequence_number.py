@@ -119,7 +119,7 @@ class Sequence_Number:
         return True
 
     def try_update_request(self, simple_flow: SimpleFlow) -> None:  # TODO
-        log_error(json.dumps(simple_flow.modified_request))
+        # log_error(json.dumps(simple_flow.modified_request))
         try:
             if not simple_flow.modified_request:
                 return
