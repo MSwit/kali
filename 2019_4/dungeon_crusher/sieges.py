@@ -43,14 +43,14 @@ class Sieges:
         self.api_session_flow = None
         self.replayer = replayer
         self.siege_boss_finder = [
-            TopBossAttack_Finder(100000000, 4),
+            TopBossAttack_Finder(100000001, 4),
             #SiegeBossAttack_Finder(11500000, False),
             #SiegeBossAttack_Finder(12850000, True, False),
-            SiegeBossAttack_Finder(9000000, False),
-            SiegeBossAttack_Finder(11000000, False),
-            SiegeBossAttack_Finder(13000000, False),
+            SiegeBossAttack_Finder(9000000, True),
+            SiegeBossAttack_Finder(11000000, True),
+            SiegeBossAttack_Finder(13000000, True),
             # SiegeBossAttack_Finder(15000000, True),
-            # SiegeBossAttack_Finder(17850000, True),
+            SiegeBossAttack_Finder(17850000, False),
             # SiegeBossAttack_Finder(18000000, True),
             # SiegeBossAttack_Finder(21000000, True),
             # SiegeBossAttack_Finder(25000000, True),
@@ -155,17 +155,17 @@ this_class = Sieges(sequence_number_modifier, replayer)
 lock = Lock()
 
 boss_searcher = BossSearcher(sequence_number_modifier, replayer)
-refresher = siege_refresher.this_class # prevent two instances
+refresher = siege_refresher.this_class  # prevent two instances
 refresher.replayer = replayer
 
 
 my_addons = [replayer,
-            SequenceHandler(),
+             SequenceHandler(),
              SiegeAttackRefiller(),
              boss_searcher,
-             refresher, 
-             MobRewardLogger(mob_reward_consumed.filename), 
-            #  BossConfigIdLogger(boss_config_id_logger.filename)
+             refresher,
+             MobRewardLogger(mob_reward_consumed.filename),
+             #  BossConfigIdLogger(boss_config_id_logger.filename)
              ]
 
 
@@ -175,7 +175,7 @@ def should_anaylse_Request(simple_flow):
 
 @concurrent
 def request(flow: http.HTTPFlow) -> None:
-   
+
     simple_flow = SimpleFlow.from_flow(flow)
     if not "soulhunters.beyondmars" in simple_flow.url:
         flow.kill()
@@ -184,7 +184,7 @@ def request(flow: http.HTTPFlow) -> None:
         return
     log_warning(
         "------------------ REQUEST starts -------------------")
-    
+
     [addon.handle_request(simple_flow) for addon in my_addons]
     try:
         process_request(simple_flow)
@@ -197,7 +197,7 @@ def request(flow: http.HTTPFlow) -> None:
 
 
 def response(flow: http.HTTPFlow) -> None:
-    
+
     log_error("response starts")
     simple_flow = SimpleFlow.from_flow(flow)
     if not should_anaylse_Request(simple_flow):
@@ -208,7 +208,7 @@ def response(flow: http.HTTPFlow) -> None:
         log_warning(
             "------------------ RESPONSE starts -------------------")
         process_response(simple_flow)
-        
+
     except Exception as e:
         Tooling.log_stacktrace(e)
     [addon.handle_response(simple_flow) for addon in my_addons]
@@ -216,4 +216,4 @@ def response(flow: http.HTTPFlow) -> None:
         exit(1)
     pass
     log_warning(
-                "------------------ RESPONSE ende -------------------")
+        "------------------ RESPONSE ende -------------------")
