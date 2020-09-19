@@ -50,7 +50,7 @@ class Sieges:
             SiegeBossAttack_Finder(11000000, True),
             SiegeBossAttack_Finder(13000000, True),
             # SiegeBossAttack_Finder(15000000, True),
-            SiegeBossAttack_Finder(17850000, False),
+            SiegeBossAttack_Finder(17850000, True, False),
             # SiegeBossAttack_Finder(18000000, True),
             # SiegeBossAttack_Finder(21000000, True),
             # SiegeBossAttack_Finder(25000000, True),
