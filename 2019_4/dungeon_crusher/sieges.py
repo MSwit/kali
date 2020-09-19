@@ -202,7 +202,8 @@ def response(flow: http.HTTPFlow) -> None:
     simple_flow = SimpleFlow.from_flow(flow)
     if not should_anaylse_Request(simple_flow):
         return
-    replayer.handle_response(simple_flow) # TODO, its bad to handle this addon in a special way.
+    # TODO, its bad to handle this addon in a special way.
+    replayer.handle_response(simple_flow)
     try:
         log_warning(
             "------------------ RESPONSE starts -------------------")
