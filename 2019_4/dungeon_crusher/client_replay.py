@@ -14,6 +14,8 @@ class ClientReplay:
     def __init__(self):
         self.pending_id = None
         self.lock = Lock()
+        self.arena_attack_id = None
+        self.rating_boss_id = None
 
     def replay(self, flow: http.HTTPFlow) -> None:
         if not self.isIdle():
@@ -30,8 +32,15 @@ class ClientReplay:
 
         self.lock.release()
 
-    def reset(self):
-        self.pending_id = None
+    def reset(self, id_to_reset):
+        if self.pending_id == id_to_reset:
+            self.pending_id = None
+        elif self.arena_attack_id == id_to_reset:
+            self.arena_attack_id == None
+        elif self.rating_boss_id == id_to_reset:
+            self.rating_boss_id = None
+        else:
+            raise Exception(f"No id: {id_to_reset} to reset !")
 
     def handle_request(self, simple_flow: SimpleFlow) -> None:
         if simple_flow.flow.id == self.pending_id:
@@ -42,7 +51,7 @@ class ClientReplay:
     def handle_response(self, simple_flow: SimpleFlow) -> None:
         if simple_flow.flow.id == self.pending_id:
             # log_error(f"[+] \t\t REPLAY - seen flow in response -> cleanup. id : {self.pending_id}")
-            self.reset()
+            self.reset(self.pending_id)
 
     def isIdle(self):
         return self.pending_id == None

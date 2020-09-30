@@ -5,8 +5,11 @@ from mitmproxy import ctx
 from simple_flow import SimpleFlow
 from sequence import Sequence
 import json
+from client_replay import ClientReplay
 my_id = "e786b343-35e8-4f59-9b86-256e188783d7"
 test_data_path = os.path.dirname(os.path.realpath(__file__)) + "/testdata"
+
+replayer = ClientReplay()
 
 
 def test_get_boss_id():
@@ -15,7 +18,7 @@ def test_get_boss_id():
         'finder': 'my_good_id'}, 'top_attack_id': None, 'current_hp': 1}]}
     simple_flow = SimpleFlow(
         "some_url", [{'kind': "find_boss_for_siege"}], None, response_content, None)
-    sieges = Sieges(Sequence_Number())
+    sieges = Sieges(Sequence_Number(), replayer)
     sieges.my_id = 'my_good_id'
     boss_id = sieges.find_boss_to_attack(simple_flow)
 
@@ -39,7 +42,7 @@ def test_should_attack_top_boss_twice():
 
     simple_flow = SimpleFlow(
         "some_url", request_content, None, response_content, None)
-    sieges = Sieges(Sequence_Number())
+    sieges = Sieges(Sequence_Number(), replayer)
     sieges.my_id = 'my_good_id'
     sieges.attacked_bosses['some_boss_id'] = 1
     boss_id = sieges.find_boss_to_attack(simple_flow)
@@ -55,7 +58,7 @@ def test_should_found_boss():
     print(test_data_path)
     sequence = Sequence.from_file(f'{test_data_path}/siege_modified_004.json')
 
-    sieges = Sieges(Sequence_Number())
+    sieges = Sieges(Sequence_Number(), replayer)
 
     flow = [flow for flow in sequence.flows if "find_boss_for_siege" in str(
         flow.request)][0]
@@ -64,7 +67,7 @@ def test_should_found_boss():
 
 
 def test_siege_detail_request_no_boss_found():
-    sieges = Sieges(Sequence_Number())
+    sieges = Sieges(Sequence_Number(), replayer)
     url = "https://soulhunters.beyondmars.io/api/boss_sieges/sieges/03837759-952a-4e29-8bf3-be4155991bcb"
     request_flow = SimpleFlow(url, {}, {}, json.loads(
         siege_detail_response), None)

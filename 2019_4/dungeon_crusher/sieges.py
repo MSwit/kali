@@ -49,14 +49,15 @@ class Sieges:
             SiegeBossAttack_Finder(9000000, True),
             SiegeBossAttack_Finder(11000000, True),
             SiegeBossAttack_Finder(13000000, True),
-            # SiegeBossAttack_Finder(15000000, True),
+            SiegeBossAttack_Finder(12850000, True, False),
+            SiegeBossAttack_Finder(15000000, True, False),
             SiegeBossAttack_Finder(17850000, True, False),
             # SiegeBossAttack_Finder(18000000, True),
             # SiegeBossAttack_Finder(21000000, True),
             # SiegeBossAttack_Finder(25000000, True),
             # SiegeBossAttack_Finder(25700000, True),
             # SiegeBossAttack_Finder(30000000, True),
-            SiegeBoss_Finisher(1200000)
+            SiegeBoss_Finisher(2000000)
         ]
         self.error = False
 
@@ -65,6 +66,8 @@ class Sieges:
             self.api_session_flow = simple_flow.flow.copy()
 
     def attack_with_json(self, attack_json):
+        if self.api_session_flow:
+            log_error("                          JUHU api_session_flow was set")
         fake_request = self.api_session_flow.copy()
         request_content = [attack_json]
         fake_request.request.content = json.dumps(  # will update seq_num etc. in request(..)

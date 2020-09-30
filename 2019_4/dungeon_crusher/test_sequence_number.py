@@ -83,7 +83,8 @@ def test_battler_reward_chest_consumed_increase_by_1_or_2():
 
 def test_dark_ritual_performed_resets_numbers():
     print(test_data_path)
-    sequence = Sequence.from_file(f'{test_data_path}/unmodified_flow__dark_ritual_performed.json')
+    sequence = Sequence.from_file(
+        f'{test_data_path}/unmodified_flow__dark_ritual_performed.json')
 
     sequence_sumber_modifier = Sequence_Number()
 
