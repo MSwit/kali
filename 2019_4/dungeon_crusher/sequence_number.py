@@ -55,6 +55,8 @@ class Sequence_Number:
                 self.sequence_number += 6
             if id == 1 or id == 2 or id == 3:
                 pass
+        if kind in "rating_boss_finished":
+            self.sequence_number += 1
 
         if kind in "battler_reward_chest_consumed":
             self.sequence_number += self.mob_reward_consumed_modifier
