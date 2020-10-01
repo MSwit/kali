@@ -26,48 +26,38 @@ class SiegeAttackRefiller:
 
     def __init__(self):
         self.attacks_left = 0
+        self.try_use_max_filler = False
 
     def handle_request(self, simple_flow: SimpleFlow):
         try:
+            ui_based_refills_normal = [
+                request for request in simple_flow.modified_request if request['kind'] == 'boss_siege_refill_attack']
+            ui_based_refills_max = [
+                request for request in simple_flow.modified_request if request['kind'] == 'boss_siege_refill_attacks_max']
+            self.attacks_left += len(ui_based_refills_normal)
+            self.attacks_left += len(ui_based_refills_max) * 3
 
             attack_request = [
                 request for request in simple_flow.modified_request if request['kind'] == 'boss_siege_attack'][0]
+
+            number_of_needed_refills = 0
             if attack_request['power_attack'] == True:
-                if self.attacks_left == 3:
-                    pass
-                if self.attacks_left == 2:
-                    simple_flow.modified_request.insert(0,
-                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
-                if self.attacks_left == 1:
-                    simple_flow.modified_request.insert(0,
-                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
-                    simple_flow.modified_request.insert(0,
-                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
-                if self.attacks_left == 0:
-                    # simple_flow.modified_request.insert(0,
-                    #                                     {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
-
-                    simple_flow.modified_request.insert(0,
-                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
-                    simple_flow.modified_request.insert(0,
-                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
-                    simple_flow.modified_request.insert(0,
-                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
+                number_of_needed_refills = 3
             else:
-                if self.attacks_left == 0:
+                number_of_needed_refills = 1
 
-                    # simple_flow.modified_request.insert(0,
-                    #                                     {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
-                    simple_flow.modified_request.insert(0,
-                                                        {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
-
-                    # log_error("going to add refill action")
-
-                    # TODO
-                    # handle : [-] Error: {'message': 'Failed to consume 56:1 - only 0 items available!', 'action': {'kind': 'boss_siege_refill_attacks_max', 'sequence_number': 16, 'seq_num': 35}, 'code': 400, 'backend_time': '2020-08-04T12:46:24.566Z'}
-
+            self.add_refills_to_match(number_of_needed_refills, simple_flow)
         except:
             pass
+
+    def add_refills_to_match(self, number_of_needed_refills: int, simple_flow: SimpleFlow) -> None:
+        if number_of_needed_refills == 3 and self.attacks_left == 0 and self.try_use_max_filler:
+            simple_flow.modified_request.insert(0,
+                                                {"kind": "boss_siege_refill_attacks_max", "sequence_number": -1, "seq_num": -1})
+            return
+        for i in range(number_of_needed_refills-self.attacks_left):
+            simple_flow.modified_request.insert(0,
+                                                {"kind": "boss_siege_refill_attack", "sequence_number": -1, "seq_num": -1})
 
     def handle_response(self, simple_flow: SimpleFlow) -> None:
         try:
