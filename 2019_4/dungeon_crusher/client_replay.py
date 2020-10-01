@@ -30,7 +30,6 @@ class ClientReplay:
         # log_error(f"[+] \t\t REPLAYED flow!...... id: {self.pending_id}")
         # log_error(f"[+] \t\t self.isIdle should be false now. isIdle? : {self.isIdle()}")
 
-        self.replay_calls += 1
         self.lock.release()
 
     def reset(self, id_to_reset):
