@@ -19,7 +19,6 @@ class BossSearcher:
         self.replayer = replayer
         self.sequence_number_modifier = sequence_number_modifier
 
-
     def is_relogin(self, simple_flow: SimpleFlow):  # TODO refactor
 
         if "https://gw.soulhunters.beyondmars.io/api/session" in simple_flow.url:
@@ -31,7 +30,7 @@ class BossSearcher:
         return False
 
     def should_search(self,  simple_flow: SimpleFlow) -> bool:
-        
+
         try:
             current_boss_hp = simple_flow.response['boss_siege_attack_result']['current_hp']
             if current_boss_hp == 0:
@@ -57,8 +56,9 @@ class BossSearcher:
         self.try_set_session_request(simple_flow)
 
     def handle_response(self, simple_flow: SimpleFlow) -> None:
-        log_error(f"[++++++++++] boss_searcher. replayer is idle? : {self.replayer.isIdle()}")
-        if self.replayer.isIdle() and  self.should_search(simple_flow):
+        log_error(
+            f"[++++++++++] boss_searcher. replayer is idle? : {self.replayer.isIdle()}")
+        if self.replayer.isIdle() and self.should_search(simple_flow):
             log_error(f"replayer is idle? : {self.replayer.isIdle() }")
             self.try_search_for_boss()
 
@@ -76,7 +76,6 @@ class BossSearcher:
         search_for_bosses_json = {
             "kind": "find_boss_for_siege", "sequence_number": -1, "seq_num": -1}
         fake_request = self.api_session_flow.copy()
-        
 
         search_for_bosses_json = [search_for_bosses_json]
         fake_request.request.content = json.dumps(
@@ -85,7 +84,8 @@ class BossSearcher:
         # time.sleep(0.5)
 
         log_error("[+] \tI send search for boss request")
-        log_error("[+] boss_searcher: because of many errors, i will check the state of the replayer again:")
+        # log_error(
+        #     "[+] boss_searcher: because of many errors, i will check the state of the replayer again:")
         log_error(f"replayer is idle? : {self.replayer.isIdle() }")
         self.replayer.replay(fake_request)
 
