@@ -24,7 +24,6 @@ from siege_attack_refiller import SiegeAttackRefiller
 from siege_refresher import SiegeRefresher
 
 
-
 class SiegeBossAttack_Finder:
 
     def __init__(self, boss_hp, power_attack: bool, has_to_be_finder: bool = True):
@@ -62,9 +61,10 @@ class SiegeBossAttack_Finder:
 
 
 class SiegeBoss_Finisher:
-    def __init__(self, maximal_boss_hp):
+    def __init__(self, maximal_boss_hp, four_sieges_needed=True):
         self.my_id = "a10e9130-7530-4839-9a11-825b99a10895"
         self.maximal_boss_hp = maximal_boss_hp
+        self.four_sieges_needed = four_sieges_needed
         self.attacked_bosses = defaultdict(int)
 
     def get_attack_json_for_bosses(self, simple_flow: SimpleFlow):
@@ -78,6 +78,9 @@ class SiegeBoss_Finisher:
             sieges = [simple_flow.response['boss_siege_attack_result']['siege']]
         except:
             pass
+
+        if self.four_sieges_needed and len(sieges) < 4:
+            return
 
         for siege in sieges:
             if siege['current_hp'] <= self.maximal_boss_hp and siege['current_hp'] > 0:
