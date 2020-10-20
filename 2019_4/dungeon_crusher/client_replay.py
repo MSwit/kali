@@ -5,6 +5,7 @@ from mitm_logging import log_error
 from simple_flow import SimpleFlow
 from threading import Thread, Lock
 import sys
+import time
 
 print(sys.argv)
 
@@ -45,7 +46,7 @@ class ClientReplay:
     def handle_request(self, simple_flow: SimpleFlow) -> None:
         if simple_flow.flow.id == self.pending_id:
             # log_error(f"[+] \t\t REPLAY - seen flow in request. id : {self.pending_id}")
-            pass
+            time.sleep(0.2)
         pass
 
     def handle_response(self, simple_flow: SimpleFlow) -> None:

@@ -75,7 +75,6 @@ class Sieges:
         boss_id = attack_json['siege_id']
         self.attacked_bosses[boss_id] += 1
         log_warning("[#] I will send boss siege attack.")
-        time.sleep(0.2)
         self.replayer.replay(fake_request)
         # ctx.master.commands.call("replay.client", [fake_request])
 
