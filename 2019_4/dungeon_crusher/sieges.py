@@ -31,6 +31,7 @@ import mob_reward_consumed
 from boss_config_id_logger import BossConfigIdLogger
 import boss_config_id_logger
 from client_replay import ClientReplay
+from resurect_replayer import ReplayResurrect
 
 
 class Sieges:
@@ -43,7 +44,7 @@ class Sieges:
         self.api_session_flow = None
         self.replayer = replayer
         self.siege_boss_finder = [
-            TopBossAttack_Finder(100000001, 4),
+            TopBossAttack_Finder(220000001, 4),
             #SiegeBossAttack_Finder(11500000, False),
             #SiegeBossAttack_Finder(12850000, True, False),
             SiegeBossAttack_Finder(9000000, True),
@@ -52,12 +53,15 @@ class Sieges:
             SiegeBossAttack_Finder(12850000, True, False),
             SiegeBossAttack_Finder(15000000, True, False),
             SiegeBossAttack_Finder(17850000, True, False),
-            # SiegeBossAttack_Finder(18000000, True),
-            # SiegeBossAttack_Finder(21000000, True),
-            # SiegeBossAttack_Finder(25000000, True),
-            # SiegeBossAttack_Finder(25700000, True),
-            # SiegeBossAttack_Finder(30000000, True),
-            SiegeBoss_Finisher(2000000)
+            SiegeBossAttack_Finder(18000000, True, False),
+            SiegeBossAttack_Finder(21000000, True, False),
+            SiegeBossAttack_Finder(25000000, True, False),
+            SiegeBossAttack_Finder(25700000, True, False),
+            SiegeBossAttack_Finder(30000000, True, False),
+            # SiegeBossAttack_Finder(42000000, True),
+            # SiegeBossAttack_Finder(54000000, True),
+            # SiegeBossAttack_Finder(62000000, True),
+            SiegeBoss_Finisher(2500000)
         ]
         self.error = False
 
@@ -76,7 +80,6 @@ class Sieges:
         self.attacked_bosses[boss_id] += 1
         log_warning("[#] I will send boss siege attack.")
         self.replayer.replay(fake_request)
-        # ctx.master.commands.call("replay.client", [fake_request])
 
     def get_attack_json(self, simple_flow: SimpleFlow):
         for finder in self.siege_boss_finder:
@@ -161,7 +164,8 @@ refresher = siege_refresher.this_class  # prevent two instances
 refresher.replayer = replayer
 
 
-my_addons = [replayer,
+my_addons = [ReplayResurrect(replayer),
+             replayer,
              SequenceHandler(),
              SiegeAttackRefiller(),
              boss_searcher,
@@ -180,7 +184,7 @@ def request(flow: http.HTTPFlow) -> None:
 
     simple_flow = SimpleFlow.from_flow(flow)
     if not "soulhunters.beyondmars" in simple_flow.url:
-        flow.kill()
+        # flow.kill()
         return
     if not should_anaylse_Request(simple_flow):
         return
@@ -189,13 +193,13 @@ def request(flow: http.HTTPFlow) -> None:
 
     [addon.handle_request(simple_flow) for addon in my_addons]
     try:
-        process_request(simple_flow)
+        process_request(simple_flow)  # // need to lock befor calling addons
 
         flow.request.content = json.dumps(
             simple_flow.modified_request).encode('utf-8')
-        # log_warning("------------------ REQUEST ends -------------------")
     except Exception as e:
         Tooling.log_stacktrace(e)
+    log_warning("------------------ REQUEST ends -------------------")
 
 
 def response(flow: http.HTTPFlow) -> None:
