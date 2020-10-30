@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-from threading import Thread, Lock
-import threading
 from tooling import Tooling
 from sequence_number import Sequence_Number
 from mitmproxy import http
@@ -102,25 +100,9 @@ class Sieges:
             Tooling.log_stacktrace(e)
 
 
-def should_lock_unlock_flow(simple_flow: SimpleFlow) -> bool:
-    if "https://soulhunters.beyondmars.io/api/clans" in simple_flow.url or "https://gw.soulhunters.beyondmars.io/api/clans" in simple_flow.url:
-        return False
-    if "https://soulhunters.beyondmars.io" in simple_flow.url or "https://gw.soulhunters.beyondmars.io" in simple_flow.url:
-        # if "sequence_number" in str(simple_flow.modified_request) and "seq_num" in str(simple_flow.modified_request):
-        #     return True // issue with quests !
-        return True
-    return False
-
-
 def process_request(simple_flow: SimpleFlow) -> None:
 
     this_class.try_set_session_request(simple_flow)
-
-    if should_lock_unlock_flow(simple_flow):
-        lock.acquire()
-    else:
-        return
-
     sequence_number_modifier.try_update_request(simple_flow)
     sequence_number_modifier.print_requests(simple_flow)
 
@@ -149,19 +131,11 @@ def process_response(simple_flow: SimpleFlow) -> None:
 
     this_class.check_response(simple_flow)
 
-    try:
-        if should_lock_unlock_flow(simple_flow):
-            lock.release()
-    except Exception as e:
-        Tooling.log_stacktrace(e)
-
 
 replayer = ClientReplay()
 sequence_number_modifier = Sequence_Number()
 this_class = Sieges(sequence_number_modifier, replayer)
 
-
-lock = Lock()
 
 boss_searcher = BossSearcher(sequence_number_modifier, replayer)
 refresher = siege_refresher.this_class  # prevent two instances
@@ -199,7 +173,7 @@ def request(flow: http.HTTPFlow) -> None:
 
     [addon.handle_request(simple_flow) for addon in my_addons]
     try:
-        process_request(simple_flow)  # // need to lock befor calling addons
+        process_request(simple_flow)
 
         flow.request.content = json.dumps(
             simple_flow.modified_request).encode('utf-8')
