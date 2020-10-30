@@ -31,7 +31,8 @@ import mob_reward_consumed
 from boss_config_id_logger import BossConfigIdLogger
 import boss_config_id_logger
 from client_replay import ClientReplay
-from resurect_replayer import ReplayResurrect
+from resurrect_replayer import ReplayResurrect
+from single_flow_gate import SingleFlowGate
 
 
 class Sieges:
@@ -45,11 +46,10 @@ class Sieges:
         self.replayer = replayer
         self.siege_boss_finder = [
             TopBossAttack_Finder(220000001, 4),
-            #SiegeBossAttack_Finder(11500000, False),
-            #SiegeBossAttack_Finder(12850000, True, False),
             SiegeBossAttack_Finder(9000000, True),
             SiegeBossAttack_Finder(11000000, True),
             SiegeBossAttack_Finder(13000000, True),
+            SiegeBossAttack_Finder(11500000, True, False),
             SiegeBossAttack_Finder(12850000, True, False),
             SiegeBossAttack_Finder(15000000, True, False),
             SiegeBossAttack_Finder(17850000, True, False),
@@ -105,7 +105,11 @@ class Sieges:
 def should_lock_unlock_flow(simple_flow: SimpleFlow) -> bool:
     if "https://soulhunters.beyondmars.io/api/clans" in simple_flow.url or "https://gw.soulhunters.beyondmars.io/api/clans" in simple_flow.url:
         return False
-    return "https://soulhunters.beyondmars.io" in simple_flow.url or "https://gw.soulhunters.beyondmars.io" in simple_flow.url
+    if "https://soulhunters.beyondmars.io" in simple_flow.url or "https://gw.soulhunters.beyondmars.io" in simple_flow.url:
+        # if "sequence_number" in str(simple_flow.modified_request) and "seq_num" in str(simple_flow.modified_request):
+        #     return True // issue with quests !
+        return True
+    return False
 
 
 def process_request(simple_flow: SimpleFlow) -> None:
@@ -163,16 +167,18 @@ boss_searcher = BossSearcher(sequence_number_modifier, replayer)
 refresher = siege_refresher.this_class  # prevent two instances
 refresher.replayer = replayer
 
-
-my_addons = [ReplayResurrect(replayer),
-             replayer,
-             SequenceHandler(),
-             SiegeAttackRefiller(),
-             boss_searcher,
-             refresher,
-             MobRewardLogger(mob_reward_consumed.filename),
-             #  BossConfigIdLogger(boss_config_id_logger.filename)
-             ]
+single_flow_gate = SingleFlowGate()
+my_addons = [
+    single_flow_gate,
+    ReplayResurrect(replayer),
+    replayer,
+    SequenceHandler(),
+    SiegeAttackRefiller(),
+    boss_searcher,
+    refresher,
+    MobRewardLogger(mob_reward_consumed.filename),
+    #  BossConfigIdLogger(boss_config_id_logger.filename)
+]
 
 
 def should_anaylse_Request(simple_flow):
@@ -181,10 +187,10 @@ def should_anaylse_Request(simple_flow):
 
 @concurrent
 def request(flow: http.HTTPFlow) -> None:
-
     simple_flow = SimpleFlow.from_flow(flow)
+    # log_error(f"[+] URL: {simple_flow.url}")
     if not "soulhunters.beyondmars" in simple_flow.url:
-        # flow.kill()
+        flow.kill()
         return
     if not should_anaylse_Request(simple_flow):
         return
