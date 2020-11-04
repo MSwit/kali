@@ -132,10 +132,11 @@ class TopBossAttack_Finder():
             for siege in sieges:
                 if siege['current_hp'] >= self.minimum_hp:
                     boss_id = siege['id']
-                    log_error(
-                        f"[+] going to attack boss with currenthp {siege['current_hp']}")
-                    self.attacked_bosses[boss_id] += 1
-                    return self.get_attack_json_for_boss_id(boss_id)
+                    if self.attacked_bosses[boss_id] == 0:
+                        log_error(
+                            f"[+] going to attack boss with currenthp {siege['current_hp']}")
+                        self.attacked_bosses[boss_id] += 1
+                        return self.get_attack_json_for_boss_id(boss_id)
 
         try:
             siege = simple_flow.response['boss_siege_attack_result']['siege']
@@ -162,7 +163,7 @@ class TopBossAttack_Finder():
     def get_attack_json_for_boss_id(self, boss_id):
         return {
             "siege_id": boss_id,
-            "power_attack": False,
+            "power_attack": True,
             "autorestore_is_on": True,
             "kind": "boss_siege_attack",
             "sequence_number": -1,

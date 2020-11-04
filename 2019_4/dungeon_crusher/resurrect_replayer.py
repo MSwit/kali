@@ -37,7 +37,7 @@ class ReplayResurrect:
         if not self.replayer.isIdle():
             log_error("[-] Something went wrong. Try to resurrect the replayer")
             if self.last_pending_id != self.replayer.pending_id:
-                og_error(
+                log_error(
                     f"[-] self.last_pending_id({self.last_pending_id}) != self.replayer.pending_id({self.replayer.pending_id}). How can this happen? Can this even happen?")
             self.replayer.reset(self.replayer.pending_id)
 

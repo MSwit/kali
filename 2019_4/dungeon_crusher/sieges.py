@@ -43,7 +43,7 @@ class Sieges:
         self.api_session_flow = None
         self.replayer = replayer
         self.siege_boss_finder = [
-            TopBossAttack_Finder(220000001, 4),
+            TopBossAttack_Finder(260000001, 4),
             SiegeBossAttack_Finder(9000000, True),
             SiegeBossAttack_Finder(11000000, True),
             SiegeBossAttack_Finder(13000000, True),
@@ -54,9 +54,11 @@ class Sieges:
             SiegeBossAttack_Finder(18000000, True, False),
             SiegeBossAttack_Finder(21000000, True, False),
             SiegeBossAttack_Finder(25000000, True, False),
-            SiegeBossAttack_Finder(25700000, True, False),
-            SiegeBossAttack_Finder(30000000, True, False),
+            # SiegeBossAttack_Finder(25700000, True, False),
+            # SiegeBossAttack_Finder(30000000, True, False),
+            SiegeBossAttack_Finder(35700000, True, False),
             # SiegeBossAttack_Finder(42000000, True),
+            # SiegeBossAttack_Finder(50000000, True),
             # SiegeBossAttack_Finder(54000000, True),
             # SiegeBossAttack_Finder(62000000, True),
             SiegeBoss_Finisher(2500000)
@@ -154,6 +156,8 @@ my_addons = [
     #  BossConfigIdLogger(boss_config_id_logger.filename)
 ]
 
+my_addons_response = my_addons[::-1]
+
 
 def should_anaylse_Request(simple_flow):
     return True
@@ -197,9 +201,32 @@ def response(flow: http.HTTPFlow) -> None:
 
     except Exception as e:
         Tooling.log_stacktrace(e)
-    [addon.handle_response(simple_flow) for addon in my_addons]
+    [addon.handle_response(simple_flow) for addon in my_addons_response]
     if this_class.error:
         exit(1)
+    should_stop = False
+    if simple_flow.status_code >= 400:
+        error = simple_flow.response.get("error", {})
+        if error:
+            log_error(json.dumps(simple_flow.response, indent=2))
+            message = error['message']
+
+            if "[outside] Wrong action sequence number = " in message:
+                correct_seq_num = message.split(" ")[-1]
+                correct_seq_num = message.split("!")[0]
+                log_error(f"corret seq_num should be {correct_seq_num}")
+            if "Sequence number mismatch" in message:
+                log_error(f"[-] Error:  {message}")
+            if "Session started on other device" in message:
+                log_error(f"[-] Error:  {message}")
+
+            if "[find_boss_for_siege] Boss siege limit reached!" in message:
+                pass
+            else:
+                should_stop = True
+    if should_stop:
+        exit(1)
+
     pass
     log_warning(
         "------------------ RESPONSE ende -------------------")

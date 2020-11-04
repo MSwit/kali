@@ -18,10 +18,11 @@ class SingleFlowGate:
         if "https://soulhunters.beyondmars.io/api/clans" in simple_flow.url or "https://gw.soulhunters.beyondmars.io/api/clans" in simple_flow.url:
             return False
 
-        if "https://soulhunters.beyondmars.io" in simple_flow.url or "https://gw.soulhunters.beyondmars.io" in simple_flow.url:
+        if "sequence_number" in str(simple_flow.modified_request) and "seq_num" in str(simple_flow.modified_request):
+            # // issue with quests ! But maybe only siege quests which causes errors all the time.
             return True
-        # if "sequence_number" in str(simple_flow.modified_request) and "seq_num" in str(simple_flow.modified_request):
-        #     return True // issue with quests !
+        # if "https://soulhunters.beyondmars.io" in simple_flow.url or "https://gw.soulhunters.beyondmars.io" in simple_flow.url:
+        #     return True
         return False
 
     def handle_request(self, simple_flow: SimpleFlow) -> None:

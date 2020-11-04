@@ -18,7 +18,6 @@ class SiegeRefresher:
         self.update_flow = None
         self.refresh_thread = None
         self.replayer = None
-        
 
     def handle_request(self, simple_flow: SimpleFlow) -> None:
         pass
@@ -29,13 +28,14 @@ class SiegeRefresher:
         if simple_flow.url == "https://soulhunters.beyondmars.io/api/boss_sieges/sieges" or simple_flow.url == "https://gw.soulhunters.beyondmars.io/api/boss_sieges/sieges":
             self.update_flow = simple_flow.flow.copy()
             self.update_flow.request.content = json.dumps({}).encode('utf-8')
-            
+
         # else:
         #     log_error(json.dumps(simple_flow.modified_request, indent=2))
 
         try:
             sieges = simple_flow.response['sieges']
-            log_error(f"[+] Detect Current siege count: {len(sieges)}........., re-schedule timer")
+            log_error(
+                f"[+] Detect Current siege count: {len(sieges)}........., re-schedule timer")
             self.refresh_timer()
         except:
             pass
@@ -43,7 +43,7 @@ class SiegeRefresher:
     def refresh_timer(self):
         if self.refresh_thread:
             self.refresh_thread.cancel()
-        self.refresh_thread = Timer(5, self.replay_siege_update_flow)
+        self.refresh_thread = Timer(2, self.replay_siege_update_flow)
         self.refresh_thread.start()
 
     def replay_siege_update_flow(self):
@@ -51,9 +51,9 @@ class SiegeRefresher:
             if self.replayer.isIdle():
                 log_error(
                     f"last siege refresh is very old. Going to generate a request")
+                # This can cause race conditions.
                 self.replayer.replay(self.update_flow)
-                
-                
+
             else:
                 log_error(
                     "[+] cant refresh sieges. Replayer issnt idle.")

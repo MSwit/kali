@@ -55,7 +55,7 @@ def request(flow: http.HTTPFlow) -> None:
     log_error("[+] Processing request.")
     simple_flow = SimpleFlow.from_flow(flow)
     if not "soulhunters.beyondmars" in simple_flow.url:
-        flow.kill()
+        #     flow.kill()
         return
 
     try:

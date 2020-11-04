@@ -16,7 +16,11 @@ class SimpleFlow:
             self.modified_request = json.loads(
                 json.dumps(self.request))
         self.response = SimpleFlow.get_json_from_unknown(response)
+        if not flow:
+            raise Exception("[-] flow is null")
+
         self.flow = flow
+        self.flow_id = flow.id
         self.status_code = None
 
     @staticmethod
@@ -38,6 +42,9 @@ class SimpleFlow:
 
     @staticmethod
     def from_flow(flow: http.HTTPFlow) -> None:
+        if not flow:
+            raise Exception("[-] flow is null")
+
         url = flow.request.pretty_url
         request = SimpleFlow.json_from_http(flow.request)
         response = None
